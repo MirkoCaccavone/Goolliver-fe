@@ -16,9 +16,12 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Token scaduto o non valido
-            localStorage.removeItem('goolliver-auth');
-            window.location.href = '/login';
+            // Token scaduto o non valido - ma NON fare redirect se siamo già nel login
+            const currentPath = window.location.pathname;
+            if (currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/forgot-password') {
+                localStorage.removeItem('goolliver-auth');
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }
