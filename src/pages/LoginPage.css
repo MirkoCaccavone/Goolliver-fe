@@ -1,0 +1,179 @@
+/* LoginPage.css - Stili dedicati per la pagina di accesso */
+
+/* Container principale */
+.login-page {
+    /* Stili da definire */
+}
+
+/* Header della pagina con logo e titoli */
+.login-header {
+    /* Stili da definire */
+}
+
+/* Logo principale */
+.login-logo {
+    /* Stili da definire */
+}
+
+/* Titolo principale */
+.login-title {
+    /* Stili da definire */
+}
+
+/* Sottotitolo con link registrazione */
+.login-subtitle {
+    /* Stili da definire */
+}
+
+/* Link alla registrazione */
+.login-register-link {
+    /* Stili da definire */
+}
+
+/* Container per i social login */
+.login-social-container {
+    /* Stili da definire */
+}
+
+/* Pulsante social generico */
+.login-social-button {
+    /* Stili da definire */
+}
+
+/* Pulsante Google specifico */
+.login-google-button {
+    /* Stili da definire */
+}
+
+/* Pulsante Facebook specifico */
+.login-facebook-button {
+    /* Stili da definire */
+}
+
+/* Icona dei social buttons */
+.login-social-icon {
+    /* Stili da definire */
+}
+
+/* Testo dei social buttons */
+.login-social-text {
+    /* Stili da definire */
+}
+
+/* Divisore "oppure" */
+.login-divider {
+    /* Stili da definire */
+}
+
+/* Linea del divisore */
+.login-divider-line {
+    /* Stili da definire */
+}
+
+/* Testo del divisore */
+.login-divider-text {
+    /* Stili da definire */
+}
+
+/* Form di login */
+.login-form {
+    /* Stili da definire */
+}
+
+/* Container per campo input */
+.login-field {
+    /* Stili da definire */
+}
+
+/* Label del campo */
+.login-field-label {
+    /* Stili da definire */
+}
+
+/* Input del campo */
+.login-field-input {
+    /* Stili da definire */
+}
+
+/* Input in stato di errore */
+.login-field-input-error {
+    /* Stili da definire */
+}
+
+/* Messaggio di errore del campo */
+.login-field-error {
+    /* Stili da definire */
+}
+
+/* Container opzioni (ricordami + password dimenticata) */
+.login-options {
+    /* Stili da definire */
+}
+
+/* Checkbox ricordami */
+.login-remember-checkbox {
+    /* Stili da definire */
+}
+
+/* Label ricordami */
+.login-remember-label {
+    /* Stili da definire */
+}
+
+/* Link password dimenticata */
+.login-forgot-password-link {
+    /* Stili da definire */
+}
+
+/* Pulsante di login principale */
+.login-button {
+    /* Stili da definire */
+}
+
+/* Pulsante in stato loading */
+.login-button-loading {
+    /* Stili da definire */
+}
+
+/* Spinner del loading */
+.login-loading-spinner {
+    /* Stili da definire */
+}
+
+/* Container per i messaggi di errore */
+.login-error {
+    /* Stili da definire */
+}
+
+/* Icona del messaggio di errore */
+.login-error-icon {
+    /* Stili da definire */
+}
+
+/* Testo del messaggio di errore */
+.login-error-text {
+    /* Stili da definire */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-page {
+        /* Stili mobile da definire */
+    }
+
+    .login-social-container {
+        /* Stili mobile social da definire */
+    }
+
+    .login-social-button {
+        /* Stili mobile social button da definire */
+    }
+
+    .login-form {
+        /* Stili mobile form da definire */
+    }
+
+    .login-field {
+        /* Stili mobile field da definire */
+    }
+}
