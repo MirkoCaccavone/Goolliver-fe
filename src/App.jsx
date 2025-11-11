@@ -7,8 +7,15 @@ import { useAuthStore } from './stores/authStore';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import ContestPage from './pages/ContestPage';
+import ContestsPage from './pages/ContestsPage';
+import ProfilePage from './pages/ProfilePage';
+import MyPhotosPage from './pages/MyPhotosPage';
+import SettingsPage from './pages/SettingsPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 import AdminPage from './pages/AdminPage';
 
 // Components
@@ -53,6 +60,17 @@ function App() {
                 path="/register"
                 element={isAuthenticated ? <Navigate to="/dashboard" /> : <RegisterPage />}
               />
+              <Route
+                path="/forgot-password"
+                element={isAuthenticated ? <Navigate to="/dashboard" /> : <ForgotPasswordPage />}
+              />
+              <Route
+                path="/reset-password"
+                element={isAuthenticated ? <Navigate to="/dashboard" /> : <ResetPasswordPage />}
+              />
+
+              {/* Auth callback route */}
+              <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
               {/* Protected routes */}
               <Route
@@ -64,10 +82,42 @@ function App() {
                 }
               />
               <Route
+                path="/contests"
+                element={
+                  <ProtectedRoute>
+                    <ContestsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/contest/:id"
                 element={
                   <ProtectedRoute>
                     <ContestPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-photos"
+                element={
+                  <ProtectedRoute>
+                    <MyPhotosPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <SettingsPage />
                   </ProtectedRoute>
                 }
               />
