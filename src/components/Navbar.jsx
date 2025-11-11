@@ -1,30 +1,42 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import './Navbar.css';
 
 const Navbar = () => {
     const { isAuthenticated, user, logout } = useAuthStore();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = async () => {
         await logout();
         navigate('/');
     };
 
+    const isActiveLink = (path) => {
+        return location.pathname === path;
+    };
+
+    const getLinkClass = (path, baseClass = 'navbar-link nav-link text-secondary me-3') => {
+        return isActiveLink(path)
+            ? `${baseClass} navbar-link-active fw-medium text-primary`
+            : baseClass;
+    };
+
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-            <div className="container">
+        <nav className="navbar-main navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div className="navbar-container container">
                 {/* Brand */}
-                <Link to="/" className="navbar-brand d-flex align-items-center">
-                    <div className="logo-circle me-2">
+                <Link to="/" className="navbar-brand-section navbar-brand d-flex align-items-center">
+                    <div className="navbar-logo logo-circle me-2">
                         <span>G</span>
                     </div>
-                    <span className="fw-bold fs-4 text-dark">Goolliver</span>
+                    <span className="navbar-brand-text fw-bold fs-4 text-dark">Goolliver</span>
                 </Link>
 
                 {/* Mobile toggle button */}
                 <button
-                    className="navbar-toggler"
+                    className="navbar-toggle navbar-toggler"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarNav"
@@ -33,50 +45,78 @@ const Navbar = () => {
                 </button>
 
                 {/* Navigation Links */}
-                <div className="collapse navbar-collapse" id="navbarNav">
-                    <div className="navbar-nav ms-auto">
+                <div className="navbar-nav-container collapse navbar-collapse" id="navbarNav">
+                    <div className="navbar-nav-items navbar-nav ms-auto">
                         {isAuthenticated ? (
                             <>
                                 <Link
                                     to="/dashboard"
-                                    className="nav-link text-secondary me-3"
+                                    className={getLinkClass('/dashboard', 'navbar-dashboard-link navbar-link nav-link text-secondary me-3')}
                                 >
+                                    <i className="bi bi-house-door me-1"></i>
                                     Dashboard
+                                </Link>
+
+                                <Link
+                                    to="/contests"
+                                    className={getLinkClass('/contests', 'navbar-link nav-link text-secondary me-3')}
+                                >
+                                    <i className="bi bi-trophy me-1"></i>
+                                    Contest
                                 </Link>
 
                                 {user?.role === 'admin' && (
                                     <Link
                                         to="/admin"
-                                        className="nav-link text-secondary me-3"
+                                        className={getLinkClass('/admin', 'navbar-admin-link navbar-link nav-link text-secondary me-3')}
                                     >
+                                        <i className="bi bi-gear me-1"></i>
                                         Admin
                                     </Link>
                                 )}
 
                                 {/* User dropdown */}
-                                <div className="nav-item dropdown">
+                                <div className="navbar-user-dropdown nav-item dropdown">
                                     <a
-                                        className="nav-link dropdown-toggle d-flex align-items-center"
+                                        className="navbar-user-toggle nav-link dropdown-toggle d-flex align-items-center"
                                         href="#"
                                         role="button"
                                         data-bs-toggle="dropdown"
+                                        aria-expanded="false"
                                     >
-                                        <div className="bg-secondary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
+                                        <div className="navbar-user-avatar bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
                                             <span className="text-white small fw-medium">
                                                 {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                             </span>
                                         </div>
-                                        <span className="text-dark">{user?.name}</span>
+                                        <span className="navbar-user-name text-dark d-none d-lg-inline">{user?.name}</span>
                                     </a>
-                                    <ul className="dropdown-menu">
-                                        <li><Link className="dropdown-item" to="/profile">Il mio Profilo</Link></li>
-                                        <li><Link className="dropdown-item" to="/settings">Impostazioni</Link></li>
-                                        <li><hr className="dropdown-divider" /></li>
+                                    <ul className="navbar-dropdown-menu dropdown-menu">
+                                        <li>
+                                            <Link className="navbar-dropdown-item dropdown-item" to="/profile">
+                                                <i className="bi bi-person me-2"></i>
+                                                Il mio Profilo
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link className="navbar-dropdown-item dropdown-item" to="/my-photos">
+                                                <i className="bi bi-images me-2"></i>
+                                                Le mie Foto
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link className="navbar-dropdown-item dropdown-item" to="/settings">
+                                                <i className="bi bi-gear me-2"></i>
+                                                Impostazioni
+                                            </Link>
+                                        </li>
+                                        <li><hr className="navbar-dropdown-divider dropdown-divider" /></li>
                                         <li>
                                             <button
-                                                className="dropdown-item"
+                                                className="navbar-logout-button dropdown-item text-danger"
                                                 onClick={handleLogout}
                                             >
+                                                <i className="bi bi-box-arrow-right me-2"></i>
                                                 Logout
                                             </button>
                                         </li>
@@ -84,20 +124,22 @@ const Navbar = () => {
                                 </div>
                             </>
                         ) : (
-                            <>
+                            <div className="navbar-auth-links d-flex align-items-center">
                                 <Link
                                     to="/login"
-                                    className="nav-link text-secondary me-2"
+                                    className="navbar-login-link nav-link text-secondary me-2"
                                 >
+                                    <i className="bi bi-box-arrow-in-right me-1"></i>
                                     Accedi
                                 </Link>
                                 <Link
                                     to="/register"
-                                    className="btn btn-primary"
+                                    className="navbar-register-button btn btn-primary"
                                 >
+                                    <i className="bi bi-person-plus me-1"></i>
                                     Registrati
                                 </Link>
-                            </>
+                            </div>
                         )}
                     </div>
                 </div>

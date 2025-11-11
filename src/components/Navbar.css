@@ -1,0 +1,135 @@
+/* Navbar.css - Stili dedicati per la barra di navigazione */
+
+/* Container principale navbar */
+.navbar-main {
+    /* Stili da definire */
+}
+
+/* Container interno navbar */
+.navbar-container {
+    /* Stili da definire */
+}
+
+/* Brand/Logo section */
+.navbar-brand-section {
+    /* Stili da definire */
+}
+
+/* Logo circle */
+.navbar-logo {
+    /* Stili da definire */
+}
+
+/* Brand text */
+.navbar-brand-text {
+    /* Stili da definire */
+}
+
+/* Toggle button mobile */
+.navbar-toggle {
+    /* Stili da definire */
+}
+
+/* Navigation links container */
+.navbar-nav-container {
+    /* Stili da definire */
+}
+
+/* Navigation items wrapper */
+.navbar-nav-items {
+    /* Stili da definire */
+}
+
+/* Navigation link generico */
+.navbar-link {
+    /* Stili da definire */
+}
+
+/* Navigation link attivo */
+.navbar-link-active {
+    /* Stili da definire */
+}
+
+/* Dashboard link */
+.navbar-dashboard-link {
+    /* Stili da definire */
+}
+
+/* Admin link */
+.navbar-admin-link {
+    /* Stili da definire */
+}
+
+/* User dropdown container */
+.navbar-user-dropdown {
+    /* Stili da definire */
+}
+
+/* User dropdown toggle */
+.navbar-user-toggle {
+    /* Stili da definire */
+}
+
+/* User avatar */
+.navbar-user-avatar {
+    /* Stili da definire */
+}
+
+/* User name */
+.navbar-user-name {
+    /* Stili da definire */
+}
+
+/* Dropdown menu */
+.navbar-dropdown-menu {
+    /* Stili da definire */
+}
+
+/* Dropdown item */
+.navbar-dropdown-item {
+    /* Stili da definire */
+}
+
+/* Dropdown divider */
+.navbar-dropdown-divider {
+    /* Stili da definire */
+}
+
+/* Logout button */
+.navbar-logout-button {
+    /* Stili da definire */
+}
+
+/* Auth links container (login/register) */
+.navbar-auth-links {
+    /* Stili da definire */
+}
+
+/* Login link */
+.navbar-login-link {
+    /* Stili da definire */
+}
+
+/* Register button */
+.navbar-register-button {
+    /* Stili da definire */
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .navbar-main {
+        /* Stili mobile da definire */
+    }
+
+    .navbar-nav-container {
+        /* Stili mobile da definire */
+    }
+
+    .navbar-user-dropdown {
+        /* Stili mobile da definire */
+    }
+
+    .navbar-auth-links {
+        /* Stili mobile da definire */
+    }
+}
