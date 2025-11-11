@@ -1,0 +1,56 @@
+/* Toast.css - Stili per le notifiche toast */
+
+/* Container principale toast */
+.toast-notification {
+    /* Stili da definire */
+}
+
+/* Toast visibile */
+.toast-visible {
+    /* Stili da definire */
+}
+
+/* Toast nascosto */
+.toast-hidden {
+    /* Stili da definire */
+}
+
+/* Toast success */
+.toast-success {
+    /* Stili da definire */
+}
+
+/* Toast error */
+.toast-error {
+    /* Stili da definire */
+}
+
+/* Toast warning */
+.toast-warning {
+    /* Stili da definire */
+}
+
+/* Toast info */
+.toast-info {
+    /* Stili da definire */
+}
+
+/* Contenuto toast */
+.toast-content {
+    /* Stili da definire */
+}
+
+/* Icona toast */
+.toast-icon {
+    /* Stili da definire */
+}
+
+/* Messaggio toast */
+.toast-message {
+    /* Stili da definire */
+}
+
+/* Pulsante chiudi */
+.toast-close-button {
+    /* Stili da definire */
+}

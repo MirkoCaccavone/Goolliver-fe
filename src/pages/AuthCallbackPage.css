@@ -1,0 +1,87 @@
+/* AuthCallbackPage.css - Stili dedicati per la pagina di callback OAuth */
+
+/* Container principale */
+.auth-callback-page {
+    /* Stili da definire */
+}
+
+/* Container contenuti */
+.auth-callback-container {
+    /* Stili da definire */
+}
+
+/* Sezione loading */
+.auth-callback-loading {
+    /* Stili da definire */
+}
+
+/* Spinner loading */
+.auth-callback-spinner {
+    /* Stili da definire */
+}
+
+/* Titolo principale */
+.auth-callback-title {
+    /* Stili da definire */
+}
+
+/* Sottotitolo */
+.auth-callback-subtitle {
+    /* Stili da definire */
+}
+
+/* Sezione errore */
+.auth-callback-error {
+    /* Stili da definire */
+}
+
+/* Icona errore */
+.auth-callback-error-icon {
+    /* Stili da definire */
+}
+
+/* Messaggio errore */
+.auth-callback-error-message {
+    /* Stili da definire */
+}
+
+/* Container azioni errore */
+.auth-callback-actions {
+    /* Stili da definire */
+}
+
+/* Pulsante retry */
+.auth-callback-retry-button {
+    /* Stili da definire */
+}
+
+/* Pulsante home */
+.auth-callback-home-button {
+    /* Stili da definire */
+}
+
+/* Sezione successo */
+.auth-callback-success {
+    /* Stili da definire */
+}
+
+/* Icona successo */
+.auth-callback-success-icon {
+    /* Stili da definire */
+}
+
+/* Progress bar container */
+.auth-callback-progress {
+    /* Stili da definire */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .auth-callback-page {
+        /* Stili mobile da definire */
+    }
+
+    .auth-callback-container {
+        /* Stili mobile da definire */
+    }
+}
