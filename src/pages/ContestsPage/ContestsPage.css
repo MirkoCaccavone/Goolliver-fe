@@ -1,0 +1,244 @@
+/* =================================
+   CONTESTS PAGE - DEDICATED CSS
+   ================================= */
+
+/* Page Container */
+.contests-page-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem 0;
+}
+
+.contests-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Header Section */
+.contests-page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+}
+
+.contests-page-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #212529;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #6f42c1, #e83e8c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.contests-page-subtitle {
+    font-size: 1.2rem;
+    color: #6c757d;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Filters Section */
+.contests-page-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.contests-filter-button {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #e9ecef;
+    border-radius: 50px;
+    background: white;
+    color: #6c757d;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.contests-filter-button:hover {
+    border-color: #6f42c1;
+    color: #6f42c1;
+    transform: translateY(-2px);
+}
+
+.contests-filter-button.active {
+    background: linear-gradient(135deg, #6f42c1, #e83e8c);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+}
+
+/* Grid Layout */
+.contests-page-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Loading States */
+.contests-page-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.contests-loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e9ecef;
+    border-top: 4px solid #6f42c1;
+    border-radius: 50%;
+    animation: contests-spin 1s linear infinite;
+}
+
+@keyframes contests-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Empty State */
+.contests-page-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.contests-empty-icon {
+    font-size: 4rem;
+    color: #e9ecef;
+    margin-bottom: 1rem;
+}
+
+.contests-empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.contests-empty-text {
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contests-page-title {
+        font-size: 2rem;
+    }
+
+    .contests-page-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .contests-page-filters {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .contests-filter-button {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .contests-page-container {
+        padding: 0 0.5rem;
+    }
+
+    .contests-page-title {
+        font-size: 1.75rem;
+    }
+
+    .contests-page-subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* Error State */
+.contest-error-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Stats Footer */
+.contests-page-stats {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-top: 3rem;
+}
+
+.stat-item {
+    padding: 1rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #6f42c1;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #6f42c1, #e83e8c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Additional responsive styles for stats */
+@media (max-width: 768px) {
+    .contests-page-stats .row {
+        row-gap: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .contests-page-stats {
+        padding: 1rem;
+    }
+
+    .contests-page-stats .row {
+        row-gap: 0.5rem;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+    }
+}
