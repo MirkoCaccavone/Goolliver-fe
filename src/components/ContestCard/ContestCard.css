@@ -251,6 +251,18 @@
     box-shadow: none;
 }
 
+.contest-action-participating {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    cursor: default;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.contest-action-participating:hover {
+    transform: none;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
 /* Responsive Design */
 @media (max-width: 576px) {
     .contest-card-body {

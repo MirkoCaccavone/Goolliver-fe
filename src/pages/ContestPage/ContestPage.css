@@ -413,6 +413,60 @@
     }
 }
 
+/* Upload Placeholder */
+.upload-placeholder {
+    border: 2px dashed #dee2e6 !important;
+    transition: all 0.3s ease;
+}
+
+.upload-placeholder:hover {
+    border-color: #6f42c1 !important;
+    background: #f8f9fa !important;
+}
+
+/* Results Podium */
+.results-podium {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.podium-position {
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.position-1 {
+    border-color: #ffc107;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+}
+
+.position-2 {
+    border-color: #6c757d;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+}
+
+.position-3 {
+    border-color: #cd7f32;
+    box-shadow: 0 4px 15px rgba(205, 127, 50, 0.2);
+}
+
+.podium-medal {
+    margin-bottom: 1rem;
+}
+
+.podium-photo {
+    border: 3px solid white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.results-full-list {
+    background: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .contest-page-container {

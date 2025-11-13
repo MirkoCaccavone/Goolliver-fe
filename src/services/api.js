@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -10,6 +10,28 @@ const api = axios.create({
     },
     withCredentials: false,
 });
+
+// Interceptor per aggiungere token di autorizzazione
+api.interceptors.request.use(
+    (config) => {
+        // Prendi il token dal localStorage (Zustand persist)
+        const authData = localStorage.getItem('goolliver-auth');
+        if (authData) {
+            try {
+                const { state } = JSON.parse(authData);
+                if (state?.token) {
+                    config.headers.Authorization = `Bearer ${state.token}`;
+                }
+            } catch (error) {
+                console.warn('Error parsing auth data:', error);
+            }
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 // Interceptor per gestire errori globali
 api.interceptors.response.use(
@@ -50,7 +72,7 @@ export const photoAPI = {
             'Content-Type': 'multipart/form-data',
         },
     }),
-    getUserPhotos: () => api.get('/photos/user/my-photos'),
+    getUserPhotos: (params = {}) => api.get('/photos/user/my-photos', { params }),
     getUserCredits: () => api.get('/photos/user/credits'),
     getGallery: (contestId) => api.get(`/photos/contest/${contestId}/gallery`),
     getModerationStatus: (entryId) => api.get(`/photos/${entryId}/moderation-status`),

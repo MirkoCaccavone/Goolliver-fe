@@ -9,7 +9,7 @@ const useAuthStore = create(
             user: null,
             token: null,
             isAuthenticated: false,
-            isLoading: true,
+            isLoading: false,
 
             // Actions
             setAuth: (user, token) => {
@@ -187,8 +187,8 @@ const useAuthStore = create(
             socialLogin: async (provider) => {
                 try {
                     // Redirect alla URL di autorizzazione social
-                    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-                    window.location.href = `${baseUrl}/api/auth/${provider}/redirect`;
+                    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api';
+                    window.location.href = `${baseUrl}/auth/${provider}/redirect`;
                 } catch (error) {
                     console.error(`${provider} login error:`, error);
                     return {
@@ -253,10 +253,10 @@ const useAuthStore = create(
 
                     // Verifica se il token è ancora valido facendo una richiesta di test
                     const response = await api.get('/user');
-                    const user = response.data;
+                    const userData = response.data.user; // L'API risponde con { user: userData }
 
                     set({
-                        user,
+                        user: userData,
                         isAuthenticated: true,
                         isLoading: false,
                     });
@@ -351,8 +351,21 @@ const useAuthStore = create(
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 token: state.token,
-                user: state.user
+                user: state.user,
+                isAuthenticated: state.isAuthenticated
             }),
+            onRehydrateStorage: () => (state) => {
+                // Quando lo store viene riidratato, controlla l'auth
+                if (state && state.token && state.user) {
+                    state.isAuthenticated = true;
+                    state.isLoading = false;
+                    // Imposta il token nell'API
+                    api.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
+                } else {
+                    state.isAuthenticated = false;
+                    state.isLoading = false;
+                }
+            }
         }
     )
 );

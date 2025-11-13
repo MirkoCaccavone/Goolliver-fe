@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { contestAPI } from '../services/api';
+import { contestAPI, photoAPI } from '../services/api';
+import { useAuthStore } from '../stores/authStore';
 import ContestCard from '../components/ContestCard/ContestCard';
 import './ContestsPage/ContestsPage.css';
 
 const ContestsPage = () => {
     const [activeFilter, setActiveFilter] = useState('all');
+    const { isAuthenticated } = useAuthStore();
 
     // Query per ottenere i contest
     const {
@@ -18,6 +20,15 @@ const ContestsPage = () => {
         queryFn: () => contestAPI.getAll(),
         select: (response) => response.data || [],
         staleTime: 5 * 60 * 1000, // 5 minuti
+    });
+
+    // Query per ottenere le partecipazioni dell'utente
+    const { data: userParticipations } = useQuery({
+        queryKey: ['user-photos'],
+        queryFn: () => photoAPI.getUserPhotos(),
+        enabled: isAuthenticated,
+        staleTime: 2 * 60 * 1000, // 2 minuti
+        select: (response) => response.data?.entries || []
     });
 
     // Filtra i contest in base al filtro attivo
@@ -39,6 +50,12 @@ const ContestsPage = () => {
                 return true;
         }
     }) || [];
+
+    // Funzione per trovare la partecipazione dell'utente per un contest
+    const getUserParticipationForContest = (contestId) => {
+        if (!userParticipations || !isAuthenticated) return null;
+        return userParticipations.find(entry => entry.contest_id === contestId) || null;
+    };
 
     // Opzioni di filtro
     const filterOptions = [
@@ -120,6 +137,7 @@ const ContestsPage = () => {
                             <ContestCard
                                 key={contest.id}
                                 contest={contest}
+                                userParticipation={getUserParticipationForContest(contest.id)}
                             />
                         ))}
                     </div>

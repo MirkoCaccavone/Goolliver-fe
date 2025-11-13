@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './ContestCard.css';
 
-const ContestCard = ({ contest }) => {
+const ContestCard = ({ contest, userParticipation = null }) => {
     // Determina lo status del contest
     const getContestStatus = () => {
         const now = new Date();
@@ -111,17 +111,36 @@ const ContestCard = ({ contest }) => {
 
                 {/* Azioni */}
                 <div className="contest-card-actions">
-                    {canParticipate ? (
+                    {userParticipation ? (
+                        // Utente già partecipante
+                        <>
+                            <div className="contest-action-button contest-action-participating">
+                                <i className="bi bi-check-circle-fill"></i>
+                                {userParticipation.moderation_status === 'approved' ? 'Partecipando' :
+                                    userParticipation.moderation_status === 'pending' ? 'In Revisione' :
+                                        userParticipation.moderation_status === 'pending_review' ? 'In Moderazione' :
+                                            userParticipation.moderation_status === 'rejected' ? 'Rifiutato' : 'In Moderazione'}
+                            </div>
+                            <Link
+                                to={`/contest/${contest.id}?tab=gallery`}
+                                className="contest-action-button contest-action-secondary"
+                            >
+                                <i className="bi bi-images"></i>
+                                Galleria
+                            </Link>
+                        </>
+                    ) : canParticipate ? (
+                        // Può partecipare
                         <>
                             <Link
-                                to={`/contest/${contest.id}`}
+                                to={`/contest/${contest.id}?action=participate`}
                                 className="contest-action-button contest-action-primary"
                             >
                                 <i className="bi bi-upload"></i>
                                 Partecipa
                             </Link>
                             <Link
-                                to={`/contest/${contest.id}/gallery`}
+                                to={`/contest/${contest.id}?tab=gallery`}
                                 className="contest-action-button contest-action-secondary"
                             >
                                 <i className="bi bi-images"></i>
@@ -131,14 +150,14 @@ const ContestCard = ({ contest }) => {
                     ) : status === 'ended' ? (
                         <>
                             <Link
-                                to={`/contest/${contest.id}/results`}
+                                to={`/contest/${contest.id}?tab=results`}
                                 className="contest-action-button contest-action-primary"
                             >
                                 <i className="bi bi-trophy"></i>
                                 Risultati
                             </Link>
                             <Link
-                                to={`/contest/${contest.id}/gallery`}
+                                to={`/contest/${contest.id}?tab=gallery`}
                                 className="contest-action-button contest-action-secondary"
                             >
                                 <i className="bi bi-images"></i>
@@ -146,10 +165,13 @@ const ContestCard = ({ contest }) => {
                             </Link>
                         </>
                     ) : status === 'upcoming' ? (
-                        <button className="contest-action-button contest-action-disabled">
-                            <i className="bi bi-clock"></i>
-                            Prossimamente
-                        </button>
+                        <Link
+                            to={`/contest/${contest.id}?tab=details`}
+                            className="contest-action-button contest-action-secondary"
+                        >
+                            <i className="bi bi-info-circle"></i>
+                            Dettagli
+                        </Link>
                     ) : (
                         <button className="contest-action-button contest-action-disabled">
                             <i className="bi bi-x-circle"></i>

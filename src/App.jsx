@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './stores/authStore';
@@ -32,7 +32,15 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, token, checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    // Se c'è un token nel localStorage ma non siamo autenticati, 
+    // proviamo a verificare l'autenticazione
+    if (token && !isAuthenticated) {
+      checkAuth();
+    }
+  }, [token, isAuthenticated, checkAuth]);
 
   if (isLoading) {
     return (
