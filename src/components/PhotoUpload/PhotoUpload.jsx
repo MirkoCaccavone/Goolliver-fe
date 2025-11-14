@@ -1,8 +1,11 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { photoAPI } from '../../services/api';
+import { Elements } from '@stripe/react-stripe-js';
+import { photoAPI, paymentAPI } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
+import stripePromise from '../../utils/stripe';
+import PaymentForm from '../PaymentForm/PaymentForm';
 import './PhotoUpload.css';
 
 const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
@@ -269,26 +272,38 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
     // Gestisce il pagamento
     const handlePayment = useCallback(() => {
         setUploadState('payment');
+    }, []);
 
-        // Simula elaborazione pagamento
-        setTimeout(() => {
-            setUploadState('completed');
+    const handlePaymentSuccess = useCallback((paymentData) => {
+        console.log('💳 Pagamento completato:', paymentData);
+        setUploadState('completed');
 
-            // Invalida le query per aggiornare i dati
-            queryClient.invalidateQueries({ queryKey: ['user-photos'] });
-            queryClient.invalidateQueries({ queryKey: ['contest-entries', contest.id] });
-            queryClient.invalidateQueries({ queryKey: ['contest', contest.id] });
-            queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
+        // Invalida le query per aggiornare i dati
+        queryClient.invalidateQueries({ queryKey: ['user-photos'] });
+        queryClient.invalidateQueries({ queryKey: ['contest-entries', contest.id] });
+        queryClient.invalidateQueries({ queryKey: ['contest', contest.id] });
+        queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
 
-            if (onUploadSuccess) {
-                onUploadSuccess({
-                    ...moderationResult,
-                    contest_id: contest.id,
-                    ...photoData
-                });
-            }
-        }, 3000);
+        if (onUploadSuccess) {
+            onUploadSuccess({
+                ...moderationResult,
+                contest_id: contest.id,
+                ...photoData,
+                payment: paymentData
+            });
+        }
     }, [contest.id, moderationResult, onUploadSuccess, photoData, queryClient]);
+
+    const handlePaymentError = useCallback((error) => {
+        console.error('❌ Errore pagamento:', error);
+        setErrorMessage(`Errore nel pagamento: ${error}`);
+        setUploadState(moderationResult?.moderation_status || 'approved');
+    }, [moderationResult]);
+
+    const handlePaymentCancel = useCallback(() => {
+        console.log('🚫 Pagamento annullato');
+        setUploadState(moderationResult?.moderation_status || 'approved');
+    }, [moderationResult]);
 
     // Gestisce il retry
     const handleRetry = useCallback(() => {
@@ -564,38 +579,19 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                 </div>
             )}
 
-            {/* Payment State */}
+            {/* Payment State - Stripe Integration */}
             {uploadState === 'payment' && (
                 <div className="upload-state-payment">
-                    <div className="payment-content">
-                        <div className="payment-icon">
-                            <div className="spinner-border text-success" role="status">
-                                <span className="visually-hidden">Elaborazione pagamento...</span>
-                            </div>
-                        </div>
-                        <h3>Elaborazione Pagamento</h3>
-                        <p>Stiamo processando il tuo pagamento di €{contest.entry_fee || 0}...</p>
-
-                        <div className="payment-steps">
-                            <div className="step-item active">
-                                <i className="bi bi-check-circle"></i>
-                                Foto approvata
-                            </div>
-                            <div className="step-item active">
-                                <i className="bi bi-credit-card"></i>
-                                Elaborazione pagamento
-                            </div>
-                            <div className="step-item">
-                                <i className="bi bi-trophy"></i>
-                                Pubblicazione
-                            </div>
-                        </div>
-
-                        <div className="payment-security">
-                            <i className="bi bi-shield-lock"></i>
-                            Transazione sicura SSL
-                        </div>
-                    </div>
+                    <Elements stripe={stripePromise}>
+                        <PaymentForm
+                            entryId={moderationResult?.id}
+                            amount={contest.entry_fee || 0}
+                            currency="EUR"
+                            onSuccess={handlePaymentSuccess}
+                            onError={handlePaymentError}
+                            onCancel={handlePaymentCancel}
+                        />
+                    </Elements>
                 </div>
             )}
 

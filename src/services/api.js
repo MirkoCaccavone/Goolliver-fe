@@ -88,6 +88,12 @@ export const voteAPI = {
     vote: (voteData) => api.post('/votes', voteData),
 };
 
+export const paymentAPI = {
+    processPayment: (paymentData) => api.post('/payments/process', paymentData),
+    getPaymentStatus: (entryId) => api.get(`/payments/status/${entryId}`),
+    getTestCards: () => api.get('/payments/test-cards'),
+};
+
 export const adminAPI = {
     getDashboard: () => api.get('/admin/dashboard'),
     getUsers: () => api.get('/admin/users'),
