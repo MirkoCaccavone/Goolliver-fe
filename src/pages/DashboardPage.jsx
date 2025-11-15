@@ -3,6 +3,18 @@ import { useAuthStore } from '../stores/authStore';
 
 const DashboardPage = () => {
     const { user } = useAuthStore();
+    const [userPhotos, setUserPhotos] = React.useState([]);
+    const [loadingPhotos, setLoadingPhotos] = React.useState(true);
+
+    React.useEffect(() => {
+        setLoadingPhotos(true);
+        import('../services/api').then(({ photoAPI }) => {
+            photoAPI.getUserPhotos().then(res => {
+                setUserPhotos(res.data?.entries || []);
+                setLoadingPhotos(false);
+            }).catch(() => setLoadingPhotos(false));
+        });
+    }, []);
 
     return (
         <div className="min-vh-100 bg-light">
@@ -74,6 +86,50 @@ const DashboardPage = () => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Stato Pagamento Foto Caricate */}
+                        <div className="card mb-5">
+                            <div className="card-header">
+                                <h5 className="card-title mb-0">Stato Pagamento Foto Caricate</h5>
+                            </div>
+                            <div className="card-body">
+                                {loadingPhotos ? (
+                                    <div className="text-muted">Caricamento foto...</div>
+                                ) : userPhotos.length === 0 ? (
+                                    <div className="text-muted">Nessuna foto caricata.</div>
+                                ) : (
+                                    <div className="table-responsive">
+                                        <table className="table table-bordered align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Contest</th>
+                                                    <th>Titolo</th>
+                                                    <th>Stato Pagamento</th>
+                                                    <th>Data Pagamento</th>
+                                                    <th>Importo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {userPhotos.map(photo => (
+                                                    <tr key={photo.id}>
+                                                        <td>{photo.contest?.title || photo.contest_id}</td>
+                                                        <td>{photo.title}</td>
+                                                        <td>
+                                                            {photo.payment_status === 'completed' && <span className="badge bg-success">Completato</span>}
+                                                            {photo.payment_status === 'pending' && <span className="badge bg-warning text-dark">In attesa</span>}
+                                                            {photo.payment_status === 'failed' && <span className="badge bg-danger">Fallito</span>}
+                                                            {!photo.payment_status && <span className="badge bg-secondary">N/A</span>}
+                                                        </td>
+                                                        <td>{photo.paid_at ? new Date(photo.paid_at).toLocaleString() : '-'}</td>
+                                                        <td>€{photo.payment_amount || '-'}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
                             </div>
                         </div>
 

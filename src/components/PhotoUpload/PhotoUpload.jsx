@@ -6,31 +6,39 @@ import { photoAPI, paymentAPI } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
 import stripePromise from '../../utils/stripe';
 import PaymentForm from '../PaymentForm/PaymentForm';
+import { useToastStore } from '../../stores/toastStore';
+import { useNavigate } from 'react-router-dom';
 import './PhotoUpload.css';
 
 const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
     const { token, user } = useAuthStore();
     const queryClient = useQueryClient();
     const [uploadState, setUploadState] = useState('idle');
+    const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [photoData, setPhotoData] = useState({
         title: '',
         description: '',
-        location: '',
         camera_model: '',
         settings: ''
     });
     const [moderationResult, setModerationResult] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
 
+    const showToast = useToastStore((state) => state.showToast);
+    const navigate = useNavigate();
+
     const fileInputRef = useRef(null);
 
     // Verifica se l'utente ha già partecipato a questo contest
-    const { data: userPhotos, isLoading: userPhotosLoading } = useQuery({
-        queryKey: ['user-photos'],
-        queryFn: () => photoAPI.getUserPhotos(),
+    const [forceCleanup, setForceCleanup] = useState(false);
+    const { data: userPhotos, isLoading: userPhotosLoading, refetch } = useQuery({
+        queryKey: ['user-photos', forceCleanup],
+        queryFn: () => forceCleanup
+            ? photoAPI.getUserPhotos({ cleanup_pending: 1 })
+            : photoAPI.getUserPhotos(),
         select: (response) => {
             console.log('📸 Raw API response:', response);
             const photos = response.data?.entries || [];
@@ -39,6 +47,18 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         },
         enabled: !!user,
     });
+
+
+    // Se c'è una entry pending, mostra direttamente il form di pagamento dopo refresh
+    React.useEffect(() => {
+        if (userPhotos && Array.isArray(userPhotos)) {
+            const pending = userPhotos.find(photo => photo.contest_id === contest?.id && photo.payment_status === 'pending');
+            if (pending && uploadState !== 'payment' && uploadState !== 'approved') {
+                setUploadState('payment');
+                setModerationResult(pending); // serve per passare l'id entry al PaymentForm
+            }
+        }
+    }, [userPhotos, contest?.id]);
 
     // Gestisce il risultato della moderazione - DEVE essere definito prima degli hooks di dropzone
     const handleModerationResult = useCallback((response) => {
@@ -195,16 +215,6 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         formData.append('camera_model', photoData.camera_model);
         formData.append('settings', photoData.settings);
 
-        // Debug dei dati inviati
-        console.log('Upload data:', {
-            contestId: contest.id,
-            title: photoData.title,
-            titleLength: photoData.title ? photoData.title.length : 0,
-            titleTrimmed: photoData.title ? photoData.title.trim() : '',
-            description: photoData.description,
-            file: selectedFile ? selectedFile.name : 'No file'
-        });
-
         // Simulate moderation delay
         setTimeout(() => {
             if (uploadState === 'uploading') {
@@ -292,13 +302,46 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                 payment: paymentData
             });
         }
+
+        // Mostra Toast di successo
+        showToast('Pagamento completato con successo!', 'success', 4000);
+        setTimeout(() => {
+            navigate(`/contest/${contest.id}`);
+        }, 2500);
     }, [contest.id, moderationResult, onUploadSuccess, photoData, queryClient]);
 
     const handlePaymentError = useCallback((error) => {
         console.error('❌ Errore pagamento:', error);
         setErrorMessage(`Errore nel pagamento: ${error}`);
-        setUploadState(moderationResult?.moderation_status || 'approved');
-    }, [moderationResult]);
+        setUploadState('idle');
+
+        // Mostra Toast di errore
+        showToast(`Errore nel pagamento: ${error}`, 'error', 4000);
+        // Invalida e refetcha le query per aggiornare lo stato locale
+        queryClient.invalidateQueries({ queryKey: ['user-photos'] });
+        queryClient.invalidateQueries({ queryKey: ['contest-entries', contest.id] });
+        queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
+        queryClient.refetchQueries({ queryKey: ['user-photos'] });
+        queryClient.refetchQueries({ queryKey: ['contest-entries', contest.id] });
+        queryClient.refetchQueries({ queryKey: ['contest-participation', contest.id] });
+
+        // Pulizia entry pending solo dopo errore pagamento
+        photoAPI.getUserPhotos({ cleanup_pending: 1 }).then(() => {
+            queryClient.invalidateQueries({ queryKey: ['user-photos'] });
+        });
+
+        // Resetta lo stato locale per permettere nuovo upload
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setModerationResult(null);
+        setPhotoData({
+            title: '',
+            description: '',
+            location: '',
+            camera_model: '',
+            settings: ''
+        });
+    }, [moderationResult, queryClient, contest.id]);
 
     const handlePaymentCancel = useCallback(() => {
         console.log('🚫 Pagamento annullato');
@@ -315,17 +358,12 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
     }, [uploadState, handleReset, handleSubmit]);
 
     // TEMPORANEO: Disabilita controllo partecipazione fino all'implementazione del sistema di pagamento
-    // Il problema: Entry con stato 'approved' (foto normali) vengono considerate come partecipazione
-    // anche se l'utente non ha ancora pagato, perché il pagamento è solo simulato
-    const userParticipation = null; // Sempre null = sempre permette nuovo upload
-
-    // TODO: Implementare sistema di pagamento reale con campo 'paid' nell'Entry
-    // Logica futura dovrebbe essere:
-    // const userParticipation = (userPhotos && Array.isArray(userPhotos))
-    //     ? userPhotos.find(photo => 
-    //         photo.contest_id === contest?.id && photo.paid === true
-    //       )
-    //     : null;    // Mostra loading mentre i dati dell'utente si caricano
+    // Determina la partecipazione utente: solo entry con payment_status === 'completed' sono valide
+    const userParticipation = (userPhotos && Array.isArray(userPhotos))
+        ? userPhotos.find(photo =>
+            photo.contest_id === contest?.id && photo.payment_status === 'completed'
+        )
+        : null;
     if (userPhotosLoading) {
         return (
             <div className="photo-upload-container">
@@ -369,8 +407,60 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         );
     }
 
+    // Se esiste una entry 'pending', mostra stato di attesa pagamento SOLO se non si sta già mostrando il form di pagamento
+    // ...AVVISO PAGAMENTO PENDING RIMOSSO: ora si mostra solo il form di pagamento se necessario...
+
+    // Se NON ha una entry completed, mostra bottone retry dopo errore
+    const hasCompletedEntry = (userPhotos && Array.isArray(userPhotos))
+        ? userPhotos.some(photo => photo.contest_id === contest?.id && photo.payment_status === 'completed')
+        : false;
+
+    if (!hasCompletedEntry && uploadState === 'error') {
+        return (
+            <div className="photo-upload-container">
+                <div className="error-message">
+                    <div className="message-icon">
+                        <i className="bi bi-x-circle-fill"></i>
+                    </div>
+                    <h3>Errore nell'upload o pagamento</h3>
+                    <p>{errorMessage || 'Si è verificato un errore. Riprova.'}</p>
+                    <button
+                        onClick={() => {
+                            queryClient.invalidateQueries({ queryKey: ['user-photos'] });
+                            queryClient.invalidateQueries({ queryKey: ['contest-entries', contest?.id] });
+                            queryClient.invalidateQueries({ queryKey: ['contest-participation', contest?.id] });
+                            queryClient.refetchQueries({ queryKey: ['user-photos'] });
+                            queryClient.refetchQueries({ queryKey: ['contest-entries', contest?.id] });
+                            queryClient.refetchQueries({ queryKey: ['contest-participation', contest?.id] });
+                            handleReset();
+                        }}
+                        className="upload-action-button action-primary"
+                        style={{ marginTop: '1rem' }}
+                    >
+                        <i className="bi bi-arrow-repeat"></i>
+                        Riprova upload
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="photo-upload-container">
+            {/* DEBUG: Mostra tutte le entry dell'utente per questo contest */}
+            <div style={{ background: '#f8f9fa', border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem', borderRadius: '8px' }}>
+                <strong>DEBUG ENTRIES (contest {contest?.id}):</strong>
+                <ul style={{ fontSize: '0.95em', margin: '0.5em 0 0 0', padding: 0 }}>
+                    {(userPhotos || []).filter(photo => photo.contest_id === contest?.id).map(photo => (
+                        <li key={photo.id} style={{ marginBottom: '0.3em' }}>
+                            <span style={{ fontWeight: 'bold' }}>ID:</span> {photo.id} | <span style={{ fontWeight: 'bold' }}>Status:</span> {photo.payment_status} | <span style={{ fontWeight: 'bold' }}>Moderation:</span> {photo.moderation_status}
+                        </li>
+                    ))}
+                    {((userPhotos || []).filter(photo => photo.contest_id === contest?.id).length === 0) && (
+                        <li style={{ color: '#888' }}>Nessuna entry per questo contest</li>
+                    )}
+                </ul>
+            </div>
             {/* Upload Area - Idle State */}
             {uploadState === 'idle' && (
                 <div className="upload-state-idle">
@@ -582,21 +672,28 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
             {/* Payment State - Stripe Integration */}
             {uploadState === 'payment' && (
                 <div className="upload-state-payment">
-                    <Elements stripe={stripePromise}>
-                        <PaymentForm
-                            entryId={moderationResult?.id}
-                            amount={contest.entry_fee || 0}
-                            currency="EUR"
-                            onSuccess={handlePaymentSuccess}
-                            onError={handlePaymentError}
-                            onCancel={handlePaymentCancel}
-                        />
-                    </Elements>
+                    {(moderationResult && moderationResult.id) ? (
+                        <Elements stripe={stripePromise}>
+                            <PaymentForm
+                                entryId={moderationResult.id}
+                                amount={contest.entry_fee || 0}
+                                currency="EUR"
+                                onSuccess={handlePaymentSuccess}
+                                onError={handlePaymentError}
+                                onCancel={handlePaymentCancel}
+                            />
+                        </Elements>
+                    ) : (
+                        <div className="error-message">
+                            <i className="bi bi-exclamation-triangle"></i>
+                            Errore: la foto non è stata caricata correttamente, impossibile procedere al pagamento. Riprova l'upload.
+                        </div>
+                    )}
                 </div>
             )}
 
             {/* Pending Review State */}
-            {uploadState === 'pending_review' && moderationResult && (
+            {uploadState === 'pending_review' && moderationResult && !showPaymentForm && (
                 <div className="upload-state-pending-review">
                     <div className="pending-review-content">
                         <div className="pending-review-icon">
@@ -640,7 +737,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                             <div className="action-buttons">
                                 <button
                                     className="payment-button"
-                                    onClick={handlePayment}
+                                    onClick={() => setShowPaymentForm(true)}
                                     disabled={!photoData.title.trim()}
                                 >
                                     <i className="bi bi-credit-card"></i>
@@ -662,6 +759,28 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                             </div>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {uploadState === 'pending_review' && moderationResult && showPaymentForm && (
+                <div className="upload-state-payment">
+                    {(moderationResult && moderationResult.id) ? (
+                        <Elements stripe={stripePromise}>
+                            <PaymentForm
+                                entryId={moderationResult.id}
+                                amount={contest.entry_fee || 0}
+                                currency="EUR"
+                                onSuccess={handlePaymentSuccess}
+                                onError={handlePaymentError}
+                                onCancel={() => setShowPaymentForm(false)}
+                            />
+                        </Elements>
+                    ) : (
+                        <div className="error-message">
+                            <i className="bi bi-exclamation-triangle"></i>
+                            Errore: la foto non è stata caricata correttamente, impossibile procedere al pagamento. Riprova l'upload.
+                        </div>
+                    )}
                 </div>
             )}
 

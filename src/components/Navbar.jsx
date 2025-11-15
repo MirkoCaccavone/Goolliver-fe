@@ -74,6 +74,15 @@ const Navbar = () => {
                                         Admin
                                     </Link>
                                 )}
+                                {(user?.role === 'moderator' || user?.role === 'admin') && (
+                                    <Link
+                                        to="/moderator"
+                                        className={getLinkClass('/moderator', 'navbar-moderator-link navbar-link nav-link text-secondary me-3')}
+                                    >
+                                        <i className="bi bi-shield-check me-1"></i>
+                                        Moderazione
+                                    </Link>
+                                )}
 
                                 {/* User dropdown */}
                                 <div className="navbar-user-dropdown nav-item dropdown">

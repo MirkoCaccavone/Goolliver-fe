@@ -86,6 +86,7 @@ const PaymentForm = ({
             if (error) {
                 setErrors({ general: error.message });
                 onError?.(error.message);
+                setProcessing(false);
                 return;
             }
 
@@ -98,17 +99,44 @@ const PaymentForm = ({
 
             const result = response.data;
 
-            if (result.success) {
+            // Se serve azione utente (es. 3D Secure)
+            if (response.status === 202 && result.payment_intent?.next_action && result.payment_intent?.id) {
+                // Recupera client secret
+                const clientSecret = result.payment_intent.client_secret || result.payment_intent.id;
+                const nextActionType = result.payment_intent.next_action?.type;
+                // Conferma il pagamento con Stripe
+                const confirmResult = await stripe.confirmCardPayment(clientSecret);
+                if (confirmResult.error) {
+                    setErrors({ general: confirmResult.error.message });
+                    onError?.(confirmResult.error.message);
+                } else if (confirmResult.paymentIntent && confirmResult.paymentIntent.status === 'succeeded') {
+                    onSuccess?.({ transaction_id: confirmResult.paymentIntent.id });
+                } else {
+                    setErrors({ general: 'Pagamento non completato. Riprova.' });
+                    onError?.('Pagamento non completato. Riprova.');
+                }
+            } else if (result.success) {
                 onSuccess?.(result.data);
             } else {
-                setErrors({ general: result.message });
-                onError?.(result.message);
+                // Stripe error: declined, insufficient_funds, ecc.
+                let errorMsg = result.message || 'Pagamento rifiutato. Riprova con un altro metodo.';
+                if (result.error && typeof result.error === 'string') {
+                    errorMsg = result.error;
+                }
+                setErrors({ general: errorMsg });
+                onError?.(errorMsg);
             }
-
         } catch (error) {
             console.error('Errore nel pagamento:', error);
-            setErrors({ general: 'Errore di connessione. Riprova più tardi.' });
-            onError?.('Errore di connessione. Riprova più tardi.');
+            // Se il backend restituisce un messaggio specifico
+            let errorMsg = 'Errore di connessione. Riprova più tardi.';
+            if (error.response?.data?.message) {
+                errorMsg = error.response.data.message;
+            } else if (error.response?.data?.error) {
+                errorMsg = error.response.data.error;
+            }
+            setErrors({ general: errorMsg });
+            onError?.(errorMsg);
         } finally {
             setProcessing(false);
         }
@@ -119,6 +147,13 @@ const PaymentForm = ({
             !processing &&
             !isProcessing;
     };
+
+    // Permetti retry: se errore, riabilita form per nuovo inserimento
+    React.useEffect(() => {
+        if (errors.general) {
+            setProcessing(false);
+        }
+    }, [errors.general]);
 
     return (
         <div className="payment-form">

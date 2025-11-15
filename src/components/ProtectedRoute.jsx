@@ -17,21 +17,24 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
         return <Navigate to="/login" replace />;
     }
 
-    if (requiredRole && user?.role !== requiredRole) {
-        return (
-            <div className="container-fluid d-flex justify-content-center align-items-center vh-100">
-                <div className="text-center">
-                    <h1 className="display-1 fw-bold text-muted">403</h1>
-                    <p className="fs-3 text-muted mb-4">
-                        Accesso Negato
-                    </p>
-                    <p className="text-secondary mb-4">
-                        Non hai i permessi necessari per accedere a questa pagina.
-                    </p>
-                    <Navigate to="/dashboard" replace />
+    if (requiredRole) {
+        const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+        if (!allowedRoles.includes(user?.role)) {
+            return (
+                <div className="container-fluid d-flex justify-content-center align-items-center vh-100">
+                    <div className="text-center">
+                        <h1 className="display-1 fw-bold text-muted">403</h1>
+                        <p className="fs-3 text-muted mb-4">
+                            Accesso Negato
+                        </p>
+                        <p className="text-secondary mb-4">
+                            Non hai i permessi necessari per accedere a questa pagina.
+                        </p>
+                        <Navigate to="/dashboard" replace />
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
     }
 
     return children;

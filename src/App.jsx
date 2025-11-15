@@ -17,10 +17,14 @@ import MyPhotosPage from './pages/MyPhotosPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import AdminPage from './pages/AdminPage';
+import ModerationPage from './pages/ModerationPage';
 
 // Components
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+
+import Toast from './components/Toast.jsx';
+import { useToastStore } from './stores/toastStore';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,6 +37,8 @@ const queryClient = new QueryClient({
 
 function App() {
   const { isAuthenticated, isLoading, token, checkAuth } = useAuthStore();
+
+  const { toast, hideToast } = useToastStore();
 
   useEffect(() => {
     // Se c'è un token nel localStorage ma non siamo autenticati, 
@@ -55,6 +61,16 @@ function App() {
       <Router>
         <div className="min-vh-100 bg-light">
           <Navbar />
+
+          {/* Toast globale */}
+          {toast.visible && (
+            <Toast
+              message={toast.message}
+              type={toast.type}
+              duration={toast.duration}
+              onClose={hideToast}
+            />
+          )}
 
           <main>
             <Routes>
@@ -129,11 +145,21 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
               <Route
                 path="/admin"
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <AdminPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/moderator"
+                element={
+                  <ProtectedRoute requiredRole={["admin", "moderator"]}>
+                    <ModerationPage />
                   </ProtectedRoute>
                 }
               />

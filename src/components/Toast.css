@@ -1,56 +1,100 @@
 /* Toast.css - Stili per le notifiche toast */
 
 /* Container principale toast */
+
 .toast-notification {
-    /* Stili da definire */
+    position: fixed;
+    top: 32px;
+    right: 32px;
+    min-width: 280px;
+    max-width: 400px;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 16px 24px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.3s, transform 0.3s;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Toast visibile */
 .toast-visible {
-    /* Stili da definire */
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
 }
 
 /* Toast nascosto */
 .toast-hidden {
-    /* Stili da definire */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-20px);
 }
 
 /* Toast success */
 .toast-success {
-    /* Stili da definire */
+    background: #e6f9ec;
+    color: #218838;
+    border-left: 6px solid #28a745;
 }
 
 /* Toast error */
 .toast-error {
-    /* Stili da definire */
+    background: #fdecea;
+    color: #c82333;
+    border-left: 6px solid #dc3545;
 }
 
 /* Toast warning */
 .toast-warning {
-    /* Stili da definire */
+    background: #fff3cd;
+    color: #856404;
+    border-left: 6px solid #ffc107;
 }
 
 /* Toast info */
 .toast-info {
-    /* Stili da definire */
+    background: #e7f3fe;
+    color: #0c5460;
+    border-left: 6px solid #17a2b8;
 }
 
 /* Contenuto toast */
 .toast-content {
-    /* Stili da definire */
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
 /* Icona toast */
 .toast-icon {
-    /* Stili da definire */
+    font-size: 1.6rem;
+    margin-right: 12px;
+    flex-shrink: 0;
 }
 
 /* Messaggio toast */
 .toast-message {
-    /* Stili da definire */
+    flex: 1;
+    margin-right: 12px;
+    word-break: break-word;
 }
 
 /* Pulsante chiudi */
 .toast-close-button {
-    /* Stili da definire */
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.toast-close-button:hover {
+    color: #333;
 }
