@@ -10,7 +10,6 @@ import { paymentAPI } from '../../services/api';
 import './PaymentForm.css';
 
 const PaymentForm = ({
-    entryId,
     amount,
     currency = 'EUR',
     onSuccess,
@@ -78,67 +77,25 @@ const PaymentForm = ({
 
         try {
             // Crea Payment Method
-            const { error, paymentMethod } = await stripe.createPaymentMethod({
+            const { paymentMethod, error: stripeError } = await stripe.createPaymentMethod({
                 type: 'card',
                 card: cardNumberElement,
             });
-
-            if (error) {
-                setErrors({ general: error.message });
-                onError?.(error.message);
+            if (stripeError) {
                 setProcessing(false);
+                setErrors({ cardNumber: stripeError.message });
+                onError?.(stripeError.message);
                 return;
             }
-
-            // Invia Payment Method al backend usando API
-            const response = await paymentAPI.processPayment({
-                entry_id: entryId,
-                payment_method_id: paymentMethod.id,
-                amount: amount
+            // Passa paymentMethodId e amount a onSuccess
+            onSuccess({
+                paymentMethodId: paymentMethod.id,
+                amount
             });
-
-            const result = response.data;
-
-            // Se serve azione utente (es. 3D Secure)
-            if (response.status === 202 && result.payment_intent?.next_action && result.payment_intent?.id) {
-                // Recupera client secret
-                const clientSecret = result.payment_intent.client_secret || result.payment_intent.id;
-                const nextActionType = result.payment_intent.next_action?.type;
-                // Conferma il pagamento con Stripe
-                const confirmResult = await stripe.confirmCardPayment(clientSecret);
-                if (confirmResult.error) {
-                    setErrors({ general: confirmResult.error.message });
-                    onError?.(confirmResult.error.message);
-                } else if (confirmResult.paymentIntent && confirmResult.paymentIntent.status === 'succeeded') {
-                    onSuccess?.({ transaction_id: confirmResult.paymentIntent.id });
-                } else {
-                    setErrors({ general: 'Pagamento non completato. Riprova.' });
-                    onError?.('Pagamento non completato. Riprova.');
-                }
-            } else if (result.success) {
-                onSuccess?.(result.data);
-            } else {
-                // Stripe error: declined, insufficient_funds, ecc.
-                let errorMsg = result.message || 'Pagamento rifiutato. Riprova con un altro metodo.';
-                if (result.error && typeof result.error === 'string') {
-                    errorMsg = result.error;
-                }
-                setErrors({ general: errorMsg });
-                onError?.(errorMsg);
-            }
         } catch (error) {
-            console.error('Errore nel pagamento:', error);
-            // Se il backend restituisce un messaggio specifico
-            let errorMsg = 'Errore di connessione. Riprova più tardi.';
-            if (error.response?.data?.message) {
-                errorMsg = error.response.data.message;
-            } else if (error.response?.data?.error) {
-                errorMsg = error.response.data.error;
-            }
-            setErrors({ general: errorMsg });
-            onError?.(errorMsg);
-        } finally {
             setProcessing(false);
+            setErrors({ cardNumber: error.message });
+            onError?.(error.message);
         }
     };
 
