@@ -245,7 +245,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
             }
         }, 2000);
 
-        // Chiamata solo a /photos/moderate
+        // ...existing code...
         moderateMutation.mutate(formData);
     }, [selectedFile, photoData, contest.id, uploadState, moderateMutation]);
 
