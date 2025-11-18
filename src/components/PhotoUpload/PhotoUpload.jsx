@@ -139,24 +139,6 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         }
     });
 
-    // Mutation per la moderazione AI (NON crea entry)
-    const moderateMutation = useMutation({
-        mutationFn: async (formData) => {
-            try {
-                const response = await photoAPI.moderate(formData);
-                return response.data;
-            } catch (error) {
-                throw error;
-            }
-        },
-        onSuccess: (response) => {
-            handleModerationResult(response.moderation);
-        },
-        onError: (error) => {
-            setErrorMessage('Errore durante la moderazione AI.');
-            setUploadState('error');
-        }
-    });
 
     // Gestisce la selezione del file - DEVE essere definito prima dei return
     const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
@@ -245,9 +227,8 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
             }
         }, 2000);
 
-        // ...existing code...
-        moderateMutation.mutate(formData);
-    }, [selectedFile, photoData, contest.id, uploadState, moderateMutation]);
+        uploadMutation.mutate(formData);
+    }, [selectedFile, photoData, contest.id, uploadState, uploadMutation]);
 
     // Gestisce il reset
     const handleReset = useCallback(() => {
@@ -323,8 +304,13 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
             // payment_status: 'pending' (verrà aggiornato dopo il pagamento)
             formData.append('payment_status', 'pending');
             const entryResponse = await photoAPI.upload(formData);
-            const entryId = entryResponse.entry?.id;
-            if (!entryId) throw new Error('Impossibile creare la entry');
+            console.log('[UPLOAD] Risposta photoAPI.upload:', entryResponse);
+            // Estrai l'id dalla risposta corretta
+            const entryId = entryResponse.data?.entry?.id || entryResponse.data?.id;
+            if (!entryId) {
+                console.error('[UPLOAD] Entry ID non trovato:', entryResponse);
+                throw new Error('Impossibile creare la entry');
+            }
 
             // 2. Processa il pagamento
             const paymentPayload = {
@@ -333,7 +319,11 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                 amount: contest.entry_fee || 0
             };
             const paymentResult = await paymentAPI.processPayment(paymentPayload);
-            if (paymentResult.success === false) throw new Error(paymentResult.message || 'Pagamento fallito');
+            console.log('[PAGAMENTO] Risposta paymentAPI.processPayment:', paymentResult);
+            if (paymentResult.success === false) {
+                console.error('[PAGAMENTO] Pagamento fallito:', paymentResult);
+                throw new Error(paymentResult.message || 'Pagamento fallito');
+            }
 
             // 3. Successo: aggiorna stato e mostra conferma
             setUploadState('completed');
@@ -354,8 +344,18 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                 navigate(`/contest/${contest.id}`);
             }, 2500);
         } catch (error) {
-            setErrorMessage('Errore nel pagamento o nel salvataggio della foto.');
-            setUploadState('error');
+            console.error('[ERRORE] handlePaymentSuccess:', error);
+            let errorMsg = error?.message || '';
+            // Messaggio utente più chiaro
+            if (!errorMsg || errorMsg.match(/400|Request failed/i)) {
+                errorMsg = 'Il pagamento non è andato a buon fine. Nessun importo è stato addebitato. Puoi riprovare.';
+            }
+            if (errorMsg.includes('Pagamento fallito')) {
+                errorMsg = 'Pagamento rifiutato: controlla i dati della carta o usa un altro metodo.';
+            }
+            showToast(errorMsg, 'error', 6000);
+            setErrorMessage(errorMsg);
+            setUploadState('payment'); // Permette di ripetere il pagamento
         }
     }, [contest.id, onUploadSuccess, photoData, queryClient, selectedFile, navigate, showToast]);
 
@@ -718,8 +718,34 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                 </div>
             )}
 
-            {/* Payment State - Stripe Integration */}
-            {uploadState === 'payment' && (
+            {/* Payment State - Stripe Integration o errore pagamento */}
+            {uploadState === 'payment' && errorMessage ? (
+                <div className="upload-state-payment-error">
+                    <div className="error-content">
+                        <i className="bi bi-exclamation-triangle"></i>
+                        <h3>Pagamento non riuscito</h3>
+                        <p>{errorMessage}</p>
+                        <div className="error-actions">
+                            <button
+                                className="upload-action-button action-primary"
+                                onClick={handleRetry}
+                            >
+                                <i className="bi bi-arrow-repeat"></i>
+                                Riprova Pagamento
+                            </button>
+                            {onCancel && (
+                                <button
+                                    className="upload-action-button action-secondary"
+                                    onClick={onCancel}
+                                >
+                                    <i className="bi bi-arrow-left"></i>
+                                    Torna al Contest
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            ) : (uploadState === 'payment' && !errorMessage) ? (
                 <div className="upload-state-payment">
                     <Elements stripe={stripePromise}>
                         <PaymentForm
@@ -731,7 +757,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                         />
                     </Elements>
                 </div>
-            )}
+            ) : null}
 
             {/* Pending Review State */}
             {uploadState === 'pending_review' && moderationResult && !showPaymentForm && (
@@ -958,12 +984,12 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                 </div>
             )}
 
-            {errorMessage && uploadState !== 'idle' && (
+            {errorMessage && uploadState !== 'idle' && uploadState !== 'payment' && (
                 <div className="error-state">
                     <div className="error-content">
                         <i className="bi bi-exclamation-triangle"></i>
                         <h3>Errore nell'upload</h3>
-                        <p>{errorMessage}</p>
+                        {/* <p>{errorMessage}</p> */}
                         <button
                             className="upload-action-button action-primary"
                             onClick={handleRetry}
