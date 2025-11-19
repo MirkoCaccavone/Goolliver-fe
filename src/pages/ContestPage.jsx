@@ -13,6 +13,27 @@ const ContestPage = () => {
     const { user } = useAuthStore();
     const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState('gallery');
+    const [entryExpired, setEntryExpired] = useState(false);
+    // Effettua la chiamata a /api/entries/last quando si entra nella tab 'gallery'
+    useEffect(() => {
+        if (activeTab === 'gallery' && user && id) {
+            // Chiamata API per triggerare la cancellazione automatica
+            fetch(`/api/entries/last?user_id=${user.id}&contest_id=${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.expired) {
+                        setEntryExpired(true);
+                        // Invalida le query per aggiornare la UI
+                        queryClient.invalidateQueries({ queryKey: ['contest-entries', id] });
+                        queryClient.invalidateQueries({ queryKey: ['user-photos'] });
+                        queryClient.invalidateQueries({ queryKey: ['contest-participation', id] });
+                    } else {
+                        setEntryExpired(false);
+                    }
+                })
+                .catch(() => setEntryExpired(false));
+        }
+    }, [activeTab, user, id, queryClient]);
 
     // Query per il contest
     const {
@@ -349,6 +370,12 @@ const ContestPage = () => {
                         {/* Gallery Tab */}
                         {activeTab === 'gallery' && (
                             <div>
+                                {entryExpired && (
+                                    <div className="alert alert-warning mb-3">
+                                        <i className="bi bi-exclamation-triangle me-2"></i>
+                                        La tua foto in attesa di pagamento è scaduta. Carica nuovamente per partecipare!
+                                    </div>
+                                )}
                                 <div className="section-header">
                                     <div className="section-icon">
                                         <i className="bi bi-images"></i>

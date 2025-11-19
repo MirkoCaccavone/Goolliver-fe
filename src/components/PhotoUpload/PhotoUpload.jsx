@@ -14,6 +14,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
     const { token, user } = useAuthStore();
     const queryClient = useQueryClient();
     const [uploadState, setUploadState] = useState('idle');
+    const [paymentEntryId, setPaymentEntryId] = useState(null);
     const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -47,6 +48,46 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         },
         enabled: !!user,
     });
+
+    // useEffect: controlla stato entry su mount/refresh
+    React.useEffect(() => {
+        if (!user?.id || !contest?.id) return;
+        fetch(`http://127.0.0.1:8000/api/entries/last?user_id=${user.id}&contest_id=${contest.id}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.expired) {
+                    setErrorMessage(data.message || 'Upload scaduto. Carica una nuova foto.');
+                    setUploadState('idle');
+                    setShowPaymentForm(false);
+                    setModerationResult(null);
+                } else if (data.entry) {
+                    if (data.entry.payment_status === 'completed' && data.entry.moderation_status === 'approved') {
+                        setUploadState('completed');
+                        setModerationResult(data.entry);
+                        setShowPaymentForm(false);
+                        setErrorMessage('');
+                    } else if (data.entry.payment_status === 'pending') {
+                        setUploadState('payment');
+                        setModerationResult(data.entry);
+                        setShowPaymentForm(true);
+                        setErrorMessage('');
+                    } else {
+                        setUploadState('idle');
+                        setShowPaymentForm(false);
+                        setModerationResult(null);
+                        setErrorMessage('');
+                    }
+                } else {
+                    setUploadState('idle');
+                    setShowPaymentForm(false);
+                    setModerationResult(null);
+                    setErrorMessage('');
+                }
+            })
+            .catch(() => {
+                setErrorMessage('Errore nel recupero dello stato della partecipazione.');
+            });
+    }, [user?.id, contest?.id]);
 
 
     // Se la pagina viene caricata con una entry pending già esistente (refresh), elimina la entry
@@ -292,24 +333,28 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
     // Gestisce il successo del pagamento
     const handlePaymentSuccess = useCallback(async (paymentData) => {
         try {
-            // 1. Crea la entry nel DB (upload)
-            const formData = new FormData();
-            formData.append('photo', selectedFile);
-            formData.append('contest_id', contest.id);
-            formData.append('title', photoData.title);
-            formData.append('description', photoData.description);
-            formData.append('location', photoData.location);
-            formData.append('camera_model', photoData.camera_model);
-            formData.append('settings', photoData.settings);
-            // payment_status: 'pending' (verrà aggiornato dopo il pagamento)
-            formData.append('payment_status', 'pending');
-            const entryResponse = await photoAPI.upload(formData);
-            console.log('[UPLOAD] Risposta photoAPI.upload:', entryResponse);
-            // Estrai l'id dalla risposta corretta
-            const entryId = entryResponse.data?.entry?.id || entryResponse.data?.id;
+            let entryId = paymentEntryId;
+            let entryResponse = null;
+            // Se non abbiamo già una entry, creala
             if (!entryId) {
-                console.error('[UPLOAD] Entry ID non trovato:', entryResponse);
-                throw new Error('Impossibile creare la entry');
+                const formData = new FormData();
+                formData.append('photo', selectedFile);
+                formData.append('contest_id', contest.id);
+                formData.append('title', photoData.title);
+                formData.append('description', photoData.description);
+                formData.append('location', photoData.location);
+                formData.append('camera_model', photoData.camera_model);
+                formData.append('settings', photoData.settings);
+                // payment_status: 'pending' (verrà aggiornato dopo il pagamento)
+                formData.append('payment_status', 'pending');
+                entryResponse = await photoAPI.upload(formData);
+                console.log('[UPLOAD] Risposta photoAPI.upload:', entryResponse);
+                entryId = entryResponse.data?.entry?.id || entryResponse.data?.id;
+                if (!entryId) {
+                    console.error('[UPLOAD] Entry ID non trovato:', entryResponse);
+                    throw new Error('Impossibile creare la entry');
+                }
+                setPaymentEntryId(entryId);
             }
 
             // 2. Processa il pagamento
@@ -332,8 +377,9 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
             queryClient.invalidateQueries({ queryKey: ['contest', contest.id] });
             queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
             if (onUploadSuccess) {
+                // Se abbiamo appena creato la entry, usiamo quella, altrimenti fetch locale
                 onUploadSuccess({
-                    ...entryResponse.entry,
+                    ...(entryResponse ? entryResponse.entry : {}),
                     contest_id: contest.id,
                     ...photoData,
                     payment: paymentResult
@@ -353,6 +399,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
             if (errorMsg.includes('Pagamento fallito')) {
                 errorMsg = 'Pagamento rifiutato: controlla i dati della carta o usa un altro metodo.';
             }
+            setPaymentEntryId(null); // Reset entryId su QUALSIASI errore di pagamento
             showToast(errorMsg, 'error', 6000);
             setErrorMessage(errorMsg);
             setUploadState('payment'); // Permette di ripetere il pagamento
@@ -733,10 +780,10 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                                 <i className="bi bi-arrow-repeat"></i>
                                 Riprova Pagamento
                             </button>
-                            {onCancel && (
+                            {handleReset && (
                                 <button
                                     className="upload-action-button action-secondary"
-                                    onClick={onCancel}
+                                    onClick={handleReset}
                                 >
                                     <i className="bi bi-arrow-left"></i>
                                     Torna al Contest
