@@ -153,6 +153,11 @@ const LoginPage = () => {
                                             {socialLoading === 'facebook' ? 'Connessione...' : 'Continua con Facebook'}
                                         </span>
                                     </button>
+                                    <div className="alert alert-info mt-2" style={{ fontSize: '0.95em' }}>
+                                        <strong>Vuoi registrarti con un altro account Facebook?</strong><br />
+                                        Esci da Facebook dal browser, poi riprova il login.<br />
+                                        Facebook ti farà scegliere un altro profilo.
+                                    </div>
                                 </div>
 
                                 <div className="login-divider d-flex align-items-center mb-4">
