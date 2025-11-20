@@ -336,9 +336,17 @@ const useAuthStore = create(
             },
 
             updateUser: (userData) => {
-                set((state) => ({
-                    user: { ...state.user, ...userData }
-                }));
+                set((state) => {
+                    const updatedUser = { ...state.user, ...userData };
+                    // Aggiorna anche lo storage persistente
+                    localStorage.setItem('goolliver-auth', JSON.stringify({
+                        state: {
+                            ...state,
+                            user: updatedUser
+                        }
+                    }));
+                    return { user: updatedUser };
+                });
             },
 
             // Initialize store

@@ -5,6 +5,13 @@ import './Navbar.css';
 
 const Navbar = () => {
     const { isAuthenticated, user, logout } = useAuthStore();
+    // Mostra avatar solo se è un URL valido
+    const isValidAvatarUrl = user?.avatar && (user.avatar.startsWith('http') || user.avatar.startsWith('/storage/'));
+    const avatarUrl = isValidAvatarUrl
+        ? (user.avatar.startsWith('/storage/')
+            ? `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://127.0.0.1:8000'}${user.avatar}`
+            : user.avatar)
+        : null;
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -93,10 +100,19 @@ const Navbar = () => {
                                         data-bs-toggle="dropdown"
                                         aria-expanded="false"
                                     >
-                                        <div className="navbar-user-avatar bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
-                                            <span className="text-white small fw-medium">
-                                                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                                            </span>
+                                        <div className="navbar-user-avatar me-2 d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
+                                            {avatarUrl ? (
+                                                <img
+                                                    src={avatarUrl}
+                                                    alt="Avatar"
+                                                    className="rounded-circle border"
+                                                    style={{ width: 32, height: 32, objectFit: 'cover' }}
+                                                />
+                                            ) : (
+                                                <span className="bg-primary text-white small fw-medium rounded-circle d-flex align-items-center justify-content-center" style={{ width: 32, height: 32 }}>
+                                                    {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                                                </span>
+                                            )}
                                         </div>
                                         <span className="navbar-user-name text-dark d-none d-lg-inline">{user?.name}</span>
                                     </a>
