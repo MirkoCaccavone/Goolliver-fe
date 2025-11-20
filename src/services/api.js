@@ -74,6 +74,7 @@ export const photoAPI = {
     }),
     getUserPhotos: (params = {}) => api.get('/photos/user/my-photos', { params }),
     getUserCredits: () => api.get('/photos/user/credits'),
+    getUserVotesSummary: () => api.get('/photos/user/votes-summary'),
     getGallery: (contestId) => api.get(`/photos/contest/${contestId}/gallery`),
     getModerationStatus: (entryId) => api.get(`/photos/${entryId}/moderation-status`),
     update: (entryId, data) => api.put(`/photos/${entryId}`, data),
