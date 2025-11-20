@@ -862,6 +862,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                                         queryClient.invalidateQueries({ queryKey: ['contest-entries', contest.id] });
                                         queryClient.invalidateQueries({ queryKey: ['contest', contest.id] });
                                         queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
+                                        queryClient.invalidateQueries({ queryKey: ['userCredits'] });
                                         if (onUploadSuccess) {
                                             onUploadSuccess({
                                                 ...(response?.entry || {}),
