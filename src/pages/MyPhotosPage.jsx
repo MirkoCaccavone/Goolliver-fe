@@ -33,7 +33,8 @@ const MyPhotosPage = () => {
     });
 
     const photos = photosData?.data?.entries || [];
-    const credits = creditsData?.data?.credits || 0;
+    // Usa il campo corretto per i crediti (photo_credits)
+    const credits = creditsData?.data?.photo_credits ?? creditsData?.data?.credits ?? 0;
 
 
 
@@ -205,16 +206,7 @@ const MyPhotosPage = () => {
                                             <i className="bi bi-eye me-1"></i>
                                             Visualizza
                                         </button>
-                                        {photo.moderation_status === 'rejected' && (
-                                            <button
-                                                className="btn btn-sm btn-outline-success flex-fill"
-                                                disabled={credits <= 0}
-                                                title={credits <= 0 ? "Crediti insufficienti" : "Ricarica foto con crediti"}
-                                            >
-                                                <i className="bi bi-arrow-repeat me-1"></i>
-                                                Riprova
-                                            </button>
-                                        )}
+                                        {/* Pulsante "Riprova" rimosso per foto rifiutate */}
                                     </div>
                                 </div>
                             </div>

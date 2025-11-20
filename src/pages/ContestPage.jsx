@@ -334,18 +334,31 @@ const ContestPage = () => {
                                 </button>
                             )}
 
-                            {userParticipation && (
+                            {/* Permetti di partecipare di nuovo se rifiutato */}
+                            {canParticipate && !participationLoading && userParticipation?.moderation_status === 'rejected' && (
                                 <button
-                                    className="nav-link"
-                                    disabled
-                                    style={{ cursor: 'not-allowed', opacity: 0.6 }}
+                                    className={`nav-link ${activeTab === 'upload' ? 'active' : ''}`}
+                                    onClick={() => setActiveTab('upload')}
                                 >
-                                    <i className="bi bi-check-circle me-1"></i>
-                                    {userParticipation.moderation_status === 'approved' ? 'Partecipando' :
-                                        userParticipation.moderation_status === 'pending' ? 'In Revisione' :
-                                            userParticipation.moderation_status === 'pending_review' ? 'In Moderazione' :
-                                                'Rifiutato'}
+                                    <i className="bi bi-upload me-1"></i>
+                                    Partecipa di nuovo
                                 </button>
+                            )}
+
+                            {userParticipation && (
+                                userParticipation.moderation_status !== 'rejected' && (
+                                    <button
+                                        className="nav-link"
+                                        disabled
+                                        style={{ cursor: 'not-allowed', opacity: 0.6 }}
+                                    >
+                                        <i className="bi bi-check-circle me-1"></i>
+                                        {userParticipation.moderation_status === 'approved' ? 'Partecipando' :
+                                            userParticipation.moderation_status === 'pending' ? 'In Revisione' :
+                                                userParticipation.moderation_status === 'pending_review' ? 'In Moderazione' :
+                                                    'Rifiutato'}
+                                    </button>
+                                )
                             )}
 
                             {status === 'ended' && (
@@ -423,7 +436,7 @@ const ContestPage = () => {
                         )}
 
                         {/* Upload Tab */}
-                        {activeTab === 'upload' && canParticipate && !participationLoading && !userParticipation && (
+                        {activeTab === 'upload' && canParticipate && !participationLoading && (!userParticipation || userParticipation.moderation_status === 'rejected') && (
                             <div>
                                 <div className="section-header">
                                     <div className="section-icon">

@@ -114,13 +114,27 @@ const ContestCard = ({ contest, userParticipation = null }) => {
                     {userParticipation ? (
                         // Utente già partecipante
                         <>
-                            <div className="contest-action-button contest-action-participating">
-                                <i className="bi bi-check-circle-fill"></i>
-                                {userParticipation.moderation_status === 'approved' ? 'Partecipando' :
-                                    userParticipation.moderation_status === 'pending' ? 'In Revisione' :
-                                        userParticipation.moderation_status === 'pending_review' ? 'In Moderazione' :
-                                            userParticipation.moderation_status === 'rejected' ? 'Rifiutato' : 'In Moderazione'}
-                            </div>
+                            {userParticipation.moderation_status === 'approved' && (
+                                <div className="contest-action-button contest-action-participating">
+                                    <i className="bi bi-check-circle-fill"></i>
+                                    Partecipando
+                                </div>
+                            )}
+                            {(userParticipation.moderation_status === 'pending' || userParticipation.moderation_status === 'pending_review') && (
+                                <div className="contest-action-button contest-action-moderation">
+                                    <i className="bi bi-hourglass-split"></i>
+                                    In Moderazione
+                                </div>
+                            )}
+                            {userParticipation.moderation_status === 'rejected' && (
+                                <Link
+                                    to={`/contest/${contest.id}?action=participate`}
+                                    className="contest-action-button contest-action-rejected"
+                                >
+                                    <i className="bi bi-x-circle-fill"></i>
+                                    Rifiutato - Partecipa di nuovo
+                                </Link>
+                            )}
                             <Link
                                 to={`/contest/${contest.id}?tab=gallery`}
                                 className="contest-action-button contest-action-secondary"

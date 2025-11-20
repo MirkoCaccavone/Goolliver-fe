@@ -41,9 +41,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
             ? photoAPI.getUserPhotos({ cleanup_pending: 1 })
             : photoAPI.getUserPhotos(),
         select: (response) => {
-            console.log('📸 Raw API response:', response);
             const photos = response.data?.entries || [];
-            console.log('📸 Parsed user photos:', photos);
             return photos;
         },
         enabled: !!user,
@@ -473,8 +471,8 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         );
     }
 
-    // Se ha già partecipato, mostra messaggio invece del form
-    if (userParticipation) {
+    // Se ha già partecipato con stato attivo, mostra messaggio invece del form
+    if (userParticipation && ['approved', 'pending', 'pending_review'].includes(userParticipation.moderation_status)) {
         return (
             <div className="photo-upload-container">
                 <div className="already-participated-message">
@@ -488,7 +486,6 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                         {userParticipation.moderation_status === 'approved' && 'Approvata - Partecipazione attiva'}
                         {userParticipation.moderation_status === 'pending' && 'In revisione automatica'}
                         {userParticipation.moderation_status === 'pending_review' && 'In revisione manuale'}
-                        {userParticipation.moderation_status === 'rejected' && 'Rifiutata - Contatta il supporto'}
                     </div>
                     <button
                         onClick={onCancel}
@@ -953,13 +950,11 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                         </div>
                         <h3>Foto Non Approvata</h3>
                         <p>La tua foto non ha superato la moderazione automatica.</p>
-
                         {moderationResult.rejection_reason && (
                             <div className="rejection-reason">
                                 <strong>Motivo:</strong> {moderationResult.rejection_reason}
                             </div>
                         )}
-
                         <div className="rejection-tips">
                             <h4>💡 Suggerimenti:</h4>
                             <ul>
@@ -969,11 +964,10 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                                 <li>Controlla che non ci siano elementi protetti da copyright</li>
                             </ul>
                         </div>
-
                         <div className="rejection-actions">
                             <button
                                 className="upload-action-button action-primary"
-                                onClick={handleReset}
+                                onClick={handleResetForNewUpload}
                             >
                                 <i className="bi bi-arrow-repeat"></i>
                                 Carica Nuova Foto
