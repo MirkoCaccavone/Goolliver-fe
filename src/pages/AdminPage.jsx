@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import AdminCreateContestButton from '../components/AdminCreateContestButton';
+// import AdminCreateContestButton from '../components/AdminCreateContestButton';
 
 const AdminPage = () => {
     const { t } = useTranslation();
@@ -22,10 +22,7 @@ const AdminPage = () => {
                                 <p className="text-muted mb-4">
                                     {t('adminPage.subtitle')}
                                 </p>
-                                {/* Bottone crea contest */}
-                                <div className="mb-3">
-                                    <AdminCreateContestButton onClick={handleCreateContest} />
-                                </div>
+                                {/* Bottone crea contest rimosso, ora nella pagina contest */}
                                 <div className="alert alert-warning d-inline-block">
                                     {t('adminPage.comingSoon')}
                                 </div>

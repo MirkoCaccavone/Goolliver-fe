@@ -58,13 +58,7 @@ const Navbar = () => {
                     <div className="navbar-nav-items navbar-nav ms-auto">
                         {isAuthenticated ? (
                             <>
-                                <Link
-                                    to="/dashboard"
-                                    className={getLinkClass('/dashboard', 'navbar-dashboard-link navbar-link nav-link text-secondary me-3')}
-                                >
-                                    <i className="bi bi-house-door me-1"></i>
-                                    {t('dashboard.label')}
-                                </Link>
+                                {/* Link dashboard rimosso per admin */}
 
                                 <Link
                                     to="/contests"
@@ -75,13 +69,22 @@ const Navbar = () => {
                                 </Link>
 
                                 {user?.role === 'admin' && (
-                                    <Link
-                                        to="/admin"
-                                        className={getLinkClass('/admin', 'navbar-admin-link navbar-link nav-link text-secondary me-3')}
-                                    >
-                                        <i className="bi bi-gear me-1"></i>
-                                        {t('admin')}
-                                    </Link>
+                                    <>
+                                        <Link
+                                            to="/admin-dashboard"
+                                            className={getLinkClass('/admin-dashboard', 'navbar-admin-link navbar-link nav-link text-secondary me-3')}
+                                        >
+                                            <i className="bi bi-graph-up me-1"></i>
+                                            Dashboard Admin
+                                        </Link>
+                                        <Link
+                                            to="/admin"
+                                            className={getLinkClass('/admin', 'navbar-admin-link navbar-link nav-link text-secondary me-3')}
+                                        >
+                                            <i className="bi bi-gear me-1"></i>
+                                            {t('admin')}
+                                        </Link>
+                                    </>
                                 )}
                                 {(user?.role === 'moderator' || user?.role === 'admin') && (
                                     <Link

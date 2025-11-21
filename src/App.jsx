@@ -1,3 +1,4 @@
+import AdminUsersPage from './pages/AdminUsersPage';
 import React, { useEffect, useState } from 'react';
 import i18n from './i18n';
 import './pages/SettingsPage.css';
@@ -19,6 +20,9 @@ import MyPhotosPage from './pages/MyPhotosPage';
 import SettingsPage from './pages/SettingsPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import AdminPage from './pages/AdminPage';
+import AdminDashboard from './pages/AdminDashboard';
+import EditContestPage from './pages/EditContestPage';
+import AdminContestsPage from './pages/AdminContestsPage';
 import ModerationPage from './pages/ModerationPage';
 
 // Components
@@ -56,14 +60,6 @@ function App() {
       checkAuth();
     }
   }, [token, isAuthenticated, checkAuth]);
-
-  if (isLoading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="spinner-custom"></div>
-      </div>
-    );
-  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -108,14 +104,7 @@ function App() {
               <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
               {/* Protected routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
+              {/* DashboardPage rimossa per admin: solo dashboard admin */}
               <Route
                 path="/contests"
                 element={
@@ -167,6 +156,42 @@ function App() {
               />
 
               <Route
+                path="/admin-dashboard"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/contests"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminContestsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/contest/:id/edit"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <EditContestPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminUsersPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
                 path="/moderator"
                 element={
                   <ProtectedRoute requiredRole={["admin", "moderator"]}>
@@ -179,6 +204,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>
+
         </Router>
       </React.Fragment>
     </QueryClientProvider>
