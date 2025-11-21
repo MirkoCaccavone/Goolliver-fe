@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../stores/authStore';
 import './LoginPage.css';
@@ -12,6 +12,18 @@ const LoginPage = () => {
     const [socialLoading, setSocialLoading] = useState('');
     const { login, socialLogin } = useAuthStore();
     const navigate = useNavigate();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const [showAccountDeleted, setShowAccountDeleted] = useState(params.get('accountDeleted') === '1');
+
+    React.useEffect(() => {
+        if (showAccountDeleted) {
+            const timer = setTimeout(() => {
+                setShowAccountDeleted(false);
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [showAccountDeleted]);
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -49,7 +61,14 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="login-page min-vh-100 d-flex align-items-center py-5">
+        <div className="login-page min-vh-100 d-flex align-items-center py-5 position-relative">
+            {showAccountDeleted && (
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 10 }}>
+                    <div className="alert alert-success text-center m-0 rounded-0" role="alert">
+                        {t('login.accountDeletedSuccess', 'Il tuo account è stato eliminato con successo.')}
+                    </div>
+                </div>
+            )}
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-md-6 col-lg-5">

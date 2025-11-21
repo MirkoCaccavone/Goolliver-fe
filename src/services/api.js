@@ -55,6 +55,7 @@ export const authAPI = {
     register: (userData) => api.post('/register', userData),
     logout: () => api.post('/logout'),
     getUser: () => api.get('/user'),
+    deleteAccount: () => api.delete('/user'),
 };
 
 export const contestAPI = {
