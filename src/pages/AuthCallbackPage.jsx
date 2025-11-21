@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import './AuthCallbackPage.css';
 
 const AuthCallbackPage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [error, setError] = useState('');
@@ -70,11 +72,11 @@ const AuthCallbackPage = () => {
                 <div className="auth-callback-container text-center">
                     <div className="auth-callback-loading">
                         <div className="auth-callback-spinner spinner-border text-primary mb-3" style={{ width: '3rem', height: '3rem' }}>
-                            <span className="visually-hidden">Loading...</span>
+                            <span className="visually-hidden">{t('authCallbackPage.loading')}</span>
                         </div>
-                        <h3 className="auth-callback-title h5 mb-2">Completamento accesso...</h3>
+                        <h3 className="auth-callback-title h5 mb-2">{t('authCallbackPage.completingAccess')}</h3>
                         <p className="auth-callback-subtitle text-muted">
-                            Stiamo finalizzando il tuo login, attendi un momento.
+                            {t('authCallbackPage.finalizingLogin')}
                         </p>
                     </div>
                 </div>
@@ -90,20 +92,20 @@ const AuthCallbackPage = () => {
                         <div className="auth-callback-error-icon text-danger mb-3">
                             <i className="bi bi-exclamation-triangle" style={{ fontSize: '3rem' }}></i>
                         </div>
-                        <h3 className="auth-callback-title h5 mb-2 text-danger">Errore di Autenticazione</h3>
+                        <h3 className="auth-callback-title h5 mb-2 text-danger">{t('authCallbackPage.authError')}</h3>
                         <p className="auth-callback-error-message text-muted mb-4">{error}</p>
                         <div className="auth-callback-actions">
                             <button
                                 className="auth-callback-retry-button btn btn-primary me-2"
                                 onClick={() => navigate('/login')}
                             >
-                                Torna al Login
+                                {t('authCallbackPage.backToLogin')}
                             </button>
                             <button
                                 className="auth-callback-home-button btn btn-outline-secondary"
                                 onClick={() => navigate('/')}
                             >
-                                Homepage
+                                {t('authCallbackPage.homepage')}
                             </button>
                         </div>
                     </div>
@@ -120,9 +122,9 @@ const AuthCallbackPage = () => {
                     <div className="auth-callback-success-icon text-success mb-3">
                         <i className="bi bi-check-circle" style={{ fontSize: '3rem' }}></i>
                     </div>
-                    <h3 className="auth-callback-title h5 mb-2 text-success">Accesso Completato!</h3>
+                    <h3 className="auth-callback-title h5 mb-2 text-success">{t('authCallbackPage.accessCompleted')}</h3>
                     <p className="auth-callback-subtitle text-muted">
-                        Verrai reindirizzato alla dashboard tra pochi secondi...
+                        {t('authCallbackPage.redirectDashboard')}
                     </p>
                     <div className="auth-callback-progress mt-3">
                         <div className="progress" style={{ height: '4px' }}>

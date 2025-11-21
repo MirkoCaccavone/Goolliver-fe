@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useTranslation } from 'react-i18next';
 import './Navbar.css';
 
 const Navbar = () => {
+    const { t } = useTranslation();
     const { isAuthenticated, user, logout } = useAuthStore();
     // Mostra avatar solo se è un URL valido
     const isValidAvatarUrl = user?.avatar && (user.avatar.startsWith('http') || user.avatar.startsWith('/storage/'));
@@ -61,7 +63,7 @@ const Navbar = () => {
                                     className={getLinkClass('/dashboard', 'navbar-dashboard-link navbar-link nav-link text-secondary me-3')}
                                 >
                                     <i className="bi bi-house-door me-1"></i>
-                                    Dashboard
+                                    {t('dashboard.label')}
                                 </Link>
 
                                 <Link
@@ -69,7 +71,7 @@ const Navbar = () => {
                                     className={getLinkClass('/contests', 'navbar-link nav-link text-secondary me-3')}
                                 >
                                     <i className="bi bi-trophy me-1"></i>
-                                    Contest
+                                    {t('contests.label')}
                                 </Link>
 
                                 {user?.role === 'admin' && (
@@ -78,7 +80,7 @@ const Navbar = () => {
                                         className={getLinkClass('/admin', 'navbar-admin-link navbar-link nav-link text-secondary me-3')}
                                     >
                                         <i className="bi bi-gear me-1"></i>
-                                        Admin
+                                        {t('admin')}
                                     </Link>
                                 )}
                                 {(user?.role === 'moderator' || user?.role === 'admin') && (
@@ -87,7 +89,7 @@ const Navbar = () => {
                                         className={getLinkClass('/moderator', 'navbar-moderator-link navbar-link nav-link text-secondary me-3')}
                                     >
                                         <i className="bi bi-shield-check me-1"></i>
-                                        Moderazione
+                                        {t('moderation')}
                                     </Link>
                                 )}
 
@@ -120,19 +122,19 @@ const Navbar = () => {
                                         <li>
                                             <Link className="navbar-dropdown-item dropdown-item" to="/profile">
                                                 <i className="bi bi-person me-2"></i>
-                                                Il mio Profilo
+                                                {t('my_profile')}
                                             </Link>
                                         </li>
                                         <li>
                                             <Link className="navbar-dropdown-item dropdown-item" to="/my-photos">
                                                 <i className="bi bi-images me-2"></i>
-                                                Le mie Foto
+                                                {t('my_photos')}
                                             </Link>
                                         </li>
                                         <li>
                                             <Link className="navbar-dropdown-item dropdown-item" to="/settings">
                                                 <i className="bi bi-gear me-2"></i>
-                                                Impostazioni
+                                                {t('settings')}
                                             </Link>
                                         </li>
                                         <li><hr className="navbar-dropdown-divider dropdown-divider" /></li>
@@ -142,7 +144,7 @@ const Navbar = () => {
                                                 onClick={handleLogout}
                                             >
                                                 <i className="bi bi-box-arrow-right me-2"></i>
-                                                Logout
+                                                {t('logout')}
                                             </button>
                                         </li>
                                     </ul>
@@ -155,14 +157,14 @@ const Navbar = () => {
                                     className="navbar-login-link nav-link text-secondary me-2"
                                 >
                                     <i className="bi bi-box-arrow-in-right me-1"></i>
-                                    Accedi
+                                    {t('login')}
                                 </Link>
                                 <Link
                                     to="/register"
                                     className="navbar-register-button btn btn-primary"
                                 >
                                     <i className="bi bi-person-plus me-1"></i>
-                                    Registrati
+                                    {t('register')}
                                 </Link>
                             </div>
                         )}

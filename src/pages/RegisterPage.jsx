@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../stores/authStore';
+import { useTranslation } from 'react-i18next';
 import './RegisterPage.css';
 
 const RegisterPage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const register = useAuthStore(state => state.register);
     const socialLogin = useAuthStore(state => state.socialLogin);
@@ -62,14 +64,14 @@ const RegisterPage = () => {
                                     <div className="register-logo logo-circle mx-auto mb-3" style={{ width: '64px', height: '64px', fontSize: '1.5rem' }}>
                                         <span>G</span>
                                     </div>
-                                    <h2 className="register-title h3 fw-bold text-dark">Crea il tuo account</h2>
-                                    <p className="register-subtitle text-muted">Unisciti alla community di Goolliver</p>
+                                    <h2 className="register-title h3 fw-bold text-dark">{t('create_account')}</h2>
+                                    <p className="register-subtitle text-muted">{t('join_community')}</p>
                                 </div>
 
                                 {serverError && (
                                     <div className="register-error alert alert-danger">
                                         <i className="register-error-icon bi bi-exclamation-triangle me-2"></i>
-                                        <span className="register-error-text">{serverError}</span>
+                                        <span className="register-error-text">{t(serverError)}</span>
                                     </div>
                                 )}
 
@@ -86,7 +88,7 @@ const RegisterPage = () => {
                                             <i className="register-social-icon bi bi-google me-2"></i>
                                         )}
                                         <span className="register-social-text">
-                                            {socialLoading === 'google' ? 'Connessione...' : 'Continua con Google'}
+                                            {socialLoading === 'google' ? t('connecting') : t('continue_with_google')}
                                         </span>
                                     </button>
 
@@ -103,34 +105,34 @@ const RegisterPage = () => {
                                             <i className="register-social-icon bi bi-facebook me-2"></i>
                                         )}
                                         <span className="register-social-text">
-                                            {socialLoading === 'facebook' ? 'Connessione...' : 'Continua con Facebook'}
+                                            {socialLoading === 'facebook' ? t('connecting') : t('continue_with_facebook')}
                                         </span>
                                     </button>
                                 </div>
 
                                 <div className="register-divider d-flex align-items-center mb-4">
                                     <hr className="register-divider-line flex-grow-1" />
-                                    <span className="register-divider-text px-3 text-muted small">oppure</span>
+                                    <span className="register-divider-text px-3 text-muted small">{t('or')}</span>
                                     <hr className="register-divider-line flex-grow-1" />
                                 </div>
 
                                 <form className="register-form" onSubmit={handleSubmit(onSubmit)}>
                                     <div className="register-field mb-3">
-                                        <label htmlFor="name" className="register-field-label form-label">Nome completo</label>
+                                        <label htmlFor="name" className="register-field-label form-label">{t('full_name')}</label>
                                         <input
                                             type="text"
                                             className={`register-field-input form-control ${errors.name ? 'register-field-input-error is-invalid' : ''}`}
                                             id="name"
-                                            placeholder="Inserisci il tuo nome"
+                                            placeholder={t('enter_your_name')}
                                             {...registerForm('name', {
-                                                required: 'Il nome è obbligatorio',
+                                                required: t('name_required'),
                                                 minLength: {
                                                     value: 2,
-                                                    message: 'Il nome deve avere almeno 2 caratteri'
+                                                    message: t('name_min_length')
                                                 },
                                                 maxLength: {
                                                     value: 255,
-                                                    message: 'Il nome non può superare i 255 caratteri'
+                                                    message: t('name_max_length')
                                                 }
                                             })}
                                         />
@@ -138,17 +140,17 @@ const RegisterPage = () => {
                                     </div>
 
                                     <div className="register-field mb-3">
-                                        <label htmlFor="email" className="register-field-label form-label">Email</label>
+                                        <label htmlFor="email" className="register-field-label form-label">{t('email')}</label>
                                         <input
                                             type="email"
                                             className={`register-field-input form-control ${errors.email ? 'register-field-input-error is-invalid' : ''}`}
                                             id="email"
-                                            placeholder="esempio@email.com"
+                                            placeholder={t('email_example')}
                                             {...registerForm('email', {
-                                                required: 'L\'email è obbligatoria',
+                                                required: t('email_required'),
                                                 pattern: {
                                                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                                    message: 'Inserisci un indirizzo email valido'
+                                                    message: t('email_invalid')
                                                 }
                                             })}
                                         />
@@ -156,22 +158,22 @@ const RegisterPage = () => {
                                         {!errors.email && (
                                             <div className="register-field-help form-text">
                                                 <i className="bi bi-info-circle me-1"></i>
-                                                Useremo questa email per comunicazioni importanti
+                                                {t('email_usage_info')}
                                             </div>
                                         )}
                                     </div>
 
                                     <div className="register-field mb-3">
-                                        <label htmlFor="phone" className="register-field-label form-label">Telefono <span className="text-muted">(opzionale)</span></label>
+                                        <label htmlFor="phone" className="register-field-label form-label">{t('phone')} <span className="text-muted">({t('optional')})</span></label>
                                         <input
                                             type="tel"
                                             className={`register-field-input form-control ${errors.phone ? 'register-field-input-error is-invalid' : ''}`}
                                             id="phone"
-                                            placeholder="+39 123 456 7890"
+                                            placeholder={t('phone_example')}
                                             {...registerForm('phone', {
                                                 pattern: {
                                                     value: /^[\+]?[0-9\s\-\(\)]+$/,
-                                                    message: 'Inserisci un numero di telefono valido'
+                                                    message: t('phone_invalid')
                                                 }
                                             })}
                                         />
@@ -179,21 +181,21 @@ const RegisterPage = () => {
                                     </div>
 
                                     <div className="register-field mb-3">
-                                        <label htmlFor="password" className="register-field-label form-label">Password</label>
+                                        <label htmlFor="password" className="register-field-label form-label">{t('password')}</label>
                                         <input
                                             type="password"
                                             className={`register-field-input form-control ${errors.password ? 'register-field-input-error is-invalid' : ''}`}
                                             id="password"
-                                            placeholder="Crea una password sicura"
+                                            placeholder={t('create_secure_password')}
                                             {...registerForm('password', {
-                                                required: 'La password è obbligatoria',
+                                                required: t('password_required'),
                                                 minLength: {
                                                     value: 8,
-                                                    message: 'La password deve avere almeno 8 caratteri'
+                                                    message: t('password_min_length')
                                                 },
                                                 pattern: {
                                                     value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-                                                    message: 'La password deve contenere almeno: 1 maiuscola, 1 minuscola, 1 numero e 1 simbolo'
+                                                    message: t('password_pattern')
                                                 }
                                             })}
                                         />
@@ -201,23 +203,23 @@ const RegisterPage = () => {
                                         <div className="register-field-help form-text">
                                             <i className="bi bi-shield-check me-1"></i>
                                             {errors.password ? (
-                                                <span className="text-danger">Deve contenere almeno 8 caratteri: maiuscole, minuscole, numeri e simboli</span>
+                                                <span className="text-danger">{t('password_help_error')}</span>
                                             ) : (
-                                                <span className="text-muted">Minimum 8 caratteri con maiuscole, minuscole, numeri e simboli</span>
+                                                <span className="text-muted">{t('password_help')}</span>
                                             )}
                                         </div>
                                     </div>
 
                                     <div className="register-field mb-4">
-                                        <label htmlFor="password_confirmation" className="register-field-label form-label">Conferma password</label>
+                                        <label htmlFor="password_confirmation" className="register-field-label form-label">{t('confirm_password')}</label>
                                         <input
                                             type="password"
                                             className={`register-field-input form-control ${errors.password_confirmation ? 'register-field-input-error is-invalid' : ''}`}
                                             id="password_confirmation"
-                                            placeholder="Ripeti la password"
+                                            placeholder={t('repeat_password')}
                                             {...registerForm('password_confirmation', {
-                                                required: 'La conferma password è obbligatoria',
-                                                validate: value => value === password || 'Le password non coincidono'
+                                                required: t('confirm_password_required'),
+                                                validate: value => value === password || t('passwords_do_not_match')
                                             })}
                                         />
                                         {errors.password_confirmation && <div className="register-field-error invalid-feedback">{errors.password_confirmation.message}</div>}
@@ -231,19 +233,19 @@ const RegisterPage = () => {
                                         {isLoading ? (
                                             <>
                                                 <span className="register-loading-spinner spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                Registrazione in corso...
+                                                {t('registering')}
                                             </>
                                         ) : (
-                                            'Crea account'
+                                            t('create_account')
                                         )}
                                     </button>
                                 </form>
 
                                 <div className="register-footer text-center mt-4">
                                     <p className="register-footer-text text-muted mb-0">
-                                        Hai già un account?{' '}
+                                        {t('already_have_account')} {' '}
                                         <Link to="/login" className="register-login-link text-primary text-decoration-none fw-medium">
-                                            Accedi qui
+                                            {t('login_here')}
                                         </Link>
                                     </p>
                                 </div>

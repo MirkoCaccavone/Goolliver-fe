@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { contestAPI, photoAPI } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
@@ -6,6 +7,7 @@ import ContestCard from '../components/ContestCard/ContestCard';
 import './ContestsPage/ContestsPage.css';
 
 const ContestsPage = () => {
+    const { t } = useTranslation();
     const [activeFilter, setActiveFilter] = useState('all');
     const { isAuthenticated } = useAuthStore();
 
@@ -59,10 +61,10 @@ const ContestsPage = () => {
 
     // Opzioni di filtro
     const filterOptions = [
-        { key: 'all', label: 'Tutti i Contest', icon: 'bi-grid' },
-        { key: 'active', label: 'Attivi', icon: 'bi-play-circle' },
-        { key: 'upcoming', label: 'Prossimi', icon: 'bi-clock' },
-        { key: 'ended', label: 'Terminati', icon: 'bi-check-circle' }
+        { key: 'all', label: t('contests.all'), icon: 'bi-grid' },
+        { key: 'active', label: t('contests.active'), icon: 'bi-play-circle' },
+        { key: 'upcoming', label: t('contests.upcoming'), icon: 'bi-clock' },
+        { key: 'ended', label: t('contests.ended'), icon: 'bi-check-circle' }
     ];
 
     if (error) {
@@ -70,9 +72,9 @@ const ContestsPage = () => {
             <div className="contests-page-wrapper">
                 <div className="contests-page-container">
                     <div className="contests-page-header">
-                        <h1 className="contests-page-title">Contest Fotografici</h1>
+                        <h1 className="contests-page-title">{t('contests.title')}</h1>
                         <p className="contests-page-subtitle">
-                            Partecipa ai nostri contest e vinci fantastici premi
+                            {t('contests.subtitle')}
                         </p>
                     </div>
 
@@ -80,7 +82,7 @@ const ContestsPage = () => {
                         <div className="alert alert-danger d-flex align-items-center" role="alert">
                             <i className="bi bi-exclamation-triangle-fill me-2"></i>
                             <div>
-                                <strong>Errore nel caricamento dei contest</strong><br />
+                                <strong>{t('contests.errorLoading')}</strong><br />
                                 <small>{error.message}</small>
                             </div>
                             <button
@@ -88,7 +90,7 @@ const ContestsPage = () => {
                                 onClick={() => refetch()}
                             >
                                 <i className="bi bi-arrow-clockwise me-1"></i>
-                                Riprova
+                                {t('contests.retry')}
                             </button>
                         </div>
                     </div>
@@ -102,10 +104,9 @@ const ContestsPage = () => {
             <div className="contests-page-container">
                 {/* Header */}
                 <div className="contests-page-header">
-                    <h1 className="contests-page-title">Contest Fotografici</h1>
+                    <h1 className="contests-page-title">{t('contests.title')}</h1>
                     <p className="contests-page-subtitle">
-                        Partecipa ai nostri contest, carica le tue foto migliori e vinci fantastici premi.
-                        Ogni foto viene moderata per garantire la qualità della competizione.
+                        {t('contests.fullSubtitle')}
                     </p>
                 </div>
 
@@ -151,14 +152,14 @@ const ContestsPage = () => {
                         </div>
                         <h3 className="contests-empty-title">
                             {activeFilter === 'all'
-                                ? 'Nessun contest disponibile'
-                                : `Nessun contest ${activeFilter === 'active' ? 'attivo' : activeFilter === 'upcoming' ? 'in arrivo' : 'terminato'}`
+                                ? t('contests.noneAvailable')
+                                : t(`contests.none_${activeFilter}`)
                             }
                         </h3>
                         <p className="contests-empty-text">
                             {activeFilter === 'all'
-                                ? 'I contest fotografici saranno disponibili presto. Torna a trovarci!'
-                                : 'Prova a cambiare il filtro per vedere altri contest.'
+                                ? t('contests.comingSoon')
+                                : t('contests.tryChangingFilter')
                             }
                         </p>
                         {activeFilter !== 'all' && (
@@ -166,7 +167,7 @@ const ContestsPage = () => {
                                 className="btn btn-primary mt-3"
                                 onClick={() => setActiveFilter('all')}
                             >
-                                Vedi tutti i contest
+                                {t('contests.seeAll')}
                             </button>
                         )}
                     </div>
@@ -179,7 +180,7 @@ const ContestsPage = () => {
                             <div className="col-md-3">
                                 <div className="stat-item">
                                     <div className="stat-number">{contests.length}</div>
-                                    <div className="stat-label">Contest Totali</div>
+                                    <div className="stat-label">{t('contests.totalContests')}</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -192,7 +193,7 @@ const ContestsPage = () => {
                                             return now >= start && now <= end;
                                         }).length}
                                     </div>
-                                    <div className="stat-label">Contest Attivi</div>
+                                    <div className="stat-label">{t('contests.activeContests')}</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -200,7 +201,7 @@ const ContestsPage = () => {
                                     <div className="stat-number">
                                         {contests.reduce((total, contest) => total + (contest.current_participants || 0), 0)}
                                     </div>
-                                    <div className="stat-label">Partecipanti Totali</div>
+                                    <div className="stat-label">{t('contests.totalParticipants')}</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -208,7 +209,7 @@ const ContestsPage = () => {
                                     <div className="stat-number">
                                         {contests.filter(c => c.prize).length}
                                     </div>
-                                    <div className="stat-label">Con Premio</div>
+                                    <div className="stat-label">{t('contests.withPrize')}</div>
                                 </div>
                             </div>
                         </div>

@@ -1,8 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
 const ModerationPage = () => {
+    const { t } = useTranslation();
     const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -34,7 +36,7 @@ const ModerationPage = () => {
             setPhotos(res.data.data || []);
             setPagination(res.data.pagination);
         } catch (err) {
-            setError('Errore nel caricamento delle foto da moderare');
+            setError(t('moderationPage.errorLoading'));
         }
         setLoading(false);
     };
@@ -52,7 +54,7 @@ const ModerationPage = () => {
             await api.post(`/moderation/photos/${photoId}/${action}`);
             setPhotos(photos.filter(photo => photo.id !== photoId));
         } catch (err) {
-            setError('Errore nell\'aggiornamento dello stato della foto');
+            setError(t('moderationPage.errorUpdate'));
         }
     };
 
@@ -68,19 +70,19 @@ const ModerationPage = () => {
             setPhotos(photos.filter(photo => photo.id !== rejectPhotoId));
             setRejectModalOpen(false);
         } catch (err) {
-            setError('Errore nel rifiuto della foto');
+            setError(t('moderationPage.errorReject'));
         }
         setRejectLoading(false);
     };
 
-    if (loading) return <div>Caricamento...</div>;
+    if (loading) return <div>{t('moderationPage.loading')}</div>;
     if (error) return <div className="alert alert-danger">{error}</div>;
 
     return (
         <div className="container py-4">
-            <h2 className="mb-4">Foto da moderare</h2>
+            <h2 className="mb-4">{t('moderationPage.title')}</h2>
             {photos.length === 0 ? (
-                <div className="alert alert-info">Nessuna foto da moderare</div>
+                <div className="alert alert-info">{t('moderationPage.noPhotos')}</div>
             ) : (
                 <ul className="list-unstyled">
                     {photos.map(photo => (
@@ -89,21 +91,21 @@ const ModerationPage = () => {
                                 <div className="col-md-3">
                                     <img src={photo.photo_url || photo.thumbnail_url} alt={photo.title} style={{ maxWidth: '100%', borderRadius: 8, cursor: 'pointer' }} onClick={() => { setModalImg(photo.photo_url || photo.thumbnail_url); setModalOpen(true); }} />
                                     <button className="btn btn-outline-primary mt-2 w-100" onClick={() => { setModalImg(photo.photo_url || photo.thumbnail_url); setModalOpen(true); }}>
-                                        Ingrandisci
+                                        {t('moderationPage.enlarge')}
                                     </button>
                                 </div>
                                 <div className="col-md-6">
-                                    <div><strong>Titolo:</strong> {photo.title || '(senza titolo)'}</div>
-                                    <div><strong>Autore:</strong> {photo.user?.name} ({photo.user?.email})</div>
-                                    <div><strong>Contest:</strong> {photo.contest?.title}</div>
-                                    <div><strong>Data upload:</strong> {new Date(photo.created_at).toLocaleString()}</div>
-                                    <div><strong>Stato moderazione:</strong> {photo.moderation_status}</div>
-                                    <div><strong>Score AI:</strong> {photo.moderation_score}</div>
-                                    <div><strong>Descrizione:</strong> {photo.description}</div>
+                                    <div><strong>{t('moderationPage.photoTitle')}:</strong> {photo.title || t('moderationPage.noTitle')}</div>
+                                    <div><strong>{t('moderationPage.author')}:</strong> {photo.user?.name} ({photo.user?.email})</div>
+                                    <div><strong>{t('moderationPage.contest')}:</strong> {photo.contest?.title}</div>
+                                    <div><strong>{t('moderationPage.uploadDate')}:</strong> {new Date(photo.created_at).toLocaleString()}</div>
+                                    <div><strong>{t('moderationPage.moderationStatus')}:</strong> {photo.moderation_status}</div>
+                                    <div><strong>{t('moderationPage.aiScore')}:</strong> {photo.moderation_score}</div>
+                                    <div><strong>{t('moderationPage.description')}:</strong> {photo.description}</div>
                                 </div>
                                 <div className="col-md-3 text-end">
-                                    <button className="btn btn-success me-2" onClick={() => handleModerate(photo.id, 'approve')}>Approva</button>
-                                    <button className="btn btn-danger" onClick={() => handleModerate(photo.id, 'reject')}>Rifiuta</button>
+                                    <button className="btn btn-success me-2" onClick={() => handleModerate(photo.id, 'approve')}>{t('moderationPage.approve')}</button>
+                                    <button className="btn btn-danger" onClick={() => handleModerate(photo.id, 'reject')}>{t('moderationPage.reject')}</button>
                                 </div>
                             </div>
                         </li>
@@ -128,11 +130,11 @@ const ModerationPage = () => {
                     <div className="modal-dialog modal-dialog-centered" onClick={e => e.stopPropagation()}>
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">Immagine Ingrandita</h5>
+                                <h5 className="modal-title">{t('moderationPage.enlargedImage')}</h5>
                                 <button type="button" className="btn-close" onClick={() => setModalOpen(false)}></button>
                             </div>
                             <div className="modal-body text-center">
-                                <img src={modalImg} alt="Ingrandita" style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: 8 }} />
+                                <img src={modalImg} alt={t('moderationPage.enlargedImage')} style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: 8 }} />
                             </div>
                         </div>
                     </div>
@@ -146,16 +148,16 @@ const ModerationPage = () => {
                         <div className="modal-content">
                             <form onSubmit={submitReject}>
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Rifiuta Foto</h5>
+                                    <h5 className="modal-title">{t('moderationPage.rejectPhoto')}</h5>
                                     <button type="button" className="btn-close" onClick={() => setRejectModalOpen(false)}></button>
                                 </div>
                                 <div className="modal-body">
                                     <div className="mb-3">
-                                        <label className="form-label">Motivo del rifiuto</label>
+                                        <label className="form-label">{t('moderationPage.rejectReason')}</label>
                                         <input type="text" className="form-control" value={rejectReason} onChange={e => setRejectReason(e.target.value)} required maxLength={500} />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label">Categoria</label>
+                                        <label className="form-label">{t('moderationPage.category')}</label>
                                         <select className="form-select" value={rejectCategory} onChange={e => setRejectCategory(e.target.value)} required>
                                             {rejectCategories.map(cat => (
                                                 <option key={cat} value={cat}>{cat}</option>
@@ -164,8 +166,8 @@ const ModerationPage = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={() => setRejectModalOpen(false)} disabled={rejectLoading}>Annulla</button>
-                                    <button type="submit" className="btn btn-danger" disabled={rejectLoading || !rejectReason}>Rifiuta</button>
+                                    <button type="button" className="btn btn-secondary" onClick={() => setRejectModalOpen(false)} disabled={rejectLoading}>{t('cancel')}</button>
+                                    <button type="submit" className="btn btn-danger" disabled={rejectLoading || !rejectReason}>{t('moderationPage.reject')}</button>
                                 </div>
                             </form>
                         </div>

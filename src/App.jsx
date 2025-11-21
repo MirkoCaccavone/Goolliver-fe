@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import i18n from './i18n';
+import './pages/SettingsPage.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './stores/authStore';
@@ -36,6 +38,13 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  // Forza re-render globale al cambio lingua
+  const [currentLang, setCurrentLang] = useState(i18n.language);
+  useEffect(() => {
+    const onLangChange = (lng) => setCurrentLang(lng);
+    i18n.on('languageChanged', onLangChange);
+    return () => i18n.off('languageChanged', onLangChange);
+  }, []);
   const { isAuthenticated, isLoading, token, checkAuth } = useAuthStore();
 
   const { toast, hideToast } = useToastStore();
@@ -58,8 +67,10 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="min-vh-100 bg-light">
+      {/* Forza re-render su cambio lingua */}
+      <React.Fragment key={currentLang}>
+        <Router>
+          {/* Il tema viene gestito dal body tramite SettingsPage.css */}
           <Navbar />
 
           {/* Toast globale */}
@@ -168,8 +179,8 @@ function App() {
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>
-        </div>
-      </Router>
+        </Router>
+      </React.Fragment>
     </QueryClientProvider>
   );
 }

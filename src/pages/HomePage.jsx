@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
     const { isAuthenticated } = useAuthStore();
+    const { t } = useTranslation();
 
     return (
         <div className="min-vh-100">
@@ -13,11 +15,10 @@ const HomePage = () => {
                     <div className="row">
                         <div className="col-lg-8 mx-auto text-center">
                             <h1 className="display-3 fw-bold text-dark mb-4 hero-title">
-                                Benvenuto su <span className="text-primary-custom">Goolliver</span>
+                                {t('welcome')} <span className="text-primary-custom">Goolliver</span>
                             </h1>
                             <p className="lead text-secondary mb-5">
-                                La piattaforma dove puoi partecipare a contest fotografici,
-                                votare le tue foto preferite e vincere premi fantastici.
+                                {t('homepage_subtitle')}
                             </p>
 
                             <div className="d-flex gap-3 justify-content-center flex-wrap">
@@ -26,7 +27,7 @@ const HomePage = () => {
                                         to="/dashboard"
                                         className="btn btn-primary btn-lg px-4"
                                     >
-                                        Vai alla Dashboard
+                                        {t('go_to_dashboard')}
                                     </Link>
                                 ) : (
                                     <>
@@ -34,13 +35,13 @@ const HomePage = () => {
                                             to="/register"
                                             className="btn btn-primary btn-lg px-4"
                                         >
-                                            Inizia Ora
+                                            {t('get_started')}
                                         </Link>
                                         <Link
                                             to="/login"
                                             className="btn btn-outline-secondary btn-lg px-4"
                                         >
-                                            Accedi
+                                            {t('login')}
                                         </Link>
                                     </>
                                 )}
@@ -55,7 +56,7 @@ const HomePage = () => {
                 <div className="container py-4">
                     <div className="row">
                         <div className="col-lg-8 mx-auto text-center mb-5">
-                            <h2 className="display-5 fw-bold text-dark">Come Funziona</h2>
+                            <h2 className="display-5 fw-bold text-dark">{t('how_it_works')}</h2>
                         </div>
                     </div>
 
@@ -66,11 +67,10 @@ const HomePage = () => {
                                     <i className="bi bi-camera text-primary-custom" style={{ fontSize: '2rem' }}></i>
                                 </div>
                                 <h3 className="h4 fw-semibold text-dark mb-3">
-                                    Carica le tue Foto
+                                    {t('upload_photos')}
                                 </h3>
                                 <p className="text-secondary">
-                                    Partecipa ai contest caricando le tue migliori fotografie.
-                                    Sistema di moderazione AI per garantire qualità.
+                                    {t('upload_photos_desc')}
                                 </p>
                             </div>
                         </div>
@@ -81,11 +81,10 @@ const HomePage = () => {
                                     <i className="bi bi-heart-fill text-primary-custom" style={{ fontSize: '2rem' }}></i>
                                 </div>
                                 <h3 className="h4 fw-semibold text-dark mb-3">
-                                    Vota e Partecipa
+                                    {t('vote_and_participate')}
                                 </h3>
                                 <p className="text-secondary">
-                                    Un voto per contest per utente. Sistema trasparente
-                                    e leaderboard in tempo reale.
+                                    {t('vote_and_participate_desc')}
                                 </p>
                             </div>
                         </div>
@@ -96,11 +95,10 @@ const HomePage = () => {
                                     <i className="bi bi-trophy-fill text-primary-custom" style={{ fontSize: '2rem' }}></i>
                                 </div>
                                 <h3 className="h4 fw-semibold text-dark mb-3">
-                                    Vinci Premi
+                                    {t('win_prizes')}
                                 </h3>
                                 <p className="text-secondary">
-                                    Sistema di crediti e premi. Rimborsi automatici
-                                    per foto rifiutate dalla moderazione.
+                                    {t('win_prizes_desc')}
                                 </p>
                             </div>
                         </div>
@@ -115,25 +113,25 @@ const HomePage = () => {
                         <div className="col-6 col-md-3">
                             <div className="stats-card">
                                 <div className="display-4 fw-bold text-primary-custom mb-2">1000+</div>
-                                <div className="text-secondary">Foto Caricate</div>
+                                <div className="text-secondary">{t('photos_uploaded')}</div>
                             </div>
                         </div>
                         <div className="col-6 col-md-3">
                             <div className="stats-card">
                                 <div className="display-4 fw-bold text-primary-custom mb-2">50+</div>
-                                <div className="text-secondary">Contest Attivi</div>
+                                <div className="text-secondary">{t('active_contests')}</div>
                             </div>
                         </div>
                         <div className="col-6 col-md-3">
                             <div className="stats-card">
                                 <div className="display-4 fw-bold text-primary-custom mb-2">500+</div>
-                                <div className="text-secondary">Utenti Attivi</div>
+                                <div className="text-secondary">{t('active_users')}</div>
                             </div>
                         </div>
                         <div className="col-6 col-md-3">
                             <div className="stats-card">
                                 <div className="display-4 fw-bold text-primary-custom mb-2">10k+</div>
-                                <div className="text-secondary">Voti Espressi</div>
+                                <div className="text-secondary">{t('votes_cast')}</div>
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { contestAPI, photoAPI, voteAPI } from '../services/api';
@@ -7,6 +8,7 @@ import PhotoUpload from '../components/PhotoUpload/PhotoUpload';
 import './ContestPage/ContestPage.css';
 
 const ContestPage = () => {
+    const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -180,11 +182,11 @@ const ContestPage = () => {
             <div className="contest-page-wrapper">
                 <div className="contest-page-container">
                     <div className="alert alert-danger">
-                        <h4>Contest non trovato</h4>
-                        <p>Il contest che stai cercando non esiste o è stato rimosso.</p>
+                        <h4>{t('contestPage.notFoundTitle')}</h4>
+                        <p>{t('contestPage.notFoundText')}</p>
                         <Link to="/contests" className="btn btn-primary">
                             <i className="bi bi-arrow-left me-1"></i>
-                            Torna ai Contest
+                            {t('contestPage.backToContests')}
                         </Link>
                     </div>
                 </div>
@@ -208,7 +210,7 @@ const ContestPage = () => {
                         <div className="contest-breadcrumb">
                             <Link to="/contests" className="contest-breadcrumb-link">
                                 <i className="bi bi-grid-3x3-gap me-1"></i>
-                                Contest
+                                {t('contestPage.contests')}
                             </Link>
                             <i className="bi bi-chevron-right"></i>
                             <span>{contest.category || 'Generale'}</span>
@@ -217,9 +219,9 @@ const ContestPage = () => {
                         {/* Status Badge */}
                         <div className={`contest-status-badge contest-status-${status}`}>
                             <i className={`bi ${status === 'active' ? 'bi-play-circle-fill' : status === 'upcoming' ? 'bi-clock-fill' : 'bi-check-circle-fill'}`}></i>
-                            {status === 'active' && 'Contest Attivo'}
-                            {status === 'upcoming' && 'Prossimamente'}
-                            {status === 'ended' && 'Terminato'}
+                            {status === 'active' && t('contestPage.active')}
+                            {status === 'upcoming' && t('contestPage.upcoming')}
+                            {status === 'ended' && t('contestPage.ended')}
                         </div>
 
                         {/* Title & Description */}
@@ -233,7 +235,7 @@ const ContestPage = () => {
                                     <i className="bi bi-people-fill"></i>
                                 </div>
                                 <div className="contest-meta-value">{contest.current_participants || 0}</div>
-                                <div className="contest-meta-label">Partecipanti</div>
+                                <div className="contest-meta-label">{t('contestPage.participants')}</div>
                             </div>
 
                             <div className="contest-meta-item">
@@ -241,7 +243,7 @@ const ContestPage = () => {
                                     <i className="bi bi-person-check-fill"></i>
                                 </div>
                                 <div className="contest-meta-value">{contest.max_participants}</div>
-                                <div className="contest-meta-label">Max Partecipanti</div>
+                                <div className="contest-meta-label">{t('contestPage.maxParticipants')}</div>
                             </div>
 
                             <div className="contest-meta-item">
@@ -249,7 +251,7 @@ const ContestPage = () => {
                                     <i className="bi bi-calendar-event"></i>
                                 </div>
                                 <div className="contest-meta-value">{daysRemaining}</div>
-                                <div className="contest-meta-label">Giorni Rimanenti</div>
+                                <div className="contest-meta-label">{t('contestPage.daysRemaining')}</div>
                             </div>
 
                             <div className="contest-meta-item">
@@ -257,7 +259,7 @@ const ContestPage = () => {
                                     <i className="bi bi-coin"></i>
                                 </div>
                                 <div className="contest-meta-value">€{contest.entry_fee}</div>
-                                <div className="contest-meta-label">Quota Partecipazione</div>
+                                <div className="contest-meta-label">{t('contestPage.entryFee')}</div>
                             </div>
                         </div>
 
@@ -268,7 +270,7 @@ const ContestPage = () => {
                                     <i className="bi bi-trophy-fill"></i>
                                 </div>
                                 <div className="contest-prize-amount">{contest.prize}</div>
-                                <div className="contest-prize-label">Premio in Palio</div>
+                                <div className="contest-prize-label">{t('contestPage.prize')}</div>
                             </div>
                         )}
 
@@ -280,22 +282,22 @@ const ContestPage = () => {
                                     className="contest-action-button contest-action-primary"
                                 >
                                     <i className="bi bi-camera-fill"></i>
-                                    Partecipa Ora
+                                    {t('contestPage.participateNow')}
                                 </button>
                             ) : status === 'ended' ? (
                                 <button className="contest-action-button contest-action-secondary" disabled>
                                     <i className="bi bi-check-circle"></i>
-                                    Contest Terminato
+                                    {t('contestPage.contestEnded')}
                                 </button>
                             ) : status === 'upcoming' ? (
                                 <button className="contest-action-button contest-action-secondary" disabled>
                                     <i className="bi bi-clock"></i>
-                                    Prossimamente
+                                    {t('contestPage.comingSoon')}
                                 </button>
                             ) : (
                                 <button className="contest-action-button contest-action-secondary" disabled>
                                     <i className="bi bi-x-circle"></i>
-                                    Completo
+                                    {t('contestPage.full')}
                                 </button>
                             )}
 
@@ -321,7 +323,7 @@ const ContestPage = () => {
                                 onClick={() => setActiveTab('gallery')}
                             >
                                 <i className="bi bi-images me-1"></i>
-                                Gallery ({entries?.length || 0})
+                                {t('contestPage.gallery')} ({entries?.length || 0})
                             </button>
 
                             {canParticipate && !participationLoading && !userParticipation && (
@@ -330,7 +332,7 @@ const ContestPage = () => {
                                     onClick={() => setActiveTab('upload')}
                                 >
                                     <i className="bi bi-upload me-1"></i>
-                                    Partecipa
+                                    {t('contestPage.participate')}
                                 </button>
                             )}
 
@@ -341,7 +343,7 @@ const ContestPage = () => {
                                     onClick={() => setActiveTab('upload')}
                                 >
                                     <i className="bi bi-upload me-1"></i>
-                                    Partecipa di nuovo
+                                    {t('contestPage.participateAgain')}
                                 </button>
                             )}
 
@@ -353,10 +355,10 @@ const ContestPage = () => {
                                         style={{ cursor: 'not-allowed', opacity: 0.6 }}
                                     >
                                         <i className="bi bi-check-circle me-1"></i>
-                                        {userParticipation.moderation_status === 'approved' ? 'Partecipando' :
-                                            userParticipation.moderation_status === 'pending' ? 'In Revisione' :
-                                                userParticipation.moderation_status === 'pending_review' ? 'In Moderazione' :
-                                                    'Rifiutato'}
+                                        {userParticipation.moderation_status === 'approved' ? t('contestPage.participating') :
+                                            userParticipation.moderation_status === 'pending' ? t('contestPage.inReview') :
+                                                userParticipation.moderation_status === 'pending_review' ? t('contestPage.inModeration') :
+                                                    t('contestPage.rejected')}
                                     </button>
                                 )
                             )}
@@ -367,7 +369,7 @@ const ContestPage = () => {
                                     onClick={() => setActiveTab('results')}
                                 >
                                     <i className="bi bi-trophy me-1"></i>
-                                    Risultati
+                                    {t('contestPage.results')}
                                 </button>
                             )}
 
@@ -376,7 +378,7 @@ const ContestPage = () => {
                                 onClick={() => setActiveTab('details')}
                             >
                                 <i className="bi bi-info-circle me-1"></i>
-                                Dettagli
+                                {t('contestPage.details')}
                             </button>
                         </div>
 
@@ -393,7 +395,7 @@ const ContestPage = () => {
                                     <div className="section-icon">
                                         <i className="bi bi-images"></i>
                                     </div>
-                                    <h3 className="section-title">Foto Partecipanti</h3>
+                                    <h3 className="section-title">{t('contestPage.participantPhotos')}</h3>
                                 </div>
 
                                 {entriesLoading ? (
@@ -423,11 +425,11 @@ const ContestPage = () => {
                                         <div className="empty-state-icon">
                                             <i className="bi bi-camera"></i>
                                         </div>
-                                        <div className="empty-state-title">Nessuna foto ancora</div>
+                                        <div className="empty-state-title">{t('contestPage.noPhotosYet')}</div>
                                         <div className="empty-state-text">
                                             {status === 'active'
-                                                ? 'Sii il primo a partecipare a questo contest!'
-                                                : 'Le foto verranno visualizzate quando il contest sarà attivo.'
+                                                ? t('contestPage.beFirstParticipant')
+                                                : t('contestPage.photosVisibleWhenActive')
                                             }
                                         </div>
                                     </div>
@@ -442,16 +444,16 @@ const ContestPage = () => {
                                     <div className="section-icon">
                                         <i className="bi bi-upload"></i>
                                     </div>
-                                    <h3 className="section-title">Partecipa al Contest</h3>
+                                    <h3 className="section-title">{t('contestPage.participateInContest')}</h3>
                                 </div>
 
                                 <div className="alert alert-info">
                                     <i className="bi bi-info-circle me-2"></i>
-                                    <strong>Flusso di Partecipazione:</strong><br />
-                                    1. Carica la tua foto<br />
-                                    2. Moderazione AI automatica<br />
-                                    3. Pagamento (€{contest.entry_fee})<br />
-                                    4. Foto pubblicata e votabile
+                                    <strong>{t('contestPage.participationFlowTitle')}</strong><br />
+                                    {t('contestPage.participationFlow1')}<br />
+                                    {t('contestPage.participationFlow2')}<br />
+                                    {t('contestPage.participationFlow3', { fee: contest.entry_fee })}<br />
+                                    {t('contestPage.participationFlow4')}
                                 </div>
 
                                 <PhotoUpload
@@ -488,14 +490,14 @@ const ContestPage = () => {
                                     <div className="section-icon">
                                         <i className="bi bi-trophy"></i>
                                     </div>
-                                    <h3 className="section-title">Risultati Finali</h3>
+                                    <h3 className="section-title">{t('contestPage.finalResults')}</h3>
                                 </div>
 
                                 {leaderboard?.length > 0 ? (
                                     <div>
                                         <div className="alert alert-success mb-4">
                                             <i className="bi bi-trophy-fill me-2"></i>
-                                            <strong>Contest Terminato!</strong> Ecco i risultati finali.
+                                            <strong>{t('contestPage.contestEndedTitle')}</strong> {t('contestPage.finalResultsText')}
                                         </div>
 
                                         <div className="results-podium mb-4">
@@ -517,7 +519,7 @@ const ContestPage = () => {
                                             ))}
                                         </div>
 
-                                        <h5>Classifica Completa</h5>
+                                        <h5>{t('contestPage.fullRanking')}</h5>
                                         <div className="results-full-list">
                                             {leaderboard.map((entry, index) => (
                                                 <div key={entry.id} className="leaderboard-item">
@@ -549,8 +551,8 @@ const ContestPage = () => {
                                         <div className="empty-state-icon">
                                             <i className="bi bi-trophy"></i>
                                         </div>
-                                        <div className="empty-state-title">Nessun risultato disponibile</div>
-                                        <div className="empty-state-text">Non ci sono stati partecipanti a questo contest.</div>
+                                        <div className="empty-state-title">{t('contestPage.noResultsTitle')}</div>
+                                        <div className="empty-state-text">{t('contestPage.noResultsText')}</div>
                                     </div>
                                 )}
                             </div>
@@ -563,26 +565,26 @@ const ContestPage = () => {
                                     <div className="section-icon">
                                         <i className="bi bi-info-circle"></i>
                                     </div>
-                                    <h3 className="section-title">Dettagli Contest</h3>
+                                    <h3 className="section-title">{t('contestPage.contestDetails')}</h3>
                                 </div>
 
                                 <div className="row">
                                     <div className="col-md-6 mb-3">
-                                        <strong>Data Inizio:</strong><br />
+                                        <strong>{t('contestPage.startDate')}:</strong><br />
                                         {formatDate(contest.start_date)}
                                     </div>
                                     <div className="col-md-6 mb-3">
-                                        <strong>Data Fine:</strong><br />
+                                        <strong>{t('contestPage.endDate')}:</strong><br />
                                         {formatDate(contest.end_date)}
                                     </div>
                                     <div className="col-md-6 mb-3">
-                                        <strong>Categoria:</strong><br />
-                                        {contest.category || 'Generale'}
+                                        <strong>{t('contestPage.category')}:</strong><br />
+                                        {contest.category || t('contestPage.general')}
                                     </div>
                                     <div className="col-md-6 mb-3">
-                                        <strong>Status:</strong><br />
+                                        <strong>{t('contestPage.status')}:</strong><br />
                                         <span className={`badge bg-${status === 'active' ? 'success' : status === 'upcoming' ? 'warning' : 'secondary'}`}>
-                                            {status === 'active' ? 'Attivo' : status === 'upcoming' ? 'Prossimo' : 'Terminato'}
+                                            {status === 'active' ? t('contestPage.active') : status === 'upcoming' ? t('contestPage.next') : t('contestPage.ended')}
                                         </span>
                                     </div>
                                 </div>
@@ -596,7 +598,7 @@ const ContestPage = () => {
                             <div className="section-icon">
                                 <i className="bi bi-trophy"></i>
                             </div>
-                            <h3 className="section-title">Classifica</h3>
+                            <h3 className="section-title">{t('contestPage.ranking')}</h3>
                         </div>
 
                         {leaderboardLoading ? (
@@ -634,8 +636,8 @@ const ContestPage = () => {
                                 <div className="empty-state-icon">
                                     <i className="bi bi-trophy"></i>
                                 </div>
-                                <div className="empty-state-title">Nessun voto ancora</div>
-                                <div className="empty-state-text">La classifica apparirà quando inizieranno i voti!</div>
+                                <div className="empty-state-title">{t('contestPage.noVotesYet')}</div>
+                                <div className="empty-state-text">{t('contestPage.rankingWillAppear')}</div>
                             </div>
                         )}
                     </div>

@@ -2,8 +2,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ProfilePage.css';
 import { useAuthStore } from '../stores/authStore';
+import { useTranslation } from 'react-i18next';
 
 const ProfilePage = () => {
+    const { t } = useTranslation();
     const { user, token, updateUser, setAuth } = useAuthStore();
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
@@ -148,17 +150,17 @@ const ProfilePage = () => {
                         <div className="modal-dialog modal-dialog-centered" role="document">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Conferma rimozione avatar</h5>
+                                    <h5 className="modal-title">{t('confirm_remove_avatar_title')}</h5>
                                 </div>
                                 <div className="modal-body">
-                                    <p>Sei sicuro di voler rimuovere il tuo avatar? Questa azione è irreversibile.</p>
+                                    <p>{t('confirm_remove_avatar_message')}</p>
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" onClick={() => setShowConfirmModal(false)}>
-                                        Annulla
+                                        {t('cancel')}
                                     </button>
                                     <button type="button" className="btn btn-danger" onClick={() => { setShowConfirmModal(false); handleRemoveAvatar(); }}>
-                                        Rimuovi Avatar
+                                        {t('remove_avatar')}
                                     </button>
                                 </div>
                             </div>
@@ -169,7 +171,7 @@ const ProfilePage = () => {
             <div className="row justify-content-center">
                 <div className="col-md-8">
                     <div className="card p-4">
-                        <h1 className="h2 mb-4 text-center">Il mio Profilo</h1>
+                        <h1 className="h2 mb-4 text-center">{t('my_profile')}</h1>
                         <form onSubmit={handleSubmit} encType="multipart/form-data">
                             <div className="mb-4 text-center">
                                 <div className="avatar-wrapper mb-2">
@@ -198,7 +200,7 @@ const ProfilePage = () => {
                                     className="btn btn-outline-secondary btn-sm me-2"
                                     onClick={() => fileInputRef.current.click()}
                                 >
-                                    Cambia Avatar
+                                    {t('change_avatar')}
                                 </button>
                                 <button
                                     type="button"
@@ -206,11 +208,11 @@ const ProfilePage = () => {
                                     onClick={confirmRemoveAvatar}
                                     disabled={loading || !user?.avatar}
                                 >
-                                    Rimuovi Avatar
+                                    {t('remove_avatar')}
                                 </button>
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Nome</label>
+                                <label className="form-label">{t('name')}</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -222,7 +224,7 @@ const ProfilePage = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Email</label>
+                                <label className="form-label">{t('email')}</label>
                                 <input
                                     type="email"
                                     className="form-control"
@@ -234,21 +236,21 @@ const ProfilePage = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Telefono</label>
+                                <label className="form-label">{t('phone')}</label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     value={phone}
                                     onChange={e => setPhone(e.target.value)}
                                     maxLength={20}
-                                    placeholder="Aggiungi o modifica il numero"
+                                    placeholder={t('add_or_edit_phone')}
                                 />
                             </div>
-                            {success && <div className="alert alert-success">{success}</div>}
-                            {error && <div className="alert alert-danger">{error}</div>}
+                            {success && <div className="alert alert-success">{t(success)}</div>}
+                            {error && <div className="alert alert-danger">{t(error)}</div>}
                             <div className="d-grid">
                                 <button type="submit" className="btn btn-primary" disabled={loading}>
-                                    {loading ? 'Salvataggio...' : 'Salva Modifiche'}
+                                    {loading ? t('saving') : t('save_changes')}
                                 </button>
                             </div>
                         </form>

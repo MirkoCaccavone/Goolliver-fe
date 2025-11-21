@@ -1,8 +1,9 @@
 import React from 'react';
 import { useAuthStore } from '../stores/authStore';
+import { useTranslation } from 'react-i18next';
 
 const DashboardPage = () => {
-
+    const { t } = useTranslation();
     const { user } = useAuthStore();
     const [userPhotos, setUserPhotos] = React.useState([]);
     const [loadingPhotos, setLoadingPhotos] = React.useState(true);
@@ -40,7 +41,7 @@ const DashboardPage = () => {
                     if (contest.status === 'open' && contest.created_at) {
                         activityArr.push({
                             type: 'warning',
-                            message: `Nuovo contest disponibile: "${contest.title}"`,
+                            message: t('dashboard.newContestAvailable', { title: contest.title }),
                             time: contest.created_at
                         });
                     }
@@ -51,7 +52,7 @@ const DashboardPage = () => {
                     if (photo.moderation_status === 'approved') {
                         activityArr.push({
                             type: 'success',
-                            message: `La tua foto "${photo.title}" è stata approvata nel contest "${photo.contest?.title || photo.contest_id}"`,
+                            message: t('dashboard.photoApproved', { title: photo.title, contest: photo.contest?.title || photo.contest_id }),
                             time: photo.moderated_at || photo.updated_at
                         });
                     }
@@ -77,10 +78,10 @@ const DashboardPage = () => {
                     <div className="col-12">
                         <div className="mb-5">
                             <h1 className="display-4 fw-bold text-dark">
-                                Ciao, {user?.name}! 👋
+                                {t('hello')}, {user?.name}! 👋
                             </h1>
                             <p className="lead text-muted">
-                                Benvenuto nella tua dashboard. Qui puoi gestire i tuoi contest e le tue foto.
+                                {t('dashboard_welcome')}
                             </p>
                         </div>
 
@@ -95,7 +96,7 @@ const DashboardPage = () => {
                                         </div>
                                         <div>
                                             <h5 className="card-title h4 mb-0">{loadingStats ? '--' : userPhotos.length}</h5>
-                                            <p className="card-text text-muted small mb-0">Foto Caricate</p>
+                                            <p className="card-text text-muted small mb-0">{t('photos_uploaded')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -109,7 +110,7 @@ const DashboardPage = () => {
                                         </div>
                                         <div>
                                             <h5 className="card-title h4 mb-0">{loadingStats ? '--' : contestsWon}</h5>
-                                            <p className="card-text text-muted small mb-0">Contest Vinti</p>
+                                            <p className="card-text text-muted small mb-0">{t('contests_won')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -123,7 +124,7 @@ const DashboardPage = () => {
                                         </div>
                                         <div>
                                             <h5 className="card-title h4 mb-0">{loadingStats ? '--' : votesReceived}</h5>
-                                            <p className="card-text text-muted small mb-0">Voti Ricevuti</p>
+                                            <p className="card-text text-muted small mb-0">{t('votes_received')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -137,7 +138,7 @@ const DashboardPage = () => {
                                         </div>
                                         <div>
                                             <h5 className="card-title h4 mb-0">{loadingStats ? '--' : credits}</h5>
-                                            <p className="card-text text-muted small mb-0">Crediti Disponibili</p>
+                                            <p className="card-text text-muted small mb-0">{t('credits_available')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -147,23 +148,23 @@ const DashboardPage = () => {
                         {/* Stato Pagamento Foto Caricate */}
                         <div className="card mb-5">
                             <div className="card-header">
-                                <h5 className="card-title mb-0">Stato Pagamento Foto Caricate</h5>
+                                <h5 className="card-title mb-0">{t('photo_payment_status')}</h5>
                             </div>
                             <div className="card-body">
                                 {loadingPhotos ? (
-                                    <div className="text-muted">Caricamento foto...</div>
+                                    <div className="text-muted">{t('loading_photos')}</div>
                                 ) : userPhotos.length === 0 ? (
-                                    <div className="text-muted">Nessuna foto caricata.</div>
+                                    <div className="text-muted">{t('no_photos_uploaded')}</div>
                                 ) : (
                                     <div className="table-responsive">
                                         <table className="table table-bordered align-middle">
                                             <thead>
                                                 <tr>
-                                                    <th>Contest</th>
-                                                    <th>Titolo</th>
-                                                    <th>Stato Pagamento</th>
-                                                    <th>Data Pagamento</th>
-                                                    <th>Importo</th>
+                                                    <th>{t('contest')}</th>
+                                                    <th>{t('title')}</th>
+                                                    <th>{t('payment_status')}</th>
+                                                    <th>{t('payment_date')}</th>
+                                                    <th>{t('amount')}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -172,9 +173,9 @@ const DashboardPage = () => {
                                                         <td>{photo.contest?.title || photo.contest_id}</td>
                                                         <td>{photo.title}</td>
                                                         <td>
-                                                            {photo.payment_status === 'completed' && <span className="badge bg-success">Completato</span>}
-                                                            {photo.payment_status === 'pending' && <span className="badge bg-warning text-dark">In attesa</span>}
-                                                            {photo.payment_status === 'failed' && <span className="badge bg-danger">Fallito</span>}
+                                                            {photo.payment_status === 'completed' && <span className="badge bg-success">{t('completed')}</span>}
+                                                            {photo.payment_status === 'pending' && <span className="badge bg-warning text-dark">{t('pending')}</span>}
+                                                            {photo.payment_status === 'failed' && <span className="badge bg-danger">{t('failed')}</span>}
                                                             {!photo.payment_status && <span className="badge bg-secondary">N/A</span>}
                                                         </td>
                                                         <td>{photo.paid_at ? new Date(photo.paid_at).toLocaleString() : '-'}</td>
@@ -197,12 +198,12 @@ const DashboardPage = () => {
                                         <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style={{ width: '80px', height: '80px' }}>
                                             <i className="bi bi-plus-lg text-primary" style={{ fontSize: '2rem' }}></i>
                                         </div>
-                                        <h5 className="card-title">Carica Nuova Foto</h5>
+                                        <h5 className="card-title">{t('upload_new_photo')}</h5>
                                         <p className="card-text text-muted">
-                                            Partecipa ai contest attivi caricando le tue migliori foto
+                                            {t('upload_new_photo_desc')}
                                         </p>
                                         <a href="/upload" className="btn btn-primary">
-                                            Inizia Upload
+                                            {t('start_upload')}
                                         </a>
                                     </div>
                                 </div>
@@ -214,12 +215,12 @@ const DashboardPage = () => {
                                         <div className="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style={{ width: '80px', height: '80px' }}>
                                             <i className="bi bi-grid-3x3 text-success" style={{ fontSize: '2rem' }}></i>
                                         </div>
-                                        <h5 className="card-title">Esplora Contest</h5>
+                                        <h5 className="card-title">{t('explore_contests')}</h5>
                                         <p className="card-text text-muted">
-                                            Scopri i contest aperti e vota le foto che ti piacciono di più
+                                            {t('explore_contests_desc')}
                                         </p>
                                         <a href="/contests" className="btn btn-outline-success">
-                                            Vedi Contest
+                                            {t('see_contests')}
                                         </a>
                                     </div>
                                 </div>
@@ -231,12 +232,12 @@ const DashboardPage = () => {
                                         <div className="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style={{ width: '80px', height: '80px' }}>
                                             <i className="bi bi-person-circle text-info" style={{ fontSize: '2rem' }}></i>
                                         </div>
-                                        <h5 className="card-title">Le Mie Foto</h5>
+                                        <h5 className="card-title">{t('my_photos')}</h5>
                                         <p className="card-text text-muted">
-                                            Gestisci le tue foto caricate e monitora le performance
+                                            {t('my_photos_desc')}
                                         </p>
                                         <a href="/my-photos" className="btn btn-outline-info">
-                                            Vedi Galleria
+                                            {t('see_gallery')}
                                         </a>
                                     </div>
                                 </div>
@@ -247,13 +248,13 @@ const DashboardPage = () => {
                         {/* Recent Activity */}
                         <div className="card">
                             <div className="card-header">
-                                <h5 className="card-title mb-0">Attività Recente</h5>
+                                <h5 className="card-title mb-0">{t('recent_activity')}</h5>
                             </div>
                             <div className="card-body">
                                 {loadingStats ? (
-                                    <div className="text-muted">Caricamento attività...</div>
+                                    <div className="text-muted">{t('loading_activity')}</div>
                                 ) : recentActivity.length === 0 ? (
-                                    <div className="text-muted">Nessuna attività recente.</div>
+                                    <div className="text-muted">{t('no_recent_activity')}</div>
                                 ) : (
                                     recentActivity.map((act, idx) => (
                                         <div className={`activity-item`} key={idx}>

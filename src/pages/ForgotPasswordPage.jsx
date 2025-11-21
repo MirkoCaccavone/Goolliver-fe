@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../stores/authStore';
 
 const ForgotPasswordPage = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -27,10 +29,10 @@ const ForgotPasswordPage = () => {
                     setTestResetUrl(result.testResetUrl);
                 }
             } else {
-                setError(result.error || 'Errore durante la richiesta di reset');
+                setError(result.error || t('forgotPassword.errorRequest'));
             }
         } catch (err) {
-            setError('Errore di connessione. Riprova più tardi.');
+            setError(t('forgotPassword.connectionError'));
         } finally {
             setIsLoading(false);
         }
@@ -47,9 +49,9 @@ const ForgotPasswordPage = () => {
                                     <div className="forgot-password-logo logo-circle mx-auto mb-3" style={{ width: '64px', height: '64px', fontSize: '1.5rem' }}>
                                         <span>G</span>
                                     </div>
-                                    <h2 className="forgot-password-title h3 fw-bold text-dark">Password dimenticata?</h2>
+                                    <h2 className="forgot-password-title h3 fw-bold text-dark">{t('forgotPassword.title')}</h2>
                                     <p className="forgot-password-subtitle text-muted">
-                                        Inserisci la tua email e ti invieremo le istruzioni per reimpostare la password.
+                                        {t('forgotPassword.subtitle')}
                                     </p>
                                 </div>
 
@@ -71,15 +73,15 @@ const ForgotPasswordPage = () => {
                                         {testResetUrl && (
                                             <div className="alert alert-info">
                                                 <i className="bi bi-gear me-2"></i>
-                                                <strong>Link di test (solo sviluppo):</strong><br />
+                                                <strong>{t('forgotPassword.testLinkTitle')}</strong><br />
                                                 <a href={testResetUrl} className="btn btn-sm btn-outline-primary mt-2">
-                                                    Vai al reset password
+                                                    {t('forgotPassword.goToReset')}
                                                 </a>
                                             </div>
                                         )}
                                         <div className="text-center mt-3">
                                             <Link to="/login" className="btn btn-primary">
-                                                Torna al login
+                                                {t('forgotPassword.backToLogin')}
                                             </Link>
                                         </div>
                                     </div>
@@ -88,18 +90,18 @@ const ForgotPasswordPage = () => {
                                 {!success && (
                                     <form className="forgot-password-form" onSubmit={handleSubmit(onSubmit)}>
                                         <div className="forgot-password-field mb-3">
-                                            <label htmlFor="email" className="forgot-password-field-label form-label">Email</label>
+                                            <label htmlFor="email" className="forgot-password-field-label form-label">{t('forgotPassword.email')}</label>
                                             <input
                                                 {...register('email', {
-                                                    required: 'Email richiesta',
+                                                    required: t('forgotPassword.emailRequired'),
                                                     pattern: {
                                                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                                        message: 'Email non valida'
+                                                        message: t('forgotPassword.emailInvalid')
                                                     }
                                                 })}
                                                 type="email"
                                                 className={`forgot-password-field-input form-control ${errors.email ? 'forgot-password-field-input-error is-invalid' : ''}`}
-                                                placeholder="inserisci la tua email"
+                                                placeholder={t('forgotPassword.emailPlaceholder')}
                                                 autoFocus
                                             />
                                             {errors.email && (
@@ -115,12 +117,12 @@ const ForgotPasswordPage = () => {
                                             {isLoading ? (
                                                 <>
                                                     <div className="forgot-password-loading-spinner spinner-border spinner-border-sm me-2" role="status">
-                                                        <span className="visually-hidden">Loading...</span>
+                                                        <span className="visually-hidden">{t('forgotPassword.loading')}</span>
                                                     </div>
-                                                    Invio in corso...
+                                                    {t('forgotPassword.sending')}
                                                 </>
                                             ) : (
-                                                'Invia email di reset'
+                                                t('forgotPassword.sendResetEmail')
                                             )}
                                         </button>
                                     </form>
@@ -129,7 +131,7 @@ const ForgotPasswordPage = () => {
                                 <div className="text-center">
                                     <Link to="/login" className="forgot-password-back-link text-primary text-decoration-none">
                                         <i className="bi bi-arrow-left me-1"></i>
-                                        Torna al login
+                                        {t('forgotPassword.backToLogin')}
                                     </Link>
                                 </div>
                             </div>

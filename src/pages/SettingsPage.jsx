@@ -1,16 +1,101 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
 const SettingsPage = () => {
+    const [notifications, setNotifications] = React.useState(true);
+    const [privacy, setPrivacy] = React.useState('public');
+    const [theme, setTheme] = React.useState(localStorage.getItem('goolliver-theme') || 'light');
+    const [language, setLanguage] = React.useState(i18n.language || localStorage.getItem('language') || 'it');
+    const { t } = useTranslation();
+
+    React.useEffect(() => {
+        document.body.classList.remove('theme-light', 'theme-dark');
+        document.body.classList.add(`theme-${theme}`);
+        localStorage.setItem('goolliver-theme', theme);
+    }, [theme]);
+
+    React.useEffect(() => {
+        if (language !== i18n.language) {
+            i18n.changeLanguage(language);
+        }
+        localStorage.setItem('language', language);
+    }, [language]);
+
     return (
         <div className="settings-page container my-5">
-            <div className="row">
-                <div className="col-12">
-                    <div className="text-center">
-                        <h1 className="h2 mb-4">Impostazioni</h1>
-                        <div className="alert alert-info">
-                            <i className="bi bi-info-circle me-2"></i>
-                            Pagina impostazioni in sviluppo
+            <div className="row justify-content-center">
+                <div className="col-md-8">
+                    <div className="card p-4">
+                        <h1 className="h2 mb-4 text-center">{t('settings')}</h1>
+
+                        {/* Notifiche */}
+                        <div className="mb-4">
+                            <h5>{t('notifications')}</h5>
+                            <div className="form-check form-switch">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="notificationsSwitch"
+                                    checked={notifications}
+                                    onChange={e => setNotifications(e.target.checked)}
+                                />
+                                <label className="form-check-label" htmlFor="notificationsSwitch">
+                                    {t('Receive email notifications')}
+                                </label>
+                            </div>
                         </div>
+
+                        {/* Privacy */}
+                        <div className="mb-4">
+                            <h5>{t('privacy')}</h5>
+                            <select
+                                className="form-select"
+                                value={privacy}
+                                onChange={e => setPrivacy(e.target.value)}
+                            >
+                                <option value="public">{t('Public profile')}</option>
+                                <option value="private">{t('Private profile')}</option>
+                            </select>
+                        </div>
+
+                        {/* Tema */}
+                        <div className="mb-4">
+                            <h5>{t('theme')}</h5>
+                            <select
+                                className="form-select"
+                                value={theme}
+                                onChange={e => setTheme(e.target.value)}
+                            >
+                                <option value="light">{t('light')}</option>
+                                <option value="dark">{t('dark')}</option>
+                            </select>
+                        </div>
+
+                        {/* Lingua */}
+                        <div className="mb-4">
+                            <h5>{t('language')}</h5>
+                            <select
+                                className="form-select"
+                                value={language}
+                                onChange={e => setLanguage(e.target.value)}
+                            >
+                                <option value="it">Italiano</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+
+                        {/* Gestione account */}
+                        <div className="mb-4">
+                            <h5>{t('account')}</h5>
+                            <button className="btn btn-outline-danger" type="button">
+                                {t('Delete account')}
+                            </button>
+                            <button className="btn btn-outline-secondary ms-2" type="button">
+                                {t('Download your data')}
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>

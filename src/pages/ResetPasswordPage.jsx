@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../stores/authStore';
 
 const ResetPasswordPage = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -20,13 +22,13 @@ const ResetPasswordPage = () => {
 
     useEffect(() => {
         if (!email || !token) {
-            setError('Link non valido o scaduto. Richiedi un nuovo reset della password.');
+            setError(t('resetPassword.invalidLink')); // translation key
         }
-    }, [email, token]);
+    }, [email, token, t]);
 
     const onSubmit = async (data) => {
         if (!email || !token) {
-            setError('Link non valido o scaduto.');
+            setError(t('resetPassword.invalidLinkShort'));
             return;
         }
 
@@ -43,10 +45,10 @@ const ResetPasswordPage = () => {
                     navigate('/login');
                 }, 3000);
             } else {
-                setError(result.error || 'Errore durante il reset della password');
+                setError(result.error || t('resetPassword.resetError'));
             }
         } catch (err) {
-            setError('Errore di connessione. Riprova più tardi.');
+            setError(t('resetPassword.connectionError'));
         } finally {
             setIsLoading(false);
         }
@@ -63,9 +65,9 @@ const ResetPasswordPage = () => {
                                     <div className="reset-password-logo logo-circle mx-auto mb-3" style={{ width: '64px', height: '64px', fontSize: '1.5rem' }}>
                                         <span>G</span>
                                     </div>
-                                    <h2 className="reset-password-title h3 fw-bold text-dark">Imposta nuova password</h2>
+                                    <h2 className="reset-password-title h3 fw-bold text-dark">{t('resetPassword.title')}</h2>
                                     <p className="reset-password-subtitle text-muted">
-                                        Inserisci la tua nuova password per {email}
+                                        {t('resetPassword.subtitle', { email })}
                                     </p>
                                 </div>
 
@@ -75,10 +77,10 @@ const ResetPasswordPage = () => {
                                             <i className="reset-password-error-icon bi bi-exclamation-triangle-fill me-2"></i>
                                             <div className="reset-password-error-text">{error}</div>
                                         </div>
-                                        {error.includes('Link non valido') && (
+                                        {error.includes(t('resetPassword.invalidLinkShort')) && (
                                             <div className="text-center mt-3">
                                                 <Link to="/forgot-password" className="btn btn-primary">
-                                                    Richiedi nuovo reset
+                                                    {t('resetPassword.requestNewReset')}
                                                 </Link>
                                             </div>
                                         )}
@@ -93,7 +95,7 @@ const ResetPasswordPage = () => {
                                         </div>
                                         <div className="alert alert-info text-center">
                                             <i className="bi bi-info-circle me-2"></i>
-                                            Verrai reindirizzato alla pagina di login tra 3 secondi...
+                                            {t('resetPassword.redirectLoginInfo')}
                                         </div>
                                     </div>
                                 )}
@@ -101,18 +103,18 @@ const ResetPasswordPage = () => {
                                 {!success && email && token && (
                                     <form className="reset-password-form" onSubmit={handleSubmit(onSubmit)}>
                                         <div className="reset-password-field mb-3">
-                                            <label htmlFor="password" className="reset-password-field-label form-label">Nuova password</label>
+                                            <label htmlFor="password" className="reset-password-field-label form-label">{t('resetPassword.newPassword')}</label>
                                             <input
                                                 {...register('password', {
-                                                    required: 'Password richiesta',
+                                                    required: t('resetPassword.passwordRequired'),
                                                     minLength: {
                                                         value: 8,
-                                                        message: 'Password deve avere almeno 8 caratteri'
+                                                        message: t('resetPassword.passwordMinLength')
                                                     }
                                                 })}
                                                 type="password"
                                                 className={`reset-password-field-input form-control ${errors.password ? 'reset-password-field-input-error is-invalid' : ''}`}
-                                                placeholder="inserisci la nuova password"
+                                                placeholder={t('resetPassword.newPasswordPlaceholder')}
                                                 autoFocus
                                             />
                                             {errors.password && (
@@ -121,16 +123,16 @@ const ResetPasswordPage = () => {
                                         </div>
 
                                         <div className="reset-password-field mb-4">
-                                            <label htmlFor="password_confirmation" className="reset-password-field-label form-label">Conferma password</label>
+                                            <label htmlFor="password_confirmation" className="reset-password-field-label form-label">{t('resetPassword.confirmPassword')}</label>
                                             <input
                                                 {...register('password_confirmation', {
-                                                    required: 'Conferma password richiesta',
+                                                    required: t('resetPassword.confirmPasswordRequired'),
                                                     validate: value =>
-                                                        value === watchPassword || 'Le password non coincidono'
+                                                        value === watchPassword || t('resetPassword.passwordsDontMatch')
                                                 })}
                                                 type="password"
                                                 className={`reset-password-field-input form-control ${errors.password_confirmation ? 'reset-password-field-input-error is-invalid' : ''}`}
-                                                placeholder="conferma la nuova password"
+                                                placeholder={t('resetPassword.confirmPasswordPlaceholder')}
                                             />
                                             {errors.password_confirmation && (
                                                 <div className="reset-password-field-error invalid-feedback">{errors.password_confirmation.message}</div>
@@ -145,12 +147,12 @@ const ResetPasswordPage = () => {
                                             {isLoading ? (
                                                 <>
                                                     <div className="reset-password-loading-spinner spinner-border spinner-border-sm me-2" role="status">
-                                                        <span className="visually-hidden">Loading...</span>
+                                                        <span className="visually-hidden">{t('resetPassword.loading')}</span>
                                                     </div>
-                                                    Aggiornamento in corso...
+                                                    {t('resetPassword.updating')}
                                                 </>
                                             ) : (
-                                                'Aggiorna password'
+                                                t('resetPassword.updatePassword')
                                             )}
                                         </button>
                                     </form>
@@ -159,7 +161,7 @@ const ResetPasswordPage = () => {
                                 <div className="text-center">
                                     <Link to="/login" className="reset-password-back-link text-primary text-decoration-none">
                                         <i className="bi bi-arrow-left me-1"></i>
-                                        Torna al login
+                                        {t('resetPassword.backToLogin')}
                                     </Link>
                                 </div>
                             </div>

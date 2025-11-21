@@ -1,0 +1,89 @@
+/* SettingsPage.css: tema chiaro/scuro base */
+
+body.theme-light {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+
+body.theme-dark {
+    background-color: #181a1b;
+    color: #f8f9fa;
+}
+
+body.theme-dark .card,
+.settings-page .card.theme-dark {
+    background-color: #23272b;
+    color: #f8f9fa;
+    border-color: #343a40;
+}
+
+body.theme-dark .form-control,
+.settings-page .form-control.theme-dark {
+    background-color: #23272b;
+    color: #f8f9fa;
+    border-color: #343a40;
+}
+
+body.theme-dark .form-select,
+.settings-page .form-select.theme-dark {
+    background-color: #23272b;
+    color: #f8f9fa;
+    border-color: #343a40;
+}
+
+body.theme-dark .form-check-input {
+    background-color: #23272b;
+    border-color: #343a40;
+}
+
+body.theme-dark .btn,
+.settings-page .btn.theme-dark {
+    background-color: #343a40;
+    color: #f8f9fa;
+    border-color: #23272b;
+}
+
+body.theme-dark .btn-outline-danger {
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+body.theme-dark .btn-outline-secondary {
+    color: #adb5bd;
+    border-color: #adb5bd;
+}
+
+body.theme-dark .alert {
+    background-color: #23272b;
+    color: #f8f9fa;
+    border-color: #343a40;
+}
+
+body.theme-dark hr,
+.settings-page hr.theme-dark {
+    border-top: 1px solid #343a40;
+}
+
+body.theme-dark .navbar-main {
+    background-color: #23272b !important;
+    color: #f8f9fa !important;
+    border-bottom: 1px solid #343a40;
+}
+
+body.theme-dark .navbar-link,
+body.theme-dark .navbar-user-name {
+    color: #f8f9fa !important;
+}
+
+body.theme-dark .logo-circle {
+    background-color: #343a40 !important;
+    color: #f8f9fa !important;
+}
+
+.settings-page .card {
+    background-color: inherit;
+    color: inherit;
+}
+
+/* Puoi aggiungere altri stili per componenti, navbar, ecc. */
