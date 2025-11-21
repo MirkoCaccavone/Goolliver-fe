@@ -1,8 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AdminCreateContestButton from '../components/AdminCreateContestButton';
 
 const AdminPage = () => {
     const { t } = useTranslation();
+    // Funzione placeholder per la creazione contest
+    const handleCreateContest = () => {
+        alert('Azione: crea contest (da implementare)');
+        // Qui puoi aprire una modale o fare redirect
+    };
+
     return (
         <div className="min-vh-100 bg-light">
             <div className="container py-5">
@@ -15,6 +22,10 @@ const AdminPage = () => {
                                 <p className="text-muted mb-4">
                                     {t('adminPage.subtitle')}
                                 </p>
+                                {/* Bottone crea contest */}
+                                <div className="mb-3">
+                                    <AdminCreateContestButton onClick={handleCreateContest} />
+                                </div>
                                 <div className="alert alert-warning d-inline-block">
                                     {t('adminPage.comingSoon')}
                                 </div>
