@@ -98,7 +98,7 @@ export const paymentAPI = {
 };
 
 export const adminAPI = {
-    getDashboard: () => api.get('/admin/dashboard'),
+    getDashboard: (days = 30) => api.get('/admin/dashboard', { params: { days } }),
     getUsers: () => api.get('/admin/users'),
     getUserDetail: (userId) => api.get(`/admin/users/${userId}`),
     updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role`, { role }),
@@ -112,6 +112,8 @@ export const adminAPI = {
     getContests: () => api.get('/admin/contests'),
     getContestDetails: (contestId) => api.get(`/admin/contests/${contestId}/details`),
     getCreditAnalytics: () => api.get('/admin/credits/analytics'),
+    getSystemStatus: () => api.get('/admin/system-status'),
+    sendTestEmail: () => api.post('/admin/send-test-email'),
 };
 
 export default api;
