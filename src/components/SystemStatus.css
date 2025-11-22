@@ -1,0 +1,84 @@
+.system-status-box {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    padding: 18px 20px 10px 20px;
+    margin-bottom: 18px;
+}
+
+.system-status-box h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.08rem;
+    color: #333;
+}
+
+.system-status-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+}
+
+.system-status-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.98rem;
+    min-width: 180px;
+}
+
+.system-status-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 2px;
+    border: 1.5px solid #e0e0e0;
+}
+
+.system-status-label {
+    font-weight: 500;
+    color: #222;
+}
+
+.system-status-message {
+    color: #555;
+}
+
+.system-status-percent {
+    color: #888;
+    font-size: 0.93em;
+    margin-left: 4px;
+}
+
+.system-notifications {
+    margin-bottom: 18px;
+}
+
+.system-notification {
+    padding: 8px 14px;
+    border-radius: 7px;
+    margin-bottom: 7px;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.system-notification.danger {
+    background: #ffeaea;
+    color: #c82333;
+    border: 1px solid #f5c6cb;
+}
+
+.system-notification.warning {
+    background: #fffbe6;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.system-notification.info {
+    background: #eaf4ff;
+    color: #0056b3;
+    border: 1px solid #b8daff;
+}
