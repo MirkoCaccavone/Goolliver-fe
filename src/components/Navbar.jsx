@@ -58,7 +58,17 @@ const Navbar = () => {
                     <div className="navbar-nav-items navbar-nav ms-auto">
                         {isAuthenticated ? (
                             <>
-                                {/* Link dashboard rimosso per admin */}
+
+                                {/* Link dashboard classica per tutti tranne admin */}
+                                {user?.role !== 'admin' && (
+                                    <Link
+                                        to="/dashboard"
+                                        className={getLinkClass('/dashboard', 'navbar-link nav-link text-secondary me-3')}
+                                    >
+                                        <i className="bi bi-speedometer2 me-1"></i>
+                                        Dashboard
+                                    </Link>
+                                )}
 
                                 <Link
                                     to="/contests"

@@ -1,4 +1,7 @@
+import AdminCreditsPage from './pages/AdminCreditsPage';
+// ...existing code...
 import AdminUsersPage from './pages/AdminUsersPage';
+import AdminUserDetailPage from './pages/AdminUserDetailPage';
 import React, { useEffect, useState } from 'react';
 import i18n from './i18n';
 import './pages/SettingsPage.css';
@@ -104,7 +107,15 @@ function App() {
               <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
               {/* Protected routes */}
-              {/* DashboardPage rimossa per admin: solo dashboard admin */}
+              {/* DashboardPage per tutti gli utenti autenticati tranne admin */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/contests"
                 element={
@@ -155,11 +166,21 @@ function App() {
                 }
               />
 
+
               <Route
                 path="/admin-dashboard"
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/credits"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminCreditsPage />
                   </ProtectedRoute>
                 }
               />
@@ -187,6 +208,15 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <AdminUsersPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/users/:id"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminUserDetailPage />
                   </ProtectedRoute>
                 }
               />

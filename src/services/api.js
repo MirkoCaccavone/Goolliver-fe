@@ -100,8 +100,10 @@ export const paymentAPI = {
 export const adminAPI = {
     getDashboard: () => api.get('/admin/dashboard'),
     getUsers: () => api.get('/admin/users'),
+    getUserDetail: (userId) => api.get(`/admin/users/${userId}`),
     updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role`, { role }),
     toggleUserStatus: (userId) => api.patch(`/admin/users/${userId}/status`),
+    deleteUser: (userId) => api.delete(`/admin/users/${userId}`),
     getModeration: () => api.get('/admin/moderation/entries'),
     moderateEntry: (entryId, action, reason) => api.patch(`/admin/moderation/entries/${entryId}/moderate`, {
         action,

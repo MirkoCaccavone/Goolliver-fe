@@ -73,9 +73,10 @@ const AdminDashboard = () => {
                             <h2>Foto in moderazione</h2>
                             <div className="admin-dashboard-value">{dashboard.stats?.entries?.pending ?? '-'}</div>
                         </div>
-                        <div className="admin-dashboard-widget">
+                        <div className="admin-dashboard-widget" style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/credits')}>
                             <h2>Crediti distribuiti</h2>
                             <div className="admin-dashboard-value">{dashboard.stats?.credits?.total_credits_distributed ?? '-'}</div>
+                            <div style={{ fontSize: '0.9em', color: '#007bff', marginTop: '0.5rem' }}>Clicca per vedere i crediti</div>
                         </div>
                     </div>
                 </>
