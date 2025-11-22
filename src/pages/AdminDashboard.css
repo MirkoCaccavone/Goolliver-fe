@@ -1,3 +1,120 @@
+.admin-dashboard-event-filters {
+    margin-bottom: 1rem;
+}
+
+.admin-dashboard-event-filters button {
+    background: #f1f3f6;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4em 1.1em;
+    font-size: 1em;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    margin-right: 0.3em;
+}
+
+.admin-dashboard-event-filters button.active,
+.admin-dashboard-event-filters button:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.admin-dashboard-events-list {
+    scrollbar-width: thin;
+    scrollbar-color: #007bff #e9ecef;
+}
+
+.admin-dashboard-events-list::-webkit-scrollbar {
+    width: 7px;
+    background: #e9ecef;
+    border-radius: 8px;
+}
+
+.admin-dashboard-events-list::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 8px;
+}
+
+.admin-dashboard-latest-events {
+    margin-top: 2.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+}
+
+.admin-dashboard-latest-events h2 {
+    margin-bottom: 1.2rem;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.admin-dashboard-events-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-dashboard-event-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.7rem;
+    transition: box-shadow 0.2s;
+    border-left: 4px solid #e9ecef;
+}
+
+.admin-dashboard-event-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: #f1f3f6;
+}
+
+.event-type {
+    font-weight: bold;
+    font-size: 0.98em;
+    min-width: 70px;
+    text-align: center;
+    border-radius: 6px;
+    padding: 0.2em 0.7em;
+    color: #fff;
+    background: #6c757d;
+}
+
+.event-type.user {
+    background: #007bff;
+}
+
+.event-type.contest {
+    background: #28a745;
+}
+
+.event-type.entry {
+    background: #ffc107;
+    color: #333;
+}
+
+.event-type.credit {
+    background: #17a2b8;
+}
+
+.event-desc {
+    flex: 1;
+    font-size: 1.04em;
+    color: #222;
+}
+
+.event-date {
+    font-size: 0.93em;
+    color: #888;
+    min-width: 120px;
+    text-align: right;
+}
+
 .admin-dashboard-wrapper {
     padding: 2rem;
     max-width: 900px;
