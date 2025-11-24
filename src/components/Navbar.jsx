@@ -40,7 +40,7 @@ const Navbar = () => {
                     <div className="navbar-logo logo-circle me-2">
                         <span>G</span>
                     </div>
-                    <span className="navbar-brand-text fw-bold fs-4 text-dark">Goolliver</span>
+                    <span className="navbar-brand-text fw-bold fs-4 text-dark">Goolly</span>
                 </Link>
 
                 {/* Mobile toggle button */}

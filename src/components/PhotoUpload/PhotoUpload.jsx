@@ -1,3 +1,4 @@
+// ...existing code...
 import React, { useState, useRef, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -11,6 +12,78 @@ import { useNavigate } from 'react-router-dom';
 import './PhotoUpload.css';
 
 const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
+    // Utility: crea FormData per upload foto
+    const buildPhotoFormData = (extra = {}) => {
+        const formData = new FormData();
+        formData.append('photo', selectedFile);
+        formData.append('contest_id', contest.id);
+        formData.append('title', photoData.title);
+        formData.append('description', photoData.description);
+        formData.append('location', photoData.location);
+        formData.append('camera_model', photoData.camera_model);
+        formData.append('settings', photoData.settings);
+        Object.entries(extra).forEach(([k, v]) => formData.append(k, v));
+        return formData;
+    };
+
+    // Utility: invalidazione query
+    const invalidateAllContestQueries = () => {
+        queryClient.invalidateQueries({ queryKey: ['user-photos'] });
+        queryClient.invalidateQueries({ queryKey: ['contest-entries', contest.id] });
+        queryClient.invalidateQueries({ queryKey: ['contest', contest.id] });
+        queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
+        queryClient.invalidateQueries({ queryKey: ['userCredits'] });
+    };
+
+    // Utility: reset stato locale
+    const resetLocalState = () => {
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setUploadState('idle');
+        setUploadProgress(0);
+        setModerationResult(null);
+        setErrorMessage('');
+        setPhotoData({
+            title: '',
+            description: '',
+            location: '',
+            camera_model: '',
+            settings: ''
+        });
+    };
+
+    // Componenti interni per bottone crediti e conferma pagamento
+    const UseCreditsButton = ({ onClick }) => (
+        <button
+            className="upload-action-button action-secondary"
+            onClick={onClick}
+        >
+            <i className="bi bi-coin"></i> Usa credit{userCredits > 1 ? 'i' : 'o'}
+        </button>
+    );
+
+    const CreditPaymentConfirm = ({ onConfirm, onCancel, credits, discount, finalAmount }) => (
+        <div className="payment-credit-confirm">
+            <h3>Conferma pagamento con crediti</h3>
+            <p>
+                Vuoi usare <strong>{credits} credito{credits !== 1 ? 'i' : ''}</strong> per uno sconto di <strong>€{discount}</strong>?<br />
+                Pagherai <strong>€{finalAmount}</strong> invece di €{entryFee}.
+            </p>
+            <button className="upload-action-button action-primary" onClick={onConfirm}>
+                Conferma e usa {credits} credito{credits !== 1 ? 'i' : ''}
+            </button>
+            <button className="upload-action-button action-secondary" onClick={onCancel}>
+                Annulla
+            </button>
+        </div>
+    );
+    // ...existing code...
+
+    // Funzione helper per creare una entry (deve essere dentro il componente per accedere a selectedFile, contest, photoData)
+    const createEntry = async () => {
+        const formData = buildPhotoFormData({ payment_status: 'pending' });
+        return await photoAPI.upload(formData);
+    };
     const { token, user } = useAuthStore();
     // Query crediti utente
     const { data: creditsData } = useQuery({
@@ -18,8 +91,14 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         queryFn: photoAPI.getUserCredits,
         enabled: !!user
     });
-    const userCredits = creditsData?.data?.photo_credits ?? creditsData?.data?.credits ?? 0;
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null); // 'card' | 'credit'
+    const userCredits = creditsData?.data?.photo_credits ?? 0;
+    const creditValue = 0.2;
+    const maxUsableCredits = Math.min(userCredits, 10);
+    const creditEuroValue = (userCredits * creditValue).toFixed(2);
+    const maxDiscount = (maxUsableCredits * creditValue).toFixed(2);
+    const entryFee = contest?.entry_fee || 2.0;
+    const finalAmount = (entryFee - maxDiscount > 0 ? (entryFee - maxDiscount) : 0).toFixed(2);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null); // 'card' | 'credit' | 'mixed'
     const queryClient = useQueryClient();
     const [uploadState, setUploadState] = useState('idle');
     const [paymentEntryId, setPaymentEntryId] = useState(null);
@@ -236,6 +315,10 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
 
     // Gestisce l'invio del form - solo moderazione AI
     const handleSubmit = useCallback(async () => {
+        if (selectedPaymentMethod === 'mixed') {
+            // In modalità pagamento misto, la submit viene gestita dal PaymentForm
+            return;
+        }
         if (!selectedFile) {
             setErrorMessage('Seleziona una foto prima di procedere.');
             return;
@@ -258,14 +341,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         setUploadProgress(0);
         setErrorMessage('');
 
-        const formData = new FormData();
-        formData.append('photo', selectedFile);
-        formData.append('contest_id', contest.id);
-        formData.append('title', photoData.title);
-        formData.append('description', photoData.description);
-        formData.append('location', photoData.location);
-        formData.append('camera_model', photoData.camera_model);
-        formData.append('settings', photoData.settings);
+        const formData = buildPhotoFormData();
 
         // Simulate moderation delay
         setTimeout(() => {
@@ -275,23 +351,11 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         }, 2000);
 
         uploadMutation.mutate(formData);
-    }, [selectedFile, photoData, contest.id, uploadState, uploadMutation]);
+    }, [selectedFile, photoData, contest.id, uploadState, uploadMutation, selectedPaymentMethod]);
 
     // Gestisce il reset
     const handleReset = useCallback(() => {
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        setUploadState('idle');
-        setUploadProgress(0);
-        setModerationResult(null);
-        setErrorMessage('');
-        setPhotoData({
-            title: '',
-            description: '',
-            location: '',
-            camera_model: '',
-            settings: ''
-        });
+        resetLocalState();
     }, []);
 
     // Gestisce il reset per caricare un'altra foto (elimina Entry e resetta tutto)
@@ -309,24 +373,10 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         }
 
         // Resetta lo stato locale
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        setUploadState('idle');
-        setUploadProgress(0);
-        setModerationResult(null);
-        setErrorMessage('');
-        setPhotoData({
-            title: '',
-            description: '',
-            location: '',
-            camera_model: '',
-            settings: ''
-        });
+        resetLocalState();
 
         // Invalida le query per resettare lo stato di partecipazione
-        queryClient.invalidateQueries({ queryKey: ['user-photos'] });
-        queryClient.invalidateQueries({ queryKey: ['contest-entries', contest?.id] });
-        queryClient.invalidateQueries({ queryKey: ['contest-participation', contest?.id] });
+        invalidateAllContestQueries();
 
         console.log('🔄 Reset completo per nuovo upload - Entry eliminata e cache invalidata');
     }, [moderationResult, queryClient, contest?.id]);
@@ -338,23 +388,14 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
 
     // Gestisce il successo del pagamento
     const handlePaymentSuccess = useCallback(async (paymentData) => {
+        // Calcola creditsToUse in base a paymentData
+        const creditsToUse = typeof paymentData.creditsToUse === 'number' ? paymentData.creditsToUse : (typeof paymentData.creditsToUse === 'string' ? parseInt(paymentData.creditsToUse, 10) : 0);
         try {
             let entryId = paymentEntryId;
             let entryResponse = null;
             // Se non abbiamo già una entry, creala
             if (!entryId) {
-                const formData = new FormData();
-                formData.append('photo', selectedFile);
-                formData.append('contest_id', contest.id);
-                formData.append('title', photoData.title);
-                formData.append('description', photoData.description);
-                formData.append('location', photoData.location);
-                formData.append('camera_model', photoData.camera_model);
-                formData.append('settings', photoData.settings);
-                // payment_status: 'pending' (verrà aggiornato dopo il pagamento)
-                formData.append('payment_status', 'pending');
-                entryResponse = await photoAPI.upload(formData);
-                console.log('[UPLOAD] Risposta photoAPI.upload:', entryResponse);
+                entryResponse = await createEntry();
                 entryId = entryResponse.data?.entry?.id || entryResponse.data?.id;
                 if (!entryId) {
                     console.error('[UPLOAD] Entry ID non trovato:', entryResponse);
@@ -367,7 +408,8 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
             const paymentPayload = {
                 entry_id: entryId,
                 payment_method_id: paymentData.paymentMethodId, // deve essere fornito dal PaymentForm
-                amount: contest.entry_fee || 0
+                amount: paymentData.amount,
+                creditsToUse: creditsToUse > 0 ? creditsToUse : undefined
             };
             const paymentResult = await paymentAPI.processPayment(paymentPayload);
             console.log('[PAGAMENTO] Risposta paymentAPI.processPayment:', paymentResult);
@@ -378,10 +420,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
 
             // 3. Successo: aggiorna stato e mostra conferma
             setUploadState('completed');
-            queryClient.invalidateQueries({ queryKey: ['user-photos'] });
-            queryClient.invalidateQueries({ queryKey: ['contest-entries', contest.id] });
-            queryClient.invalidateQueries({ queryKey: ['contest', contest.id] });
-            queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
+            invalidateAllContestQueries();
             if (onUploadSuccess) {
                 // Se abbiamo appena creato la entry, usiamo quella, altrimenti fetch locale
                 onUploadSuccess({
@@ -420,9 +459,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         // Mostra Toast di errore
         showToast(`Errore nel pagamento: ${error}`, 'error', 4000);
         // Invalida e refetcha le query per aggiornare lo stato locale
-        queryClient.invalidateQueries({ queryKey: ['user-photos'] });
-        queryClient.invalidateQueries({ queryKey: ['contest-entries', contest.id] });
-        queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
+        invalidateAllContestQueries();
         queryClient.refetchQueries({ queryKey: ['user-photos'] });
         queryClient.refetchQueries({ queryKey: ['contest-entries', contest.id] });
         queryClient.refetchQueries({ queryKey: ['contest-participation', contest.id] });
@@ -433,16 +470,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
         });
 
         // Resetta lo stato locale per permettere nuovo upload
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        setModerationResult(null);
-        setPhotoData({
-            title: '',
-            description: '',
-            location: '',
-            camera_model: '',
-            settings: ''
-        });
+        resetLocalState();
     }, [moderationResult, queryClient, contest.id]);
 
     const handlePaymentCancel = useCallback(() => {
@@ -811,17 +839,24 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                                     <i className="bi bi-credit-card"></i> Carta di credito
                                 </button>
                                 {userCredits > 0 && (
-                                    <button
-                                        className="upload-action-button action-secondary"
-                                        onClick={() => setSelectedPaymentMethod('credit')}
-                                    >
-                                        <i className="bi bi-coin"></i> Usa credit{userCredits > 1 ? 'i' : 'o'}
-                                    </button>
+                                    <UseCreditsButton onClick={() => {
+                                        if (userCredits < 10) {
+                                            setSelectedPaymentMethod('mixed');
+                                            setShowPaymentForm(true);
+                                            setUploadState('pending_review');
+                                        } else {
+                                            setSelectedPaymentMethod('credit');
+                                        }
+                                    }} />
                                 )}
                             </div>
                             <div className="payment-info">
-                                <span>Crediti disponibili: <strong>{userCredits}</strong></span>
-                                <span> Costo partecipazione: <strong>€{contest.entry_fee || 0}</strong></span>
+                                <span>Crediti disponibili: <strong>{userCredits}</strong> (valore: €{creditEuroValue})</span>
+                                <span> Costo partecipazione: <strong>€{entryFee}</strong></span>
+                                {userCredits > 0 && (
+                                    <span>Sconto massimo: <strong>€{maxDiscount}</strong> ({maxUsableCredits} crediti)</span>
+                                )}
+                                <span>Importo da pagare: <strong>€{finalAmount}</strong></span>
                             </div>
                         </div>
                     )}
@@ -841,7 +876,10 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                     {selectedPaymentMethod === 'credit' && (
                         <div className="payment-credit-confirm">
                             <h3>Conferma pagamento con crediti</h3>
-                            <p>Vuoi usare <strong>1 credito</strong> per partecipare?</p>
+                            <p>
+                                Vuoi usare <strong>{maxUsableCredits} credito{maxUsableCredits !== 1 ? 'i' : ''}</strong> per uno sconto di <strong>€{maxDiscount}</strong>?<br />
+                                Pagherai <strong>€{finalAmount}</strong> invece di €{entryFee}.
+                            </p>
                             <button
                                 className="upload-action-button action-primary"
                                 onClick={async () => {
@@ -855,7 +893,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                                         formData.append('camera_model', photoData.camera_model);
                                         formData.append('settings', photoData.settings);
                                         formData.append('payment_method', 'credit');
-                                        // La logica backend scala il credito e crea la entry
+                                        // La logica backend scala i crediti e crea la entry
                                         const response = await photoAPI.upload(formData);
                                         setUploadState('completed');
                                         queryClient.invalidateQueries({ queryKey: ['user-photos'] });
@@ -884,7 +922,7 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                                     }
                                 }}
                             >
-                                Conferma e usa 1 credito
+                                Conferma e usa {maxUsableCredits} credito{maxUsableCredits !== 1 ? 'i' : ''}
                             </button>
                             <button
                                 className="upload-action-button action-secondary"
@@ -983,15 +1021,26 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                                 {userCredits > 0 && (
                                     <button
                                         className="upload-action-button action-secondary"
-                                        onClick={() => setSelectedPaymentMethod('credit')}
+                                        onClick={() => {
+                                            if (userCredits < 10) {
+                                                setSelectedPaymentMethod('mixed');
+                                                setShowPaymentForm(true);
+                                            } else {
+                                                setSelectedPaymentMethod('credit');
+                                            }
+                                        }}
                                     >
                                         <i className="bi bi-coin"></i> Usa credit{userCredits > 1 ? 'i' : 'o'}
                                     </button>
                                 )}
                             </div>
                             <div className="payment-info">
-                                <span>Crediti disponibili: <strong>{userCredits}</strong></span>
-                                <span> Costo partecipazione: <strong>€{contest.entry_fee || 0}</strong></span>
+                                <span>Crediti disponibili: <strong>{userCredits}</strong> (valore: €{creditEuroValue})</span>
+                                <span> Costo partecipazione: <strong>€{entryFee}</strong></span>
+                                {userCredits > 0 && (
+                                    <span>Sconto massimo: <strong>€{maxDiscount}</strong> ({maxUsableCredits} crediti)</span>
+                                )}
+                                <span>Importo da pagare: <strong>€{finalAmount}</strong></span>
                             </div>
                         </div>
                     )}
@@ -1008,60 +1057,52 @@ const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
                         </Elements>
                     )}
                     {/* Pagamento con crediti */}
-                    {selectedPaymentMethod === 'credit' && (
-                        <div className="payment-credit-confirm">
-                            <h3>Conferma pagamento con crediti</h3>
-                            <p>Vuoi usare <strong>1 credito</strong> per partecipare?</p>
-                            <button
-                                className="upload-action-button action-primary"
-                                onClick={async () => {
-                                    try {
-                                        const formData = new FormData();
-                                        formData.append('photo', selectedFile);
-                                        formData.append('contest_id', contest.id);
-                                        formData.append('title', photoData.title);
-                                        formData.append('description', photoData.description);
-                                        formData.append('location', photoData.location);
-                                        formData.append('camera_model', photoData.camera_model);
-                                        formData.append('settings', photoData.settings);
-                                        formData.append('payment_method', 'credit');
-                                        // La logica backend scala il credito e crea la entry
-                                        const response = await photoAPI.upload(formData);
-                                        setUploadState('completed');
-                                        queryClient.invalidateQueries({ queryKey: ['user-photos'] });
-                                        queryClient.invalidateQueries({ queryKey: ['contest-entries', contest.id] });
-                                        queryClient.invalidateQueries({ queryKey: ['contest', contest.id] });
-                                        queryClient.invalidateQueries({ queryKey: ['contest-participation', contest.id] });
-                                        if (onUploadSuccess) {
-                                            onUploadSuccess({
-                                                ...(response?.entry || {}),
-                                                contest_id: contest.id,
-                                                ...photoData,
-                                                payment: response?.payment
-                                            });
-                                        }
-                                        showToast('Pagamento con crediti completato!', 'success', 4000);
-                                        setTimeout(() => {
-                                            navigate(`/contest/${contest.id}`);
-                                        }, 2500);
-                                    } catch (error) {
-                                        setPaymentEntryId(null);
-                                        showToast(error?.message || 'Errore pagamento crediti', 'error', 6000);
-                                        setErrorMessage(error?.message || 'Errore pagamento crediti');
-                                        setUploadState('payment');
-                                        setSelectedPaymentMethod(null);
+                    {selectedPaymentMethod === 'credit' && userCredits >= 10 && (
+                        <CreditPaymentConfirm
+                            onConfirm={async () => {
+                                try {
+                                    const formData = buildPhotoFormData({ payment_method: 'credit' });
+                                    const response = await photoAPI.upload(formData);
+                                    setUploadState('completed');
+                                    invalidateAllContestQueries();
+                                    if (onUploadSuccess) {
+                                        onUploadSuccess({
+                                            ...(response?.entry || {}),
+                                            contest_id: contest.id,
+                                            ...photoData,
+                                            payment: response?.payment
+                                        });
                                     }
-                                }}
-                            >
-                                Conferma e usa 1 credito
-                            </button>
-                            <button
-                                className="upload-action-button action-secondary"
-                                onClick={() => setSelectedPaymentMethod(null)}
-                            >
-                                Annulla
-                            </button>
-                        </div>
+                                    showToast('Pagamento con crediti completato!', 'success', 4000);
+                                    setTimeout(() => {
+                                        navigate(`/contest/${contest.id}`);
+                                    }, 2500);
+                                } catch (error) {
+                                    setPaymentEntryId(null);
+                                    showToast(error?.message || 'Errore pagamento crediti', 'error', 6000);
+                                    setErrorMessage(error?.message || 'Errore pagamento crediti');
+                                    setUploadState('payment');
+                                    setSelectedPaymentMethod(null);
+                                }
+                            }}
+                            onCancel={() => setSelectedPaymentMethod(null)}
+                            credits={10}
+                            discount={(10 * creditValue).toFixed(2)}
+                            finalAmount={0}
+                        />
+                    )}
+                    {/* Pagamento misto: crediti tra 1 e 9, mostra form carta con sconto */}
+                    {selectedPaymentMethod === 'mixed' && userCredits > 0 && userCredits < 10 && showPaymentForm && (
+                        <Elements stripe={stripePromise}>
+                            <PaymentForm
+                                amount={parseFloat(finalAmount)}
+                                currency="EUR"
+                                creditsToUse={userCredits}
+                                onSuccess={(data) => handlePaymentSuccess({ ...data, creditsToUse: userCredits })}
+                                onError={handlePaymentError}
+                                onCancel={() => { setSelectedPaymentMethod(null); setShowPaymentForm(false); }}
+                            />
+                        </Elements>
                     )}
                 </div>
             )}

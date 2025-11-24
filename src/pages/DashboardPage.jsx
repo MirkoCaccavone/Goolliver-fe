@@ -12,6 +12,8 @@ const DashboardPage = () => {
     const [votesReceived, setVotesReceived] = React.useState(0);
     const [loadingStats, setLoadingStats] = React.useState(true);
     const [recentActivity, setRecentActivity] = React.useState([]);
+    const creditValue = 0.2;
+    const creditEuroValue = (credits * creditValue).toFixed(2);
 
     React.useEffect(() => {
         setLoadingPhotos(true);
@@ -137,7 +139,7 @@ const DashboardPage = () => {
                                             <i className="bi bi-coin text-info" style={{ fontSize: '1.5rem' }}></i>
                                         </div>
                                         <div>
-                                            <h5 className="card-title h4 mb-0">{loadingStats ? '--' : credits}</h5>
+                                            <h5 className="card-title h4 mb-0">{loadingStats ? '--' : credits} <span className="text-secondary" style={{ fontSize: '1rem' }}>({loadingStats ? '--' : `€${creditEuroValue}`})</span></h5>
                                             <p className="card-text text-muted small mb-0">{t('credits_available')}</p>
                                         </div>
                                     </div>
