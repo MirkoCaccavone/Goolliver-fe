@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { contestAPI } from '../services/api';
+import { photoAPI } from '../services/api';
 
 const heroImages = [
     'public/Screenshot-(244).png',
@@ -11,8 +11,8 @@ function generateRandomPositions(count) {
     let attempts = 0;
     const minDist = 8;
     while (positions.length < count && attempts < 3000) {
-        const top = Math.random() * 90 + 10;
-        const left = Math.random() * 90 + 10;
+        const top = Math.random() * 60 + 10;
+        const left = Math.random() * 70 + 10;
         if (positions.every(pos => Math.abs(pos.top - top) > minDist && Math.abs(pos.left - left) > minDist)) {
             positions.push({ top, left });
         }
@@ -34,30 +34,14 @@ const JumboHero = () => {
 
     useEffect(() => {
         let isMounted = true;
-        async function fetchContestPhotos() {
+        async function fetchPhotos() {
             try {
                 setLoadingThumbs(true);
-                const contestsRes = await contestAPI.getAll();
-                const contests = contestsRes.data?.data || contestsRes.data || [];
-                const activeContests = contests.filter(c => c.status === 'active' || c.is_active);
-                let allPhotos = [];
-                for (const c of activeContests) {
-                    try {
-                        const entriesRes = await contestAPI.getEntries(c.id);
-                        const entries = entriesRes.data?.data || entriesRes.data || [];
-                        const photos = entries.filter(e => e.photo_url).map(e => ({
-                            src: e.photo_url,
-                            id: e.id
-                        }));
-                        allPhotos = [...allPhotos, ...photos];
-                    } catch (err) {
-                        // ignora errori singoli contest
-                    }
-                }
-                // Genera posizioni random solo una volta, dopo aver raccolto tutte le foto
-                const positions = generateRandomPositions(allPhotos.length);
-                const thumbs = allPhotos.map((photo, i) => ({
-                    src: photo.src,
+                const res = await photoAPI.getAllContestPhotos();
+                const photos = res.data?.photos || [];
+                const positions = generateRandomPositions(photos.length);
+                const thumbs = photos.map((photo, i) => ({
+                    src: photo.photo_url,
                     top: `${positions[i]?.top || 0}%`,
                     left: `${positions[i]?.left || 0}%`,
                 }));
@@ -68,7 +52,7 @@ const JumboHero = () => {
                 setLoadingThumbs(false);
             }
         }
-        fetchContestPhotos();
+        fetchPhotos();
         return () => { isMounted = false; };
     }, []);
 

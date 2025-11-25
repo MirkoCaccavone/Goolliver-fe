@@ -80,7 +80,7 @@ export const photoAPI = {
     getModerationStatus: (entryId) => api.get(`/photos/${entryId}/moderation-status`),
     update: (entryId, data) => api.put(`/photos/${entryId}`, data),
     delete: (entryId) => api.delete(`/photos/${entryId}`),
-    // ...existing code...
+    getAllContestPhotos: () => api.get('/public/contest-photos'),
 };
 
 export const voteAPI = {
