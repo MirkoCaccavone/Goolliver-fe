@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaTachometerAlt, FaTrophy, FaChartBar, FaCog, FaUserShield, FaUser, FaImages, FaSignOutAlt, FaSignInAlt, FaUserPlus, FaChevronDown } from 'react-icons/fa';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useTranslation } from 'react-i18next';
@@ -17,10 +18,32 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+
+    // Mobile menu state
+    const [mobileOpen, setMobileOpen] = useState(false);
+    // Dropdown user menu state
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
     const handleLogout = async () => {
         await logout();
         navigate('/');
     };
+
+    // Close dropdown on click outside
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownOpen(false);
+            }
+        }
+        if (dropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [dropdownOpen]);
 
     const isActiveLink = (path) => {
         return location.pathname === path;
@@ -33,29 +56,30 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar-main navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-            <div className="navbar-container container">
+        <nav className="navbar-main">
+            <div className="navbar-container">
                 {/* Brand */}
-                <Link to="/" className="navbar-brand-section navbar-brand d-flex align-items-center">
-                    <div className="navbar-logo logo-circle me-2">
+                <Link to="/" className="navbar-brand-section">
+                    <div className="navbar-logo">
                         <span>G</span>
                     </div>
-                    <span className="navbar-brand-text fw-bold fs-4 text-dark">Goolly</span>
+                    <span className="navbar-brand-text">Goolly</span>
                 </Link>
 
                 {/* Mobile toggle button */}
                 <button
-                    className="navbar-toggle navbar-toggler"
+                    className={`navbar-toggle${mobileOpen ? ' open' : ''}`}
                     type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
+                    aria-label="Toggle navigation"
+                    aria-expanded={mobileOpen}
+                    onClick={() => setMobileOpen((v) => !v)}
                 >
-                    <span className="navbar-toggler-icon"></span>
+                    <span className="navbar-toggle-icon"></span>
                 </button>
 
                 {/* Navigation Links */}
-                <div className="navbar-nav-container collapse navbar-collapse" id="navbarNav">
-                    <div className="navbar-nav-items navbar-nav ms-auto">
+                <div className={`navbar-nav-container${mobileOpen ? ' open' : ''}`} id="navbarNav">
+                    <div className="navbar-nav-items">
                         {isAuthenticated ? (
                             <>
 
@@ -63,18 +87,18 @@ const Navbar = () => {
                                 {user?.role !== 'admin' && (
                                     <Link
                                         to="/dashboard"
-                                        className={getLinkClass('/dashboard', 'navbar-link nav-link text-secondary me-3')}
+                                        className={getLinkClass('/dashboard', 'navbar-link')}
                                     >
-                                        <i className="bi bi-speedometer2 me-1"></i>
+                                        <FaTachometerAlt className="navbar-icon" />
                                         Dashboard
                                     </Link>
                                 )}
 
                                 <Link
                                     to="/contests"
-                                    className={getLinkClass('/contests', 'navbar-link nav-link text-secondary me-3')}
+                                    className={getLinkClass('/contests', 'navbar-link')}
                                 >
-                                    <i className="bi bi-trophy me-1"></i>
+                                    <FaTrophy className="navbar-icon" />
                                     {t('contests.label')}
                                 </Link>
 
@@ -82,16 +106,16 @@ const Navbar = () => {
                                     <>
                                         <Link
                                             to="/admin-dashboard"
-                                            className={getLinkClass('/admin-dashboard', 'navbar-admin-link navbar-link nav-link text-secondary me-3')}
+                                            className={getLinkClass('/admin-dashboard', 'navbar-admin-link navbar-link')}
                                         >
-                                            <i className="bi bi-graph-up me-1"></i>
+                                            <FaChartBar className="navbar-icon" />
                                             Dashboard Admin
                                         </Link>
                                         <Link
                                             to="/admin"
-                                            className={getLinkClass('/admin', 'navbar-admin-link navbar-link nav-link text-secondary me-3')}
+                                            className={getLinkClass('/admin', 'navbar-admin-link navbar-link')}
                                         >
-                                            <i className="bi bi-gear me-1"></i>
+                                            <FaCog className="navbar-icon" />
                                             {t('admin')}
                                         </Link>
                                     </>
@@ -99,64 +123,65 @@ const Navbar = () => {
                                 {(user?.role === 'moderator' || user?.role === 'admin') && (
                                     <Link
                                         to="/moderator"
-                                        className={getLinkClass('/moderator', 'navbar-moderator-link navbar-link nav-link text-secondary me-3')}
+                                        className={getLinkClass('/moderator', 'navbar-moderator-link navbar-link')}
                                     >
-                                        <i className="bi bi-shield-check me-1"></i>
+                                        <FaUserShield className="navbar-icon" />
                                         {t('moderation')}
                                     </Link>
                                 )}
 
                                 {/* User dropdown */}
-                                <div className="navbar-user-dropdown nav-item dropdown">
-                                    <a
-                                        className="navbar-user-toggle nav-link dropdown-toggle d-flex align-items-center"
-                                        href="#"
-                                        role="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
+                                <div className={`navbar-user-dropdown${dropdownOpen ? ' open' : ''}`} ref={dropdownRef}>
+                                    <button
+                                        className="navbar-user-toggle"
+                                        type="button"
+                                        aria-haspopup="true"
+                                        aria-expanded={dropdownOpen}
+                                        onClick={() => setDropdownOpen((v) => !v)}
                                     >
-                                        <div className="navbar-user-avatar me-2 d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
+                                        <div className="navbar-user-avatar">
                                             {avatarUrl ? (
                                                 <img
                                                     src={avatarUrl}
                                                     alt="Avatar"
-                                                    className="rounded-circle border"
+                                                    className="navbar-avatar-img"
                                                     style={{ width: 32, height: 32, objectFit: 'cover' }}
                                                 />
                                             ) : (
-                                                <span className="bg-primary text-white small fw-medium rounded-circle d-flex align-items-center justify-content-center" style={{ width: 32, height: 32 }}>
+                                                <span className="navbar-avatar-placeholder" style={{ width: 32, height: 32 }}>
                                                     {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                                 </span>
                                             )}
                                         </div>
-                                        <span className="navbar-user-name text-dark d-none d-lg-inline">{user?.name}</span>
-                                    </a>
-                                    <ul className="navbar-dropdown-menu dropdown-menu">
+                                        <span className="navbar-user-name">{user?.name}</span>
+                                        <FaChevronDown className="navbar-user-caret" aria-hidden="true" />
+                                    </button>
+                                    <ul className="navbar-dropdown-menu" style={{ display: dropdownOpen ? 'block' : 'none' }}>
                                         <li>
-                                            <Link className="navbar-dropdown-item dropdown-item" to="/profile">
-                                                <i className="bi bi-person me-2"></i>
+                                            <Link className="navbar-dropdown-item" to="/profile" onClick={() => setDropdownOpen(false)}>
+                                                <FaUser className="navbar-icon" />
                                                 {t('my_profile')}
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link className="navbar-dropdown-item dropdown-item" to="/my-photos">
-                                                <i className="bi bi-images me-2"></i>
+                                            <Link className="navbar-dropdown-item" to="/my-photos" onClick={() => setDropdownOpen(false)}>
+                                                <FaImages className="navbar-icon" />
                                                 {t('my_photos')}
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link className="navbar-dropdown-item dropdown-item" to="/settings">
-                                                <i className="bi bi-gear me-2"></i>
+                                            <Link className="navbar-dropdown-item" to="/settings" onClick={() => setDropdownOpen(false)}>
+                                                <FaCog className="navbar-icon" />
                                                 {t('settings')}
                                             </Link>
                                         </li>
-                                        <li><hr className="navbar-dropdown-divider dropdown-divider" /></li>
+                                        <li><hr className="navbar-dropdown-divider" /></li>
                                         <li>
                                             <button
-                                                className="navbar-logout-button dropdown-item text-danger"
-                                                onClick={handleLogout}
+                                                className="navbar-logout-button"
+                                                onClick={() => { setDropdownOpen(false); handleLogout(); }}
                                             >
-                                                <i className="bi bi-box-arrow-right me-2"></i>
+                                                <FaSignOutAlt className="navbar-icon" />
                                                 {t('logout')}
                                             </button>
                                         </li>
@@ -164,19 +189,19 @@ const Navbar = () => {
                                 </div>
                             </>
                         ) : (
-                            <div className="navbar-auth-links d-flex align-items-center">
+                            <div className="navbar-auth-links">
                                 <Link
                                     to="/login"
-                                    className="navbar-login-link nav-link text-secondary me-2"
+                                    className="navbar-login-link"
                                 >
-                                    <i className="bi bi-box-arrow-in-right me-1"></i>
+                                    <FaSignInAlt className="navbar-icon" />
                                     {t('login')}
                                 </Link>
                                 <Link
                                     to="/register"
-                                    className="navbar-register-button btn btn-primary"
+                                    className="navbar-register-button"
                                 >
-                                    <i className="bi bi-person-plus me-1"></i>
+                                    <FaUserPlus className="navbar-icon" />
                                     {t('register')}
                                 </Link>
                             </div>
