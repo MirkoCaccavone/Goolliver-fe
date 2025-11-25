@@ -1,56 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useTranslation } from 'react-i18next';
+import './style/HomePage.css';
+import JumboHero from '../components/JumboHero';
 
 const HomePage = () => {
     const { isAuthenticated } = useAuthStore();
     const { t } = useTranslation();
 
     return (
-        <div className="min-vh-100">
+        <div >
             {/* Hero Section */}
-            <section className="hero-gradient py-5">
-                <div className="container py-5">
-                    <div className="row">
-                        <div className="col-lg-8 mx-auto text-center">
-                            <h1 className="display-3 fw-bold text-dark mb-4 hero-title">
-                                {t('welcome')} <span className="text-primary-custom">Goolliver</span>
-                            </h1>
-                            <p className="lead text-secondary mb-5">
-                                {t('homepage_subtitle')}
-                            </p>
-
-                            <div className="d-flex gap-3 justify-content-center flex-wrap">
-                                {isAuthenticated ? (
-                                    <Link
-                                        to="/dashboard"
-                                        className="btn btn-primary btn-lg px-4"
-                                    >
-                                        {t('go_to_dashboard')}
-                                    </Link>
-                                ) : (
-                                    <>
-                                        <Link
-                                            to="/register"
-                                            className="btn btn-primary btn-lg px-4"
-                                        >
-                                            {t('get_started')}
-                                        </Link>
-                                        <Link
-                                            to="/login"
-                                            className="btn btn-outline-secondary btn-lg px-4"
-                                        >
-                                            {t('login')}
-                                        </Link>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
+            <JumboHero />
             {/* Features Section */}
             <section className="py-5">
                 <div className="container py-4">

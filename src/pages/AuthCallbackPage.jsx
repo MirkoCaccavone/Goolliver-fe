@@ -40,7 +40,7 @@ const AuthCallbackPage = () => {
 
                             // Redirect alla dashboard
                             setTimeout(() => {
-                                navigate('/dashboard');
+                                navigate('/');
                             }, 2000);
 
                             setIsProcessing(false);
