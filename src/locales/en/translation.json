@@ -228,7 +228,7 @@
         "backToLogin": "Back to Login",
         "homepage": "Homepage",
         "accessCompleted": "Access Completed!",
-        "redirectDashboard": "You will be redirected to the Homepage in a few seconds..."
+        "redirectHomePage": "You will be redirected to the Homepage in a few seconds..."
     },
     "contestPage": {
         "notFoundTitle": "Contest not found",

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../stores/authStore';
-import './LoginPage.css';
+import '../style/pagesStyle/LoginPage.css';
 
 const LoginPage = () => {
     const { t } = useTranslation();
@@ -35,7 +35,7 @@ const LoginPage = () => {
         try {
             const result = await login(data);
             if (result && result.success) {
-                navigate('/dashboard');
+                navigate('/');
             } else {
                 const errorMessage = result?.error || t('login.errorLogin');
                 setError(errorMessage);

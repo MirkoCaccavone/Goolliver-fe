@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { SystemStatusBox, SystemNotifications } from '../components/SystemStatus';
 import QuickActions from '../components/QuickActions';
-import '../components/SystemStatus.css';
+import '../style/componentsStyle/SystemStatus.css';
 import TrendChart from '../components/TrendChart';
 import { useNavigate } from 'react-router-dom';
 // ...existing code...
 import { useQuery } from '@tanstack/react-query';
 import { adminAPI, contestAPI } from '../services/api';
-import './AdminDashboard.css';
+import '../style/pagesStyle/AdminDashboard.css';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();

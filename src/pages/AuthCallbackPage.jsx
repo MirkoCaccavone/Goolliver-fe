@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import './AuthCallbackPage.css';
+import '../style/pagesStyle/AuthCallbackPage.css';
 
 const AuthCallbackPage = () => {
     const { t } = useTranslation();
@@ -38,7 +38,7 @@ const AuthCallbackPage = () => {
                             // Imposta l'autenticazione nello store
                             setAuth(user, token);
 
-                            // Redirect alla dashboard
+                            // Redirect alla HomePage
                             setTimeout(() => {
                                 navigate('/');
                             }, 2000);
@@ -124,7 +124,7 @@ const AuthCallbackPage = () => {
                     </div>
                     <h3 className="auth-callback-title h5 mb-2 text-success">{t('authCallbackPage.accessCompleted')}</h3>
                     <p className="auth-callback-subtitle text-muted">
-                        {t('authCallbackPage.redirectDashboard')}
+                        {t('authCallbackPage.redirectHomePage')}
                     </p>
                     <div className="auth-callback-progress mt-3">
                         <div className="progress" style={{ height: '4px' }}>

@@ -9,7 +9,7 @@ import stripePromise from '../../utils/stripe';
 import PaymentForm from '../PaymentForm/PaymentForm';
 import { useToastStore } from '../../stores/toastStore';
 import { useNavigate } from 'react-router-dom';
-import './PhotoUpload.css';
+import '../../style/componentsStyle/PhotoUpload.css';
 
 const PhotoUpload = ({ contest, onUploadSuccess, onCancel }) => {
     // Utility: crea FormData per upload foto

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../stores/authStore';
 import { useTranslation } from 'react-i18next';
-import './RegisterPage.css';
+import '../style/pagesStyle/RegisterPage.css';
 
 const RegisterPage = () => {
     const { t } = useTranslation();
@@ -30,7 +30,7 @@ const RegisterPage = () => {
 
         if (result.success) {
             // Registrazione riuscita, vai alla dashboard
-            navigate('/dashboard');
+            navigate('/');
         } else {
             // Mostra errore di registrazione con dettagli specifici
             if (result.validationErrors) {

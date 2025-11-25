@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useTranslation } from 'react-i18next';
-import './style/HomePage.css';
+import '../style/pagesStyle/HomePage.css';
 import JumboHero from '../components/JumboHero';
 
 const HomePage = () => {

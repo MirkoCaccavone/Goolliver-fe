@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './ContestCard.css';
+import '../../style/componentsStyle/ContestCard.css';
 
 const ContestCard = ({ contest, userParticipation = null }) => {
     // Determina lo status del contest

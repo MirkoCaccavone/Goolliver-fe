@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useTranslation } from 'react-i18next';
-import './Navbar.css';
+import '../style/componentsStyle/Navbar.css';
 
 const Navbar = () => {
     const { t } = useTranslation();

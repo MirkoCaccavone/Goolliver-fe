@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import './ProfilePage.css';
+import '../style/pagesStyle/ProfilePage.css';
 import { useAuthStore } from '../stores/authStore';
 import { useTranslation } from 'react-i18next';
 

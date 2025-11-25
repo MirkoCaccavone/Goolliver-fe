@@ -7,7 +7,7 @@ import {
     CardCvcElement
 } from '@stripe/react-stripe-js';
 import { paymentAPI } from '../../services/api';
-import './PaymentForm.css';
+import '../../style/componentsStyle/PaymentForm.css';
 
 const PaymentForm = ({
     amount,

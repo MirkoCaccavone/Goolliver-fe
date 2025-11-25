@@ -1,5 +1,5 @@
 import React from 'react';
-import './SystemStatus.css';
+import '../style/componentsStyle/SystemStatus.css';
 
 const statusColors = {
     ok: '#28a745',

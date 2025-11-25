@@ -208,7 +208,7 @@
         "backToLogin": "Torna al Login",
         "homepage": "Homepage",
         "accessCompleted": "Accesso Completato!",
-        "redirectDashboard": "Verrai reindirizzato alla Homepage tra pochi secondi..."
+        "redirectHomePage": "Verrai reindirizzato alla Homepage tra pochi secondi..."
     },
     "contestPage": {
         "notFoundTitle": "Contest non trovato",

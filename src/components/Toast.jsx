@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Toast.css';
+import '../style/componentsStyle/Toast.css';
 
 const Toast = ({ message, type = 'info', duration = 5000, onClose }) => {
     const [isVisible, setIsVisible] = useState(true);

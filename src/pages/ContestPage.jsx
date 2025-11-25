@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { contestAPI, photoAPI, voteAPI } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
 import PhotoUpload from '../components/PhotoUpload/PhotoUpload';
-import './ContestPage/ContestPage.css';
+import '../style/pagesStyle/ContestPage.css';
 
 const ContestPage = () => {
     const { t } = useTranslation();

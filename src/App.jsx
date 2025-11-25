@@ -1,10 +1,9 @@
 import AdminCreditsPage from './pages/AdminCreditsPage';
-// ...existing code...
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminUserDetailPage from './pages/AdminUserDetailPage';
 import React, { useEffect, useState } from 'react';
 import i18n from './i18n';
-import './pages/SettingsPage.css';
+import './style/pagesStyle/SettingsPage.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './stores/authStore';
@@ -88,19 +87,19 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route
                 path="/login"
-                element={isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />}
+                element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />}
               />
               <Route
                 path="/register"
-                element={isAuthenticated ? <Navigate to="/dashboard" /> : <RegisterPage />}
+                element={isAuthenticated ? <Navigate to="/" /> : <RegisterPage />}
               />
               <Route
                 path="/forgot-password"
-                element={isAuthenticated ? <Navigate to="/dashboard" /> : <ForgotPasswordPage />}
+                element={isAuthenticated ? <Navigate to="/" /> : <ForgotPasswordPage />}
               />
               <Route
                 path="/reset-password"
-                element={isAuthenticated ? <Navigate to="/dashboard" /> : <ResetPasswordPage />}
+                element={isAuthenticated ? <Navigate to="/" /> : <ResetPasswordPage />}
               />
 
               {/* Auth callback route */}
