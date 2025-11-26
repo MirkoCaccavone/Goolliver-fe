@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { photoAPI } from '../services/api';
 
 const heroImages = [
-    'public/Screenshot-(244).png',
+    '/Screenshot-(244).png',
 ];
 
 // Genera posizioni random non sovrapposte
