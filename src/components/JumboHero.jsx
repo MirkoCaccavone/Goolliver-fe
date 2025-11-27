@@ -58,9 +58,9 @@ const JumboHero = () => {
 
     return (
         <section className="jumbo">
-            <div className="jumbo-img-strip" style={{ position: 'relative' }}>
+            <div className="jumbo-img-strip">
                 {[...heroImages, ...heroImages].map((src, i) => (
-                    <div key={i} className="jumbo-img-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
+                    <div key={i} className="jumbo-img-wrapper">
                         <img
                             className="jumbo-img"
                             src={src}
@@ -75,14 +75,7 @@ const JumboHero = () => {
                                 style={{
                                     position: 'absolute',
                                     top: thumb.top,
-                                    left: thumb.left,
-                                    width: '60px',
-                                    height: '60px',
-                                    borderRadius: '50%',
-                                    border: '2px solid #fff',
-                                    boxShadow: '0 2px 8px #0006',
-                                    cursor: 'pointer',
-                                    zIndex: 2,
+                                    left: thumb.left
                                 }}
                                 onClick={() => setModalImg(thumb.src)}
                             />
