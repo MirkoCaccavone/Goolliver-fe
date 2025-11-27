@@ -282,5 +282,16 @@
         "ranking": "Ranking",
         "noVotesYet": "No votes yet",
         "rankingWillAppear": "The ranking will appear when voting starts!"
-    }
+    },
+    "welcome_back": "Welcome back",
+    "user": "User",
+    "home_logged_subtitle": "Here you can manage your contests, upload new photos and check your results.",
+    "home-how-section": "How it works",
+    "home-auth-section": "Personal area",
+    "home-how-title": "How it works",
+    "home-how-step-title": "Step",
+    "home-how-step-desc": "Description",
+    "home-stats-section": "Platform stats",
+    "home-stats-value": "Value",
+    "home-stats-label": "Label"
 }

@@ -290,5 +290,16 @@
     "tryChangingFilters": "Prova a modificare i filtri per vedere più risultati.",
     "noPhotosUploaded": "Non hai ancora caricato nessuna foto. Partecipa a un contest per iniziare!",
     "joinContest": "Partecipa a un Contest",
-    "errorLoadingPhotos": "Errore nel caricamento delle foto"
+    "errorLoadingPhotos": "Errore nel caricamento delle foto",
+    "welcome_back": "Bentornato",
+    "user": "Utente",
+    "home_logged_subtitle": "Qui puoi gestire i tuoi contest, caricare nuove foto e controllare i risultati.",
+    "home-how-section": "Come funziona",
+    "home-auth-section": "Area personale",
+    "home-how-title": "Come funziona",
+    "home-how-step-title": "Step",
+    "home-how-step-desc": "Descrizione",
+    "home-stats-section": "Statistiche piattaforma",
+    "home-stats-value": "Valore",
+    "home-stats-label": "Etichetta"
 }
