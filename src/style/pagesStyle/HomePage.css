@@ -108,9 +108,9 @@
     box-shadow: 0 4px 32px #000a;
 }
 
-/* =============================
-   HOMEPAGE - SEZIONE NON AUTENTICATI (VIAGGIO, MODERNO)
-   ============================= */
+/********************************
+      AEREI E NUVOLE
+*********************************/
 
 /* aereo in pagina */
 .home-plane-anim {
@@ -334,14 +334,18 @@
     }
 }
 
+/* =============================
+   HOMEPAGE - SEZIONE NON AUTENTICATI
+   ============================= */
+
 /* sezione non autenticati */
 .home-how-section {
-    width: 100%;
+    /* width: 100%; */
     min-height: 100vh;
     background: #F7EDF0;
     position: relative;
     overflow: hidden;
-    padding: 20px 0 48px 0;
+    padding: 20px 32px;
     /* display: flex;
     justify-content: center;
     align-items: flex-start; */
@@ -591,6 +595,35 @@
     transform: scale(1.07);
     transition: transform 0.25s ease;
 }
+
+
+/* =============================
+   HOMEPAGE - SEZIONE AUTENTICATI
+   ============================= */
+
+.home-auth-section {
+    padding: 0 32px;
+    height: 2000px;
+    background-color: red;
+    min-height: 100vh;
+    background: #F7EDF0;
+    position: relative;
+    overflow: hidden;
+    padding: 20px 32px;
+}
+
+.home-auth-title,
+.home-auth-username {
+    font-size: 2.6rem;
+}
+
+
+
+
+
+/********************************
+      RESPONSIVE NON AUTENTICATI
+   *********************************/
 
 /* Responsive Stats*/
 @media (max-width: 1024px) {
