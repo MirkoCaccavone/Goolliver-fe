@@ -2,7 +2,7 @@
 .footer {
     background: #333333;
     color: #f7edf0;
-    padding: 60px 20px 30px;
+    padding: 60px 32px 30px;
     /* margin-top: 60px; */
     /* font-family: "Inter", sans-serif; */
 }
@@ -10,15 +10,23 @@
 /* LAYOUT */
 .footer-container {
     max-width: 1200px;
-    margin: auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 40px;
+    /* margin: auto; */
+    display: flex;
+    justify-content: space-between;
+    /* grid-template-columns: repeat(4, 1fr); */
+    /* gap: 40px; */
 }
 
 .footer-col {
-    display: flex;
-    flex-direction: column;
+
+    /* flex-basis: 40%; */
+    /* flex: 1; */
+    /* display: flex;
+    flex-direction: column; */
+}
+
+.footer-col:first-child {
+    flex-basis: 40%;
 }
 
 /* LOGO */

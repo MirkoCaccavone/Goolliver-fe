@@ -22,7 +22,7 @@ const Footer = () => {
                 </div>
 
                 {/* --- COLONNA 2: LINK UTILI --- */}
-                <div className="footer-col">
+                <div className="footer-col title-col">
                     <h3 className="footer-title">Link Utili</h3>
                     <ul className="footer-links">
                         <li><a href="/about">Chi Siamo</a></li>
