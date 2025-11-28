@@ -8,7 +8,7 @@
 .navbar-main {
     background-color: #F7EDF0;
     width: 100%;
-    min-height: 64px;
+    min-height: 75px;
     box-shadow: 0 2px 8px rgba(34, 24, 227, 0.03);
     display: flex;
     align-items: center;
@@ -29,7 +29,9 @@
     min-height: 64px;
 }
 
-/* Brand/Logo section */
+/********************************
+      Brand/Logo section
+*********************************/
 .navbar-brand-section {
     display: flex;
     align-items: center;
@@ -61,7 +63,10 @@
 
 }
 
-/* Navigation links container */
+/********************************
+     Navigation links container
+*********************************/
+
 .navbar-nav-container {
     display: flex;
     align-items: center;
@@ -84,7 +89,7 @@
     gap: 20px;
 }
 
-/* Navigation link generico */
+/* Navigation link generico dashboard/contest) */
 
 .navbar-link {
     position: relative;
@@ -192,49 +197,6 @@
 .navbar-toggle.open .navbar-toggle-icon::before,
 .navbar-toggle.open .navbar-toggle-icon::after {
     background: #2218E3;
-}
-
-@media (max-width: 991px) {
-    .navbar-toggle {
-        display: flex;
-    }
-
-    .navbar-nav-container {
-        position: fixed;
-        top: 0;
-        right: 0;
-        height: 100vh;
-        width: 80vw;
-        max-width: 340px;
-        background: #F7EDF0;
-        box-shadow: -2px 0 16px rgba(34, 24, 227, 0.08);
-        transform: translateX(100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1001;
-        display: flex;
-        flex-direction: column-reverse;
-        padding: 40px 24px 24px 24px;
-    }
-
-    .navbar-nav-container.open {
-        transform: translateX(0);
-    }
-
-    .navbar-nav-container.open>.navbar-nav-items {
-        gap: 50px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .navbar-auth-links {
-        flex-direction: column;
-        gap: 12px;
-        margin-top: 24px;
-    }
-
-    body.navbar-mobile-open {
-        overflow: hidden;
-    }
 }
 
 /* Overlay per mobile menu */
@@ -398,12 +360,6 @@
 
 .navbar-mobile-menu-group {
     width: 100%;
-    /* max-width: 340px; */
-    /* margin: 0 auto; */
-    /* background: #fff; */
-    /* border-radius: 18px; */
-    /* box-shadow: 0 2px 16px 0 rgba(34, 24, 227, 0.07); */
-    /* padding: 24px 0 16px 0; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -465,6 +421,59 @@
     margin-top: 10px;
 }
 
+/********************************
+   bottoni Login / Registrati
+*********************************/
+
+/* Container */
+.navbar-auth-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* LOGIN — link minimal */
+.navbar-login-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.4rem 0.8rem;
+    color: #333333;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: 0.25s ease;
+}
+
+.navbar-login-link:hover {
+    color: #2218e3;
+    background: rgba(34, 24, 227, 0.10);
+}
+
+/* REGISTER — bottone primario */
+.navbar-register-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.45rem 1.1rem;
+    background: #2218e3;
+    color: #F7EDF0 !important;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: 0.25s ease;
+    box-shadow: 0 3px 10px rgba(34, 24, 227, 0.18);
+}
+
+.navbar-register-button:hover {
+    background: #1a12c2;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(34, 24, 227, 0.28);
+}
+
+/* Icone */
+.navbar-icon {
+    font-size: 1.1rem;
+}
+
 @media (max-width: 990px) {
 
     .navbar-mobile-links .navbar-link,
@@ -506,5 +515,49 @@
 @media (min-width: 990px) {
     .navbar-mobile-menu-group {
         display: none;
+    }
+}
+
+@media (max-width: 991px) {
+    .navbar-toggle {
+        display: flex;
+    }
+
+    .navbar-nav-container {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 80vw;
+        max-width: 340px;
+        background: #F7EDF0;
+        box-shadow: -2px 0 16px rgba(34, 24, 227, 0.08);
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1001;
+        display: flex;
+        flex-direction: column-reverse;
+        padding: 40px 24px 24px 24px;
+    }
+
+    .navbar-nav-container.open {
+        transform: translateX(0);
+    }
+
+    .navbar-nav-container.open>.navbar-nav-items {
+        gap: 50px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .navbar-auth-links {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    body.navbar-mobile-open {
+        overflow: hidden;
     }
 }

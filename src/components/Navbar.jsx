@@ -216,6 +216,7 @@ const Navbar = () => {
                                                 </Link>
                                             </>
                                         )}
+
                                         {(user?.role === 'moderator' || user?.role === 'admin') && (
                                             <Link
                                                 to="/moderator"
@@ -226,6 +227,7 @@ const Navbar = () => {
                                                 {t('moderation')}
                                             </Link>
                                         )}
+
                                         {/* User dropdown desktop */}
                                         <div className={`navbar-user-dropdown${dropdownOpen ? ' open' : ''}`} ref={dropdownRef}>
                                             <button
