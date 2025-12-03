@@ -3,16 +3,8 @@ import { Link } from 'react-router-dom';
 import '../../style/componentsStyle/ContestCard.css';
 
 const ContestCard = ({ contest, userParticipation = null }) => {
-    // Determina lo status del contest
-    const getContestStatus = () => {
-        const now = new Date();
-        const startDate = new Date(contest.start_date);
-        const endDate = new Date(contest.end_date);
-
-        if (now < startDate) return 'upcoming';
-        if (now > endDate) return 'ended';
-        return 'active';
-    };
+    // Usa direttamente lo status dal backend
+    const status = contest.status;
 
     // Formatta le date
     const formatDate = (dateString) => {
@@ -23,18 +15,17 @@ const ContestCard = ({ contest, userParticipation = null }) => {
         });
     };
 
-    // Calcola i giorni rimanenti
+    // Calcola i giorni rimanenti (solo se end_date esiste)
     const getDaysRemaining = () => {
+        if (!contest.end_date) return null;
         const now = new Date();
         const endDate = new Date(contest.end_date);
         const diffTime = endDate - now;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
         if (diffDays < 0) return 0;
         return diffDays;
     };
 
-    const status = getContestStatus();
     const daysRemaining = getDaysRemaining();
     const canParticipate = status === 'active' && contest.current_participants < contest.max_participants;
 
@@ -57,6 +48,7 @@ const ContestCard = ({ contest, userParticipation = null }) => {
                 {status === 'active' && 'Attivo'}
                 {status === 'upcoming' && 'Prossimo'}
                 {status === 'ended' && 'Terminato'}
+                {status === 'voting' && 'In votazione'}
             </div>
 
             {/* Header con icona */}
@@ -114,12 +106,34 @@ const ContestCard = ({ contest, userParticipation = null }) => {
                     {userParticipation ? (
                         // Utente già partecipante
                         <>
-                            {userParticipation.moderation_status === 'approved' && (
+                            {userParticipation.moderation_status === 'approved' && status === 'pending_voting' ? (
+                                <div className="contest-action-button contest-action-pending-voting">
+                                    <i className="bi bi-hourglass-split"></i>
+                                    In attesa votazione
+                                </div>
+                            ) : userParticipation.moderation_status === 'approved' && status === 'voting' ? (
+                                <>
+                                    <Link
+                                        to={`/contest/${contest.id}?tab=gallery`}
+                                        className="contest-action-button contest-action-primary"
+                                    >
+                                        <i className="bi bi-heart"></i>
+                                        Vota ora
+                                    </Link>
+                                    <Link
+                                        to={`/contest/${contest.id}?tab=gallery`}
+                                        className="contest-action-button contest-action-secondary"
+                                    >
+                                        <i className="bi bi-images"></i>
+                                        Galleria
+                                    </Link>
+                                </>
+                            ) : userParticipation.moderation_status === 'approved' ? (
                                 <div className="contest-action-button contest-action-participating">
                                     <i className="bi bi-check-circle-fill"></i>
                                     Partecipando
                                 </div>
-                            )}
+                            ) : null}
                             {(userParticipation.moderation_status === 'pending' || userParticipation.moderation_status === 'pending_review') && (
                                 <div className="contest-action-button contest-action-moderation">
                                     <i className="bi bi-hourglass-split"></i>
@@ -135,13 +149,16 @@ const ContestCard = ({ contest, userParticipation = null }) => {
                                     Rifiutato - Partecipa di nuovo
                                 </Link>
                             )}
-                            <Link
-                                to={`/contest/${contest.id}?tab=gallery`}
-                                className="contest-action-button contest-action-secondary"
-                            >
-                                <i className="bi bi-images"></i>
-                                Galleria
-                            </Link>
+                            {/* Mostra sempre Galleria se non già mostrato sopra */}
+                            {!(userParticipation.moderation_status === 'approved' && status === 'voting') && (
+                                <Link
+                                    to={`/contest/${contest.id}?tab=gallery`}
+                                    className="contest-action-button contest-action-secondary"
+                                >
+                                    <i className="bi bi-images"></i>
+                                    Galleria
+                                </Link>
+                            )}
                         </>
                     ) : canParticipate ? (
                         // Può partecipare
@@ -186,11 +203,34 @@ const ContestCard = ({ contest, userParticipation = null }) => {
                             <i className="bi bi-info-circle"></i>
                             Dettagli
                         </Link>
+                    ) : status === 'voting' ? (
+                        <>
+                            <button className="contest-action-button contest-action-disabled">
+                                <i className="bi bi-x-circle"></i>
+                                Completo
+                            </button>
+                            <Link
+                                to={`/contest/${contest.id}?tab=gallery`}
+                                className="contest-action-button contest-action-secondary"
+                            >
+                                <i className="bi bi-images"></i>
+                                Galleria
+                            </Link>
+                        </>
                     ) : (
-                        <button className="contest-action-button contest-action-disabled">
-                            <i className="bi bi-x-circle"></i>
-                            Completo
-                        </button>
+                        <>
+                            <button className="contest-action-button contest-action-disabled">
+                                <i className="bi bi-x-circle"></i>
+                                Completo
+                            </button>
+                            <Link
+                                to={`/contest/${contest.id}?tab=gallery`}
+                                className="contest-action-button contest-action-secondary"
+                            >
+                                <i className="bi bi-images"></i>
+                                Galleria
+                            </Link>
+                        </>
                     )}
                 </div>
             </div>

@@ -16,6 +16,25 @@ const ContestPage = () => {
     const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState('gallery');
     const [entryExpired, setEntryExpired] = useState(false);
+    // Stato loading per i like: oggetto { [entryId]: boolean }
+    const [likeLoading, setLikeLoading] = useState({});
+
+    // Handler per il like
+    const handleLike = async (entryId, canLike) => {
+        if (!canLike || likeLoading[entryId]) return;
+        setLikeLoading(prev => ({ ...prev, [entryId]: true }));
+        try {
+            // Usa la nuova API: POST /votes con user_id e entry_id
+            await voteAPI.vote({ user_id: user.id, entry_id: entryId });
+            queryClient.invalidateQueries({ queryKey: ['contest-entries', id] });
+            queryClient.invalidateQueries({ queryKey: ['contest-leaderboard', id] });
+        } catch (e) {
+            // TODO: mostrare errore toast
+        } finally {
+            setLikeLoading(prev => ({ ...prev, [entryId]: false }));
+        }
+    };
+
     // Effettua la chiamata a /api/entries/last quando si entra nella tab 'gallery'
     useEffect(() => {
         if (activeTab === 'gallery' && user && id) {
@@ -59,7 +78,7 @@ const ContestPage = () => {
         enabled: !!id,
     });
 
-    // Query per la leaderboard
+    // Query per la leaderboard, aggiorna ogni 5 minuti
     const {
         data: leaderboard,
         isLoading: leaderboardLoading
@@ -68,6 +87,7 @@ const ContestPage = () => {
         queryFn: () => voteAPI.getLeaderboard(id),
         select: (response) => response.data || [],
         enabled: !!id,
+        refetchInterval: 300000, // 5 minuti in ms
     });
 
     // Query per verificare se l'utente ha già partecipato
@@ -194,7 +214,9 @@ const ContestPage = () => {
         );
     }
 
-    const status = getContestStatus();
+    const status = contest.status;
+    // DEBUG: log status
+    console.log('DEBUG Contest status:', contest.status, 'Computed status:', status);
     const daysRemaining = getDaysRemaining();
     const canParticipate = status === 'active' && contest.current_participants < contest.max_participants;
 
@@ -203,6 +225,13 @@ const ContestPage = () => {
     return (
         <div className="contest-page-wrapper">
             <div className="contest-page-container">
+                {/* Messaggio pending_voting per partecipanti approvati */}
+                {status === 'pending_voting' && userParticipation?.moderation_status === 'approved' && (
+                    <div className="alert alert-info mb-3">
+                        <i className="bi bi-hourglass-split me-2"></i>
+                        A breve partirà la votazione! Riceverai una notifica quando potrai votare le foto degli altri partecipanti.
+                    </div>
+                )}
                 {/* Header Contest */}
                 <div className="contest-header">
                     <div className="contest-header-content">
@@ -403,22 +432,60 @@ const ContestPage = () => {
                                         <div className="contest-spinner"></div>
                                     </div>
                                 ) : entries?.length > 0 ? (
+
+
                                     <div className="contest-gallery">
-                                        {entries.map(entry => (
-                                            <div key={entry.id} className="gallery-item">
-                                                <img
-                                                    src={entry.thumbnail_url || entry.photo_url || '/placeholder-photo.jpg'}
-                                                    alt={entry.title || 'Foto contest'}
-                                                    className="gallery-image"
-                                                />
-                                                <div className="gallery-overlay">
-                                                    <div className="gallery-votes">
-                                                        <i className="bi bi-heart-fill"></i>
-                                                        {entry.votes_count || 0}
+                                        {entries.map(entry => {
+                                            const isVoting = status === 'voting';
+                                            const isUserParticipating = userParticipation && userParticipation.moderation_status === 'approved';
+                                            const isOwnPhoto = user && entry.user_id === user.id;
+                                            const alreadyVoted = entry.voted_by_user;
+                                            const canLike = isVoting && isUserParticipating && !isOwnPhoto && !alreadyVoted;
+                                            // ---
+                                            return (
+                                                <div key={entry.id} className="gallery-item">
+                                                    <img
+                                                        src={entry.thumbnail_url || entry.photo_url || '/placeholder-photo.jpg'}
+                                                        alt={entry.title || 'Foto contest'}
+                                                        className="gallery-image"
+                                                    />
+                                                    <div className="gallery-overlay">
+                                                        <div className="gallery-votes">
+                                                            <i className="bi bi-heart-fill"></i>
+                                                            {entry.likes_count || 0}
+                                                        </div>
+                                                        {/* Pulsante Like */}
+                                                        {isVoting && isUserParticipating && !isOwnPhoto ? (
+                                                            <button
+                                                                className="gallery-like-btn custom-like-btn"
+                                                                disabled={!canLike || likeLoading[entry.id]}
+                                                                onClick={() => handleLike(entry.id, canLike)}
+                                                                title={
+                                                                    alreadyVoted
+                                                                        ? t('contestPage.alreadyVoted')
+                                                                        : !canLike
+                                                                            ? t('contestPage.cannotVote')
+                                                                            : t('contestPage.likeThisPhoto')
+                                                                }
+                                                            >
+                                                                <span className={`like-icon${alreadyVoted ? ' liked' : ''}`}>♥</span>
+                                                                {likeLoading[entry.id] ? (
+                                                                    <span className="like-spinner"></span>
+                                                                ) : (
+                                                                    <span className="like-label">{t('contestPage.like')}</span>
+                                                                )}
+                                                            </button>
+                                                        ) : null}
+                                                        {/* Messaggio se è la propria foto */}
+                                                        {isVoting && isUserParticipating && isOwnPhoto && (
+                                                            <div className="gallery-own-photo-msg">
+                                                                {t('contestPage.cannotVoteOwnPhoto')}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 ) : (
                                     <div className="empty-state">
@@ -514,7 +581,7 @@ const ContestPage = () => {
                                                     />
                                                     <h5 className="mb-1">{index + 1}° Posto</h5>
                                                     <p className="mb-1 fw-bold">{entry.user?.name || 'Utente Anonimo'}</p>
-                                                    <p className="mb-0 text-muted">{entry.votes_count || 0} voti</p>
+                                                    <p className="mb-0 text-muted">{entry.likes_count || 0} voti</p>
                                                 </div>
                                             ))}
                                         </div>
@@ -536,12 +603,10 @@ const ContestPage = () => {
                                                             {entry.user?.name || 'Utente Anonimo'}
                                                         </div>
                                                         <div className="leaderboard-votes">
-                                                            {entry.votes_count || 0} voti
+                                                            {entry.likes_count || 0} voti
                                                         </div>
                                                     </div>
-                                                    <div className="leaderboard-score">
-                                                        {entry.vote_score || 0}
-                                                    </div>
+                                                    {/* Nessun punteggio, solo like */}
                                                 </div>
                                             ))}
                                         </div>
@@ -593,54 +658,62 @@ const ContestPage = () => {
                     </div>
 
                     {/* Sidebar */}
-                    <div className="contest-sidebar">
-                        <div className="section-header">
-                            <div className="section-icon">
-                                <i className="bi bi-trophy"></i>
-                            </div>
-                            <h3 className="section-title">{t('contestPage.ranking')}</h3>
-                        </div>
-
-                        {leaderboardLoading ? (
-                            <div className="contest-loading">
-                                <div className="contest-spinner"></div>
-                            </div>
-                        ) : leaderboard?.length > 0 ? (
-                            <div>
-                                {leaderboard.slice(0, 10).map((entry, index) => (
-                                    <div key={entry.id} className="leaderboard-item">
-                                        <div className="leaderboard-position">
-                                            {index + 1}
-                                        </div>
-                                        <img
-                                            src={entry.thumbnail_url || entry.photo_url || '/placeholder-photo.jpg'}
-                                            alt="Foto"
-                                            className="leaderboard-photo"
-                                        />
-                                        <div className="leaderboard-info">
-                                            <div className="leaderboard-user">
-                                                {entry.user?.name || 'Utente Anonimo'}
-                                            </div>
-                                            <div className="leaderboard-votes">
-                                                {entry.votes_count || 0} voti
-                                            </div>
-                                        </div>
-                                        <div className="leaderboard-score">
-                                            {entry.vote_score || 0}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="empty-state">
-                                <div className="empty-state-icon">
-                                    <i className="bi bi-trophy"></i>
+                    {/* Sidebar: classifica visibile anche durante voting */}
+                    {(status === 'voting' || status === 'ended') && (
+                        <div className="contest-sidebar">
+                            <div className="section-header">
+                                <div className="section-icon" style={{ fontSize: '2rem' }}>
+                                    🏆
                                 </div>
-                                <div className="empty-state-title">{t('contestPage.noVotesYet')}</div>
-                                <div className="empty-state-text">{t('contestPage.rankingWillAppear')}</div>
+                                <h3 className="section-title">{t('contestPage.ranking')}</h3>
                             </div>
-                        )}
-                    </div>
+
+                            {leaderboardLoading ? (
+                                <div className="contest-loading">
+                                    <div className="contest-spinner"></div>
+                                </div>
+                            ) : (() => {
+                                // Supporta sia array diretto che oggetto con chiave leaderboard
+                                const leaderboardArray = Array.isArray(leaderboard)
+                                    ? leaderboard
+                                    : Array.isArray(leaderboard?.leaderboard)
+                                        ? leaderboard.leaderboard
+                                        : [];
+                                return leaderboardArray.length > 0 ? (
+                                    <div>
+                                        {leaderboardArray.slice(0, 10).map((entry, index) => (
+                                            <div key={entry.id} className="leaderboard-item" style={{ border: '2px solid #e83e8c', background: '#fffbe6' }}>
+                                                <div className="leaderboard-position" style={{ fontSize: '1.5rem' }}>
+                                                    {index + 1} <span role="img" aria-label="medal">{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : ''}</span>
+                                                </div>
+                                                <img
+                                                    src={entry.thumbnail_url || entry.photo_url || '/placeholder-photo.jpg'}
+                                                    alt="Foto"
+                                                    className="leaderboard-photo"
+                                                />
+                                                <div className="leaderboard-info">
+                                                    <div className="leaderboard-user">
+                                                        {entry.user?.name || 'Utente Anonimo'}
+                                                    </div>
+                                                    <div className="leaderboard-votes">
+                                                        ❤️ {entry.likes_count || 0} voti
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="empty-state">
+                                        <div className="empty-state-icon">
+                                            <span style={{ fontSize: '2rem' }}>🏆</span>
+                                        </div>
+                                        <div className="empty-state-title">{t('contestPage.noVotesYet')}</div>
+                                        <div className="empty-state-text">{t('contestPage.rankingWillAppear')}</div>
+                                    </div>
+                                );
+                            })()}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
