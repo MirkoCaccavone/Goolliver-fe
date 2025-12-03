@@ -86,7 +86,6 @@ export const photoAPI = {
 export const voteAPI = {
     getLeaderboard: (contestId) => api.get(`/votes/contests/${contestId}/leaderboard`),
     getUserVoteStatus: (contestId) => api.get(`/votes/contests/${contestId}/user-vote-status`),
-    toggleLike: (entryId) => api.post(`/votes/entries/${entryId}/like`),
     getVoteStats: (entryId) => api.get(`/votes/entries/${entryId}/stats`),
     vote: (voteData) => api.post('/votes', voteData),
 };
