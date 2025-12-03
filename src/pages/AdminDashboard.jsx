@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useQuery as useRQ } from '@tanstack/react-query';
+import { notificationAPI } from '../services/notificationApi';
+import AdminNotifications from '../components/AdminNotifications';
 import { SystemStatusBox, SystemNotifications } from '../components/SystemStatus';
 import QuickActions from '../components/QuickActions';
 import '../style/componentsStyle/SystemStatus.css';
@@ -26,6 +29,14 @@ const AdminDashboard = () => {
         }
         setActionLoading(false);
     };
+
+    // Notifiche amministrative (tutte)
+    const { data: notificationsData, isLoading: loadingNotifications } = useRQ({
+        queryKey: ['admin-all-notifications'],
+        queryFn: notificationAPI.getAll,
+        select: (response) => response.data?.data || [],
+        refetchInterval: 60000,
+    });
 
     // Funzione chiudi contest
     const handleCloseContest = async (contest) => {
@@ -77,6 +88,40 @@ const AdminDashboard = () => {
     return (
         <div className="admin-dashboard-wrapper">
             <h1>Dashboard Admin</h1>
+
+            {/* Notifiche amministrative suddivise */}
+            {!loadingNotifications && notificationsData && (
+                <div className="admin-notifications-section">
+                    <div className="admin-notifications-group">
+                        <h2 className="admin-notifications-title">Da leggere ({notificationsData.filter(n => !n.read_at).length})</h2>
+                        <AdminNotifications
+                            notifications={notificationsData.filter(n => !n.read_at)}
+                            onMarkAsRead={async (id) => {
+                                await notificationAPI.markAsRead(id);
+                                window.location.reload();
+                            }}
+                            onDelete={async (id) => {
+                                await notificationAPI.delete(id);
+                                window.location.reload();
+                            }}
+                        />
+                    </div>
+                    <div className="admin-notifications-group">
+                        <h2 className="admin-notifications-title">Già lette ({notificationsData.filter(n => n.read_at).length})</h2>
+                        <AdminNotifications
+                            notifications={notificationsData.filter(n => n.read_at)}
+                            onMarkAsRead={async (id) => {
+                                await notificationAPI.markAsRead(id);
+                                window.location.reload();
+                            }}
+                            onDelete={async (id) => {
+                                await notificationAPI.delete(id);
+                                window.location.reload();
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
 
 
             {/* Azioni rapide */}
