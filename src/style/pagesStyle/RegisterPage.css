@@ -1,174 +1,343 @@
-/* RegisterPage.css - Stili dedicati per la pagina di registrazione */
+/* Layout completo */
+.register-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f7f8fc;
+}
 
-/* Container principale */
+/* --- LATO SINISTRO --- */
+.register-left {
+    flex: 1;
+    padding: 80px 60px;
+    background: linear-gradient(135deg, #2218e3, #58e312);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.register-left-info {
+    position: fixed;
+    top: 200px;
+}
+
+/* Titolo gigante */
+.register-big-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.register-big-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 400px;
+}
+
+/* Illustrazione / immagine / blob animato */
+.register-illustration {
+    position: absolute;
+    bottom: -40px;
+    right: -40px;
+    width: 340px;
+    height: 340px;
+    background: url('public/signup.svg') center/cover no-repeat;
+    opacity: 0.85;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.18));
+    pointer-events: none;
+    user-select: none;
+}
+
+/* --- LATO DESTRO (FORM) --- */
+.register-right {
+    width: 100%;
+    max-width: 420px;
+    flex: 1;
+    padding: 0 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7edf0;
+}
+
+/* ------------------------------------------------- */
+/* PAGE WRAPPER */
+/* ------------------------------------------------- */
 .register-page {
-    /* Stili da definire */
+    /* max-width: 480px; */
+    /* margin: 4rem auto; */
+    /* background: #fff; */
+    /* padding: 2.5rem 2.2rem; */
+    /* border-radius: 18px; */
+    /* box-shadow: 0 8px 35px rgba(0, 0, 0, 0.07); */
+    animation: fadeIn 0.5s ease;
 }
 
-/* Header della pagina con logo e titoli */
+/* ------------------------------------------------- */
+/* HEADER */
+/* ------------------------------------------------- */
 .register-header {
-    /* Stili da definire */
+    text-align: center;
+    margin-bottom: 1.5rem;
 }
 
-/* Logo principale */
-.register-logo {
-    /* Stili da definire */
-}
-
-/* Titolo principale */
 .register-title {
-    /* Stili da definire */
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2218e3;
 }
 
-/* Sottotitolo/descrizione */
 .register-subtitle {
-    /* Stili da definire */
+    font-size: 1rem;
+    color: #333333;
 }
 
-/* Container per i social login */
-.register-social-container {
-    /* Stili da definire */
-}
-
-/* Pulsante social generico */
-.register-social-button {
-    /* Stili da definire */
-}
-
-/* Pulsante Google specifico */
-.register-google-button {
-    /* Stili da definire */
-}
-
-/* Pulsante Facebook specifico */
-.register-facebook-button {
-    /* Stili da definire */
-}
-
-/* Icona dei social buttons */
-.register-social-icon {
-    /* Stili da definire */
-}
-
-/* Testo dei social buttons */
-.register-social-text {
-    /* Stili da definire */
-}
-
-/* Divisore "oppure" */
-.register-divider {
-    /* Stili da definire */
-}
-
-/* Linea del divisore */
-.register-divider-line {
-    /* Stili da definire */
-}
-
-/* Testo del divisore */
-.register-divider-text {
-    /* Stili da definire */
-}
-
-/* Form di registrazione */
-.register-form {
-    /* Stili da definire */
-}
-
-/* Container per campo input */
-.register-field {
-    /* Stili da definire */
-}
-
-/* Label del campo */
-.register-field-label {
-    /* Stili da definire */
-}
-
-/* Input del campo */
-.register-field-input {
-    /* Stili da definire */
-}
-
-/* Input in stato di errore */
-.register-field-input-error {
-    /* Stili da definire */
-}
-
-/* Messaggio di aiuto sotto il campo */
-.register-field-help {
-    /* Stili da definire */
-}
-
-/* Messaggio di errore del campo */
-.register-field-error {
-    /* Stili da definire */
-}
-
-/* Pulsante di registrazione principale */
-.register-button {
-    /* Stili da definire */
-}
-
-/* Pulsante in stato loading */
-.register-button-loading {
-    /* Stili da definire */
-}
-
-/* Spinner del loading */
-.register-loading-spinner {
-    /* Stili da definire */
-}
-
-/* Container per i messaggi di errore server */
+/* ------------------------------------------------- */
+/* ERROR BOX */
+/* ------------------------------------------------- */
 .register-error {
-    /* Stili da definire */
+    background: #ffe6e8;
+    border-left: 4px solid #ff0022;
+    color: #ff0022;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
-/* Icona del messaggio di errore */
 .register-error-icon {
-    /* Stili da definire */
+    font-size: 1.2rem;
 }
 
-/* Testo del messaggio di errore */
-.register-error-text {
-    /* Stili da definire */
+/* ------------------------------------------------- */
+/* SOCIAL BUTTONS */
+/* ------------------------------------------------- */
+
+.register-social-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
-/* Footer con link login */
+.register-social-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+}
+
+.register-google-button {
+    background: #db4437;
+}
+
+.register-google-button:hover {
+    background: #c23321;
+}
+
+.register-facebook-button {
+    background: #1877f2;
+}
+
+.register-facebook-button:hover {
+    background: #0f5cd3;
+}
+
+.register-social-icon {
+    font-size: 1.2rem;
+}
+
+/* LOADING SPINNER */
+.register-loading-spinner {
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spinner 0.7s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ------------------------------------------------- */
+/* DIVIDER */
+/* ------------------------------------------------- */
+.register-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.register-divider-line {
+    border: none;
+    height: 1px;
+    background: #ddd;
+    flex-grow: 1;
+}
+
+.register-divider-text {
+    font-size: 0.9rem;
+    color: #777;
+    font-weight: 600;
+}
+
+/* ------------------------------------------------- */
+/* INPUT FIELDS */
+/* ------------------------------------------------- */
+.register-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.register-field-label {
+    font-weight: 600;
+    color: #333333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+}
+
+/* Icona accanto alla label */
+.register-field-icon {
+    font-size: 1.05rem;
+    color: #2218e3;
+}
+
+.register-field-input {
+    /* width: 100%; */
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(6px);
+    font-size: 0.9rem;
+    color: #333333;
+    transition: all 0.25s ease;
+}
+
+.register-field-input:focus {
+    border-color: #2218e3;
+    box-shadow: 0 0 0 4px rgba(34, 24, 227, 0.15);
+    background: rgba(255, 255, 255, 0.95);
+    outline: none;
+}
+
+/* Placeholder più elegante */
+.register-field-input::placeholder {
+    color: #aaa;
+    opacity: 0.8;
+}
+
+/* --- ERRORE --- */
+.register-field-input-error,
+.register-field-input.is-invalid {
+    border-color: #ff0022 !important;
+    box-shadow: 0 0 0 4px rgba(255, 0, 34, 0.15);
+}
+
+.register-field-error {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #ff0022;
+}
+
+/* Help text */
+.register-field-help {
+    font-size: 0.8rem;
+    color: #777;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.register-field-info-icon {
+    font-size: 0.85rem;
+    color: #2218e3;
+}
+
+/* ------------------------------------------------- */
+/* SUBMIT BUTTON */
+/* ------------------------------------------------- */
+.register-button {
+    width: 100%;
+    background: #2218e3;
+    color: #fff;
+    padding: 0.85rem;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: 0.2s ease;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.register-button:hover {
+    background: #160fc3;
+}
+
+.register-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ------------------------------------------------- */
+/* FOOTER LINK */
+/* ------------------------------------------------- */
 .register-footer {
-    /* Stili da definire */
+    text-align: center;
+    margin: 1.5rem 0 2rem;
+
 }
 
-/* Testo del footer */
 .register-footer-text {
-    /* Stili da definire */
+    font-size: 0.9rem;
+    color: #555;
 }
 
-/* Link al login */
 .register-login-link {
-    /* Stili da definire */
+    color: #2218e3;
+    font-weight: 700;
+    text-decoration: none;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .register-page {
-        /* Stili mobile da definire */
+.register-login-link:hover {
+    text-decoration: underline;
+}
+
+/* ------------------------------------------------- */
+/* ANIMATIONS */
+/* ------------------------------------------------- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
-    .register-social-container {
-        /* Stili mobile social da definire */
-    }
-
-    .register-social-button {
-        /* Stili mobile social button da definire */
-    }
-
-    .register-form {
-        /* Stili mobile form da definire */
-    }
-
-    .register-field {
-        /* Stili mobile field da definire */
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
