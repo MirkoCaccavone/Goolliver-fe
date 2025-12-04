@@ -1,179 +1,342 @@
-/* LoginPage.css - Stili dedicati per la pagina di accesso */
+/* --- Contenitore principale della pagina login --- */
+.login-container {
+    display: flex;
+    min-height: 100vh;
+}
 
-/* Container principale */
+/* --- Colonna sinistra: illustrazione --- */
+.login-left {
+    flex: 1;
+    padding: 80px 60px;
+    background: linear-gradient(135deg, #f7edf0 0%, #58e312 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-left-info {
+    position: fixed;
+    top: 200px;
+}
+
+.login-big-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.1;
+}
+
+.login-big-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 400px;
+}
+
+.login-illustration {
+    position: absolute;
+    bottom: -40px;
+    right: -40px;
+    width: 340px;
+    height: 340px;
+    background: url('public/signup.svg') center/cover no-repeat;
+    opacity: 0.85;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.18));
+    pointer-events: none;
+    user-select: none;
+}
+
+.login-illustration:hover {
+    transform: scale(1.05);
+}
+
+/* --- Colonna destra: form --- */
+.login-right {
+    width: 100%;
+    max-width: 420px;
+    flex: 1;
+    padding: 0 80px;
+    background-color: #f7edf0;
+}
+
 .login-page {
-    /* Stili da definire */
+    animation: fadeIn 0.5s ease;
 }
 
-/* Header della pagina con logo e titoli */
+/* --- Messaggio account eliminato --- */
+.login-account-deleted {
+    padding: 0.75rem 1rem;
+    background-color: #e0ffe6;
+    color: #2a7f37;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* --- Header --- */
 .login-header {
-    /* Stili da definire */
+    text-align: center;
+    margin-bottom: 1.5rem;
 }
 
-/* Logo principale */
-.login-logo {
-    /* Stili da definire */
-}
-
-/* Titolo principale */
 .login-title {
-    /* Stili da definire */
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2218e3;
 }
 
-/* Sottotitolo con link registrazione */
 .login-subtitle {
-    /* Stili da definire */
+    font-size: 1rem;
+    color: #333333;
 }
 
-/* Link alla registrazione */
-.login-register-link {
-    /* Stili da definire */
-}
-
-/* Container per i social login */
-.login-social-container {
-    /* Stili da definire */
-}
-
-/* Pulsante social generico */
-.login-social-button {
-    /* Stili da definire */
-}
-
-/* Pulsante Google specifico */
-.login-google-button {
-    /* Stili da definire */
-}
-
-/* Pulsante Facebook specifico */
-.login-facebook-button {
-    /* Stili da definire */
-}
-
-/* Icona dei social buttons */
-.login-social-icon {
-    /* Stili da definire */
-}
-
-/* Testo dei social buttons */
-.login-social-text {
-    /* Stili da definire */
-}
-
-/* Divisore "oppure" */
-.login-divider {
-    /* Stili da definire */
-}
-
-/* Linea del divisore */
-.login-divider-line {
-    /* Stili da definire */
-}
-
-/* Testo del divisore */
-.login-divider-text {
-    /* Stili da definire */
-}
-
-/* Form di login */
-.login-form {
-    /* Stili da definire */
-}
-
-/* Container per campo input */
-.login-field {
-    /* Stili da definire */
-}
-
-/* Label del campo */
-.login-field-label {
-    /* Stili da definire */
-}
-
-/* Input del campo */
-.login-field-input {
-    /* Stili da definire */
-}
-
-/* Input in stato di errore */
-.login-field-input-error {
-    /* Stili da definire */
-}
-
-/* Messaggio di errore del campo */
-.login-field-error {
-    /* Stili da definire */
-}
-
-/* Container opzioni (ricordami + password dimenticata) */
-.login-options {
-    /* Stili da definire */
-}
-
-/* Checkbox ricordami */
-.login-remember-checkbox {
-    /* Stili da definire */
-}
-
-/* Label ricordami */
-.login-remember-label {
-    /* Stili da definire */
-}
-
-/* Link password dimenticata */
-.login-forgot-password-link {
-    /* Stili da definire */
-}
-
-/* Pulsante di login principale */
-.login-button {
-    /* Stili da definire */
-}
-
-/* Pulsante in stato loading */
-.login-button-loading {
-    /* Stili da definire */
-}
-
-/* Spinner del loading */
-.login-loading-spinner {
-    /* Stili da definire */
-}
-
-/* Container per i messaggi di errore */
+/* --- Error Message --- */
 .login-error {
-    /* Stili da definire */
+    margin-bottom: 1rem;
 }
 
-/* Icona del messaggio di errore */
+.login-error-alert {
+    background-color: #ffeded;
+    border-left: 4px solid #ff0022;
+    color: #ff0022;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+
 .login-error-icon {
-    /* Stili da definire */
+    font-size: 1.2rem;
 }
 
-/* Testo del messaggio di errore */
-.login-error-text {
-    /* Stili da definire */
+/* --- Social Buttons --- */
+.login-social-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .login-page {
-        /* Stili mobile da definire */
+.login-social-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+}
+
+.login-google-button {
+    background: #db4437;
+}
+
+.login-google-button:hover {
+    background: #c33c2e;
+}
+
+.login-facebook-button {
+    background: #1877f2;
+}
+
+.login-facebook-button:hover {
+    background: #1564c0;
+}
+
+.login-social-icon {
+    font-size: 1.2rem;
+}
+
+.login-loading-spinner {
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spinner 0.7s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
     }
 
-    .login-social-container {
-        /* Stili mobile social da definire */
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- Divider --- */
+.login-divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    gap: 1rem;
+}
+
+.login-divider-line {
+    border: none;
+    height: 2px;
+    background: #ddd;
+    flex-grow: 1;
+}
+
+.login-divider-text {
+    font-size: 0.9rem;
+    color: #333333;
+    font-weight: 600;
+}
+
+/* --- Form Fields --- */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.login-field-label {
+    font-weight: 600;
+    color: #333333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+}
+
+/* Icona accanto alla label */
+.login-field-icon {
+    font-size: 1.05rem;
+    color: #58e312;
+}
+
+.login-field-input {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(6px);
+    font-size: 0.9rem;
+    color: #333333;
+    transition: all 0.25s ease;
+}
+
+.login-field-input:focus {
+    border-color: #58e312;
+    box-shadow: 0 0 0 4px #1aff5f38;
+    background: rgba(255, 255, 255, 0.95);
+    outline: none;
+}
+
+.login-field-input::placeholder {
+    color: #aaa;
+    opacity: 0.8;
+}
+
+.login-field-input-error,
+.login-field-input.is-invalid {
+    border-color: #ff0022 !important;
+    box-shadow: 0 0 0 4px rgba(255, 0, 34, 0.15);
+}
+
+.login-field-error {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #ff0022;
+}
+
+/* --- Remember & Forgot Password --- */
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.login-remember-label {
+    margin-left: 0.3rem;
+    color: #333333;
+}
+
+.login-forgot-password-link {
+    color: #2218e3;
+    font-weight: 500;
+}
+
+.login-forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+/* --- Login Button --- */
+.login-button {
+    background: #2218e3;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.login-button:hover {
+    background: #1a15b8;
+}
+
+.login-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* --- Loading spinner inside button --- */
+.login-button .login-loading-spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #fff;
+    border-top-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    animation: spin 0.8s linear infinite;
+}
+
+/* --- React Icons --- */
+.login-field-label i.login-field-icon {
+    color: #2218e3;
+    font-size: 1.1rem;
+}
+
+/* --- Animations & minor adjustments --- */
+.login-social-button i.login-social-icon {
+    font-size: 1.2rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+    .login-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
     }
 
-    .login-social-button {
-        /* Stili mobile social button da definire */
-    }
-
-    .login-form {
-        /* Stili mobile form da definire */
-    }
-
-    .login-field {
-        /* Stili mobile field da definire */
+    .login-illustration,
+    .login-form-container {
+        max-width: 100%;
+        width: 100%;
     }
 }

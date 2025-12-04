@@ -127,8 +127,8 @@ const RegisterPage = () => {
                     {/* divider line */}
                     <div className="register-divider">
                         <hr className="register-divider-line" />
-                        <span className="register-divider-text">{t('or')}</span>
-                        <hr className="register-divider-line flex-grow-1" />
+                        <span className="register-divider-text">{t('login.or')}</span>
+                        <hr className="register-divider-line" />
                     </div>
 
                     {/* form di registrazione */}
