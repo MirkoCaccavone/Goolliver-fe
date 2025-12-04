@@ -603,7 +603,7 @@
 
 .home-auth-section {
     padding: 0 32px;
-    height: 2000px;
+    /* height: 2000px; */
     background-color: red;
     min-height: 100vh;
     background: #F7EDF0;
@@ -612,9 +612,25 @@
     padding: 20px 32px;
 }
 
+.home-auth-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
 .home-auth-title,
 .home-auth-username {
     font-size: 2.6rem;
+}
+
+/* Griglia contest card per homepage utenti loggati */
+.home-contest-cards-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin: 2rem 0 5rem;
 }
 
 

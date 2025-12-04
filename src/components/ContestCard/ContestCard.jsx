@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../../style/componentsStyle/ContestCard.css';
 
-const ContestCard = ({ contest, userParticipation = null }) => {
+const ContestCard = ({ contest, userParticipation = null, variant }) => {
     // Usa direttamente lo status dal backend
     const status = contest.status;
 
@@ -41,8 +41,11 @@ const ContestCard = ({ contest, userParticipation = null }) => {
         }
     };
 
+    // Esempio: cambia classe se variant === 'home'
+    const cardClass = variant === 'home' ? 'contest-card-container contest-card-home' : 'contest-card-container';
+
     return (
-        <div className="contest-card-container">
+        <div className={cardClass}>
             {/* Status Badge */}
             <div className={`contest-card-status-badge contest-status-${status}`}>
                 {status === 'active' && 'Attivo'}

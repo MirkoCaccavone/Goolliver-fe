@@ -8,6 +8,7 @@ import Footer from '../components/Footer';
 import HomePlanesAndClouds from '../components/HomePlanesAndClouds';
 import { FiCamera, FiAward, FiUsers, FiHeart } from "react-icons/fi";
 import { contestAPI, photoAPI } from '../services/api';
+import ContestCard from '../components/ContestCard/ContestCard';
 
 const HomePage = () => {
     const { isAuthenticated, user } = useAuthStore();
@@ -25,6 +26,10 @@ const HomePage = () => {
     const [availableContests, setAvailableContests] = useState([]);
     // Stato per tutte le entries dell'utente
     const [userEntries, setUserEntries] = useState([]);
+
+    // Stato per i contest a cui l'utente ha partecipato con status desiderato
+    const [participatedContests, setParticipatedContests] = useState([]);
+
 
     // Funzione per generare una nuova destinazione casuale all'interno di home-how-section
     const getRandomTarget = () => {
@@ -123,47 +128,59 @@ const HomePage = () => {
     useEffect(() => {
         if (isAuthenticated && user) {
             photoAPI.getUserPhotos().then(res => {
-                setUserEntries(res.data);
+                setUserEntries(res.data.entries);
             });
+        } else {
+            setUserEntries([]);
         }
     }, [isAuthenticated, user]);
+
 
     // useEffect per recuperare i contest attivi a cui l'utente può partecipare
+    // Recupera tutti i contest dal backend
+    const [allContests, setAllContests] = useState([]);
     useEffect(() => {
         if (isAuthenticated && user) {
-            // 1) Prendi tutti i contest con stato active
-            // 2) Prendi tutte le entries dell'utente loggato
-            // 3) Escludi i contest dove esiste una entry dell'utente con contest_id uguale
-            Promise.all([
-                contestAPI.getAll(),
-                photoAPI.getUserPhotos()
-            ]).then(([contestsRes, entriesRes]) => {
-                const allContests = contestsRes.data;
-                console.log(allContests);
-
-
-                const userEntries = entriesRes.data;
-                console.log(userEntries);
-
-                // Prendi solo contest attivi
-                const activeContests = allContests.filter(contest => contest.status === 'active');
-                console.log(activeContests);
-
-                // Assicurati che userEntries sia sempre un array
-                const userEntriesArr = Array.isArray(userEntries.entries) ? userEntries.entries : [];
-                console.log(userEntriesArr);
-
-                const userContestIds = userEntriesArr.map(entry => String(entry.contest_id));
-                console.log(userContestIds);
-
-                // Filtra solo i contest a cui l'utente NON partecipa
-                const filtered = activeContests.filter(contest => !userContestIds.includes(String(contest.id)));
-                setAvailableContests(filtered);
-                console.log(filtered);
-
+            contestAPI.getAll().then(res => {
+                setAllContests(res.data);
             });
+        } else {
+            setAllContests([]);
         }
     }, [isAuthenticated, user]);
+
+    // Calcola i contest attivi a cui l'utente può partecipare
+    useEffect(() => {
+        if (isAuthenticated && user && allContests.length > 0) {
+            const activeContests = allContests.filter(contest => contest.status === 'active');
+            const userContestIds = userEntries.map(entry => String(entry.contest_id));
+            const filtered = activeContests.filter(contest => !userContestIds.includes(String(contest.id)));
+            setAvailableContests(filtered);
+        } else {
+            setAvailableContests([]);
+        }
+    }, [isAuthenticated, user, allContests, userEntries]);
+
+    // Calcola i contest a cui l'utente ha partecipato con status desiderati
+    useEffect(() => {
+        if (isAuthenticated && user && allContests.length > 0) {
+            const validStatuses = ['active', 'pending_voting', 'voting'];
+            const participatedContestIds = userEntries.map(entry => String(entry.contest_id));
+            const uniqueContestIds = [...new Set(participatedContestIds)];
+            const filteredContests = allContests.filter(
+                contest => uniqueContestIds.includes(String(contest.id)) && validStatuses.includes(contest.status)
+            );
+            setParticipatedContests(filteredContests);
+        } else {
+            setParticipatedContests([]);
+        }
+    }, [isAuthenticated, user, allContests, userEntries]);
+
+    // Debug: mostra dati in console
+    useEffect(() => {
+        console.log('userEntries:', userEntries);
+        console.log('participatedContests:', participatedContests);
+    }, [userEntries, participatedContests]);
 
     return (
         <>
@@ -182,20 +199,53 @@ const HomePage = () => {
                         />
                         <div className="home-auth-container">
                             <h2 className="home-auth-title">{t('welcome_back')}, <span className="home-auth-username">{user?.name || t('user')}</span>!</h2>
+
                             {/* Contest attivi a cui può partecipare */}
-                            {availableContests.length > 0 && (
-                                <div className="home-auth-contests">
-                                    <h3>{t('active_contests')}</h3>
-                                    <ul>
-                                        {availableContests.map(contest => (
-                                            <li key={contest.id}>
-                                                <span>{contest.title}</span>
-                                                {/* Puoi aggiungere un bottone per partecipare */}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                            <section className='home-auth-section-contest'>
+                                {availableContests.length > 0 && (
+                                    <div className="home-auth-contests">
+                                        <h3>{t('active_contests')}</h3>
+                                        <div className="home-contest-cards-flex">
+                                            {availableContests.map(contest => (
+                                                <ContestCard key={contest.id} contest={contest} variant="home" />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </section>
+
+                            {/* Contest a cui ha già partecipato con status active, pending_voting, voting */}
+                            <section className='home-auth-section-contest'>
+                                {participatedContests.length > 0 && (
+                                    <div className="home-auth-contests">
+                                        <h3>Contest a cui hai partecipato</h3>
+                                        <div className="home-contest-cards-flex">
+                                            {participatedContests.map(contest => {
+                                                // Trova la participation dell'utente per questo contest
+                                                const participation = userEntries.find(entry => String(entry.contest_id) === String(contest.id));
+                                                return (
+                                                    <ContestCard key={contest.id} contest={contest} variant="home" userParticipation={participation} />
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                            </section>
+
+                            {/* Contest terminati (status ended) */}
+                            <section className='home-auth-section-contest'>
+                                {isAuthenticated && allContests.filter(contest => contest.status === 'ended').length > 0 && (
+                                    <div className="home-auth-contests">
+                                        <h3>Contest terminati</h3>
+                                        <div className="home-contest-cards-flex">
+                                            {allContests.filter(contest => contest.status === 'ended').map(contest => (
+                                                <ContestCard key={contest.id} contest={contest} variant="home" />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </section>
+
                             {/* <p className="home-auth-subtitle">{t('home_logged_subtitle')}</p> */}
                             {/* Qui puoi aggiungere: contest attivi, foto recenti, notifiche, ecc. */}
                         </div>
