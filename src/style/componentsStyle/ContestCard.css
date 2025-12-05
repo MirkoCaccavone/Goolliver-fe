@@ -1,3 +1,57 @@
+/* Background dinamico carosello home */
+.contest-card-bg-carousel {
+    position: relative;
+    background-color: #f8f9fa;
+    /* fallback colore */
+    transition: background-image 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Overlay trasparente per background carosello */
+.contest-card-bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* z-index: 1; */
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(30, 30, 40, 0.38) 0%, rgba(30, 30, 40, 0.55) 100%);
+    /* Più contrasto in basso, più trasparente in alto */
+    opacity: 0.92;
+    transition: background 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Assicura che il contenuto sia sopra l'overlay */
+.contest-card-bg-carousel>*:not(.contest-card-bg-overlay) {
+    position: relative;
+    z-index: 2;
+}
+
+.contest-card-bg-indicators {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+}
+
+.contest-card-bg-indicators span {
+    display: block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid #2218E3;
+    transition: background 0.3s, border 0.3s;
+}
+
+.contest-card-bg-indicators span.active {
+    background: #2218E3;
+    border: 1.5px solid #fff;
+}
+
 /* =====================================
    CONTEST CARD COMPONENT - DEDICATED CSS
    ===================================== */
@@ -328,11 +382,11 @@
 
 /* Card Container */
 .contest-card-home {
-    width: 200px;
-    height: 250px;
-    background: white;
+    width: 230px;
+    height: 280px;
+    background: linear-gradient(135deg, rgba(34, 24, 227, 0.1), rgba(251, 175, 0, 0.1));
     border-radius: 1.25rem;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -392,6 +446,47 @@
     overflow: hidden; */
 }
 
+.contest-card-home .contest-card-body {
+    height: 100%;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* carosello con immagini in home */
+/* .contest-card-home .contest-card-gallery-carousel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    height: 60px;
+    width: 100%;
+    background: transparent;
+    scrollbar-width: thin;
+}
+
+.contest-card-home .contest-card-gallery-thumb {
+    max-height: 56px;
+    width: auto;
+    margin-right: 6px;
+    border-radius: 8px;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    object-fit: cover;
+    background: #f8f9fa;
+}
+
+.contest-card-home .contest-card-gallery-thumb:last-child {
+    margin-right: 0;
+}
+
+.contest-card-home .contest-card-gallery-thumb:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px rgba(34, 24, 227, 0.13);
+    z-index: 2;
+} */
+
 /* .contest-card-home .contest-card-header::before {
     content: '';
     position: absolute;
@@ -418,15 +513,13 @@
 .contest-card-home .contest-card-title {
     font-size: 1rem;
     margin-bottom: 30px;
-    /* font-weight: 700;
+    color: #f7edf0;
+    /* di default chiaro sopra overlay */
+}
+
+.contest-card-home.no-photos .contest-card-title {
     color: #333333;
-    margin-bottom: 0.75rem;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden; */
+    /* fallback colore principale se non ci sono foto */
 }
 
 .contest-card-home .contest-card-description {
@@ -505,16 +598,16 @@
     border: 1px solid #ffeaa7; */
 }
 
-.contest-card-home .contest-prize-label {
+/* .contest-card-home .contest-prize-label {
     font-size: 0.75rem;
     color: #856404;
     text-transform: uppercase;
     font-weight: 600;
     margin-bottom: 0.5rem;
     letter-spacing: 0.5px;
-}
+} */
 
-.contest-card-home .contest-prize-amount {
+/* .contest-card-home .contest-prize-amount {
     font-size: 1.5rem;
     font-weight: 800;
     color: #b8860b;
@@ -522,7 +615,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-}
+} */
 
 /* Card Actions */
 .contest-card-home .contest-card-actions {
@@ -535,7 +628,7 @@
     padding: 0.6rem 0rem;
     border-radius: 0.75rem;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1rem;
     transition: all 0.3s ease;
     text-decoration: none;
     text-align: center;
@@ -549,13 +642,16 @@
 }
 
 .contest-card-home .contest-action-primary {
-    background: linear-gradient(135deg, #6f42c1, #e83e8c);
+    background: linear-gradient(135deg, #2218E3, #4A40FF);
+    /* background: linear-gradient(135deg,
+            #2218E3,
+            #7069FF); */
     color: white;
-    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+    /* box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3); */
 }
 
 .contest-card-home .contest-action-primary:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
     color: white;
     text-decoration: none;
@@ -563,14 +659,15 @@
 
 .contest-card-home .contest-action-secondary {
     background: white;
-    color: #6f42c1;
-    border: 2px solid #6f42c1;
+    color: #2218E3;
+    border: 2px solid #2218E3;
 }
 
 .contest-card-home .contest-action-secondary:hover {
-    background: #6f42c1;
-    color: white;
-    transform: translateY(-2px);
+    background: white;
+    color: #2218e3;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
     text-decoration: none;
 }
 

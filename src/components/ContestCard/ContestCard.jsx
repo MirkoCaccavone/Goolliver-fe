@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import '../../style/componentsStyle/ContestCard.css';
 
-const ContestCard = ({ contest, userParticipation = null, variant }) => {
+const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }) => {
     // Usa direttamente lo status dal backend
     const status = contest.status;
 
@@ -41,11 +41,50 @@ const ContestCard = ({ contest, userParticipation = null, variant }) => {
         }
     };
 
-    // Esempio: cambia classe se variant === 'home'
-    const cardClass = variant === 'home' ? 'contest-card-container contest-card-home' : 'contest-card-container';
+
+    // Stato per carosello background
+    const [bgIndex, setBgIndex] = useState(0);
+    const photosLenRef = useRef(photos.length);
+
+    useEffect(() => {
+        photosLenRef.current = photos.length;
+    }, [photos.length]);
+
+    useEffect(() => {
+        if (variant === 'home' && Array.isArray(photos) && photos.length > 1) {
+            const interval = setInterval(() => {
+                setBgIndex(idx => {
+                    const len = photosLenRef.current;
+                    return len > 0 ? (idx + 1) % len : 0;
+                });
+            }, 3000);
+            return () => clearInterval(interval);
+        } else {
+            setBgIndex(0);
+        }
+    }, [variant, photos.length]);
+
+    // Calcola stile background dinamico
+    const cardStyle = (variant === 'home' && photos.length > 0)
+        ? {
+            backgroundImage: `url('${photos[bgIndex]?.photo_url}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            transition: 'background-image 0.7s cubic-bezier(0.4,0,0.2,1)'
+        }
+        : {};
+
+    const cardClass = variant === 'home'
+        ? `contest-card-container contest-card-home contest-card-bg-carousel${photos.length === 0 ? ' no-photos' : ''}`
+        : 'contest-card-container';
 
     return (
-        <div className={cardClass}>
+        <div className={cardClass} style={cardStyle}>
+            {/* Overlay per rendere leggibile il testo sopra il background */}
+            {variant === 'home' && photos.length > 0 && (
+                <div className="contest-card-bg-overlay" />
+            )}
             {/* Status Badge */}
             <div className={`contest-card-status-badge contest-status-${status}`}>
                 {status === 'active' && 'Attivo'}
@@ -61,8 +100,23 @@ const ContestCard = ({ contest, userParticipation = null, variant }) => {
 
             {/* Body del card */}
             <div className="contest-card-body">
-                {/* Titolo e descrizione */}
+                {/* Titolo */}
                 <h3 className="contest-card-title">{contest.title}</h3>
+
+                {/* Indicatori carosello immagini (solo home) */}
+                {variant === 'home' && Array.isArray(photos) && photos.length > 1 && (
+                    <div className="contest-card-bg-indicators">
+                        {photos.map((_, idx) => (
+                            <span
+                                key={idx}
+                                className={idx === bgIndex ? 'active' : ''}
+                            />
+                        ))}
+                    </div>
+                )}
+
+
+                {/* Descrizione */}
                 <p className="contest-card-description">{contest.description}</p>
 
                 {/* Statistiche */}

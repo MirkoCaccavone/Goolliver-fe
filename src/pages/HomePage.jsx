@@ -22,13 +22,49 @@ const HomePage = () => {
     const plane1Ref = useRef();
     const plane2Ref = useRef();
 
+
     // Stato per i contest attivi a cui l'utente può partecipare
     const [availableContests, setAvailableContests] = useState([]);
     // Stato per tutte le entries dell'utente
     const [userEntries, setUserEntries] = useState([]);
-
     // Stato per i contest a cui l'utente ha partecipato con status desiderato
     const [participatedContests, setParticipatedContests] = useState([]);
+    // Stato per tutte le foto dei contest (public)
+    const [allContestPhotos, setAllContestPhotos] = useState([]);
+    // Stato per mappa contest_id -> array di foto
+    const [photosByContest, setPhotosByContest] = useState({});
+    // Stato di caricamento immagini
+    const [loadingPhotos, setLoadingPhotos] = useState(true);
+
+    // Recupera tutte le foto pubbliche dei contest
+    useEffect(() => {
+        setLoadingPhotos(true);
+        photoAPI.getAllContestPhotos().then(res => {
+            setAllContestPhotos(res.data.photos || []);
+            setLoadingPhotos(false);
+        }).catch(() => setLoadingPhotos(false));
+    }, []);
+
+    // Raggruppa le foto per contest_id (se presente), altrimenti fallback globale
+    useEffect(() => {
+        if (allContestPhotos && Array.isArray(allContestPhotos)) {
+            // Se le foto hanno contest_id, raggruppa, altrimenti fallback
+            if (allContestPhotos.length > 0 && allContestPhotos[0].contest_id) {
+                const grouped = allContestPhotos.reduce((acc, photo) => {
+                    const cid = String(photo.contest_id);
+                    if (!acc[cid]) acc[cid] = [];
+                    acc[cid].push(photo);
+                    return acc;
+                }, {});
+                setPhotosByContest(grouped);
+            } else {
+                // fallback: tutte le foto senza contest_id
+                setPhotosByContest({ fallback: allContestPhotos });
+            }
+        } else {
+            setPhotosByContest({});
+        }
+    }, [allContestPhotos]);
 
 
     // Funzione per generare una nuova destinazione casuale all'interno di home-how-section
@@ -177,10 +213,10 @@ const HomePage = () => {
     }, [isAuthenticated, user, allContests, userEntries]);
 
     // Debug: mostra dati in console
-    useEffect(() => {
-        console.log('userEntries:', userEntries);
-        console.log('participatedContests:', participatedContests);
-    }, [userEntries, participatedContests]);
+    // useEffect(() => {
+    //     console.log('userEntries:', userEntries);
+    //     console.log('participatedContests:', participatedContests);
+    // }, [userEntries, participatedContests]);
 
     return (
         <>
@@ -202,13 +238,25 @@ const HomePage = () => {
 
                             {/* Contest attivi a cui può partecipare */}
                             <section className='home-auth-section-contest'>
-                                {availableContests.length > 0 && (
+                                {loadingPhotos ? (
+                                    <div className="home-auth-contests"><div className="home-contest-cards-flex">Caricamento immagini...</div></div>
+                                ) : availableContests.length > 0 && (
                                     <div className="home-auth-contests">
-                                        <h3>{t('active_contests')}</h3>
+                                        <h3 className='home-auth-section-title'>{t('active_contests')}</h3>
                                         <div className="home-contest-cards-flex">
-                                            {availableContests.map(contest => (
-                                                <ContestCard key={contest.id} contest={contest} variant="home" />
-                                            ))}
+                                            {availableContests.map(contest => {
+                                                const contestPhotos = photosByContest[String(contest.id)]
+                                                    || photosByContest.fallback
+                                                    || [];
+                                                return (
+                                                    <ContestCard
+                                                        key={contest.id}
+                                                        contest={contest}
+                                                        variant="home"
+                                                        photos={contestPhotos.slice(0, 5)}
+                                                    />
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}
@@ -216,15 +264,26 @@ const HomePage = () => {
 
                             {/* Contest a cui ha già partecipato con status active, pending_voting, voting */}
                             <section className='home-auth-section-contest'>
-                                {participatedContests.length > 0 && (
+                                {loadingPhotos ? (
+                                    <div className="home-auth-contests"><div className="home-contest-cards-flex">Caricamento immagini...</div></div>
+                                ) : participatedContests.length > 0 && (
                                     <div className="home-auth-contests">
-                                        <h3>Contest a cui hai partecipato</h3>
+                                        <h3 className='home-auth-section-title'>Contest a cui hai partecipato</h3>
                                         <div className="home-contest-cards-flex">
                                             {participatedContests.map(contest => {
                                                 // Trova la participation dell'utente per questo contest
                                                 const participation = userEntries.find(entry => String(entry.contest_id) === String(contest.id));
+                                                const contestPhotos = photosByContest[String(contest.id)]
+                                                    || photosByContest.fallback
+                                                    || [];
                                                 return (
-                                                    <ContestCard key={contest.id} contest={contest} variant="home" userParticipation={participation} />
+                                                    <ContestCard
+                                                        key={contest.id}
+                                                        contest={contest}
+                                                        variant="home"
+                                                        userParticipation={participation}
+                                                        photos={contestPhotos.slice(0, 5)}
+                                                    />
                                                 );
                                             })}
                                         </div>
@@ -234,13 +293,25 @@ const HomePage = () => {
 
                             {/* Contest terminati (status ended) */}
                             <section className='home-auth-section-contest'>
-                                {isAuthenticated && allContests.filter(contest => contest.status === 'ended').length > 0 && (
+                                {loadingPhotos ? (
+                                    <div className="home-auth-contests"><div className="home-contest-cards-flex">Caricamento immagini...</div></div>
+                                ) : isAuthenticated && allContests.filter(contest => contest.status === 'ended').length > 0 && (
                                     <div className="home-auth-contests">
-                                        <h3>Contest terminati</h3>
+                                        <h3 className='home-auth-section-title'>Contest terminati</h3>
                                         <div className="home-contest-cards-flex">
-                                            {allContests.filter(contest => contest.status === 'ended').map(contest => (
-                                                <ContestCard key={contest.id} contest={contest} variant="home" />
-                                            ))}
+                                            {allContests.filter(contest => contest.status === 'ended').map(contest => {
+                                                const contestPhotos = photosByContest[String(contest.id)]
+                                                    || photosByContest.fallback
+                                                    || [];
+                                                return (
+                                                    <ContestCard
+                                                        key={contest.id}
+                                                        contest={contest}
+                                                        variant="home"
+                                                        photos={contestPhotos.slice(0, 5)}
+                                                    />
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 )}

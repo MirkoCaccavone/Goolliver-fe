@@ -1,114 +1,4 @@
 /********************************
-     Hero/Carousel Jumbo
-*********************************/
-.jumbo {
-    overflow: hidden;
-    /* width: 100vw; */
-    height: 70vh;
-    position: relative;
-    background: #000;
-}
-
-.jumbo-img-strip {
-    display: flex;
-    width: max-content;
-    height: 100%;
-    animation: scroll-strip 30s linear infinite;
-    align-items: center;
-}
-
-.jumbo-img-strip.paused {
-    animation-play-state: paused;
-}
-
-.jumbo-img {
-    width: 100vw;
-    height: 70vh;
-    object-fit: cover;
-    flex-shrink: 0;
-    transition: filter 0.2s;
-}
-
-.jumbo-img.clickable {
-    cursor: pointer;
-    filter: brightness(0.95) grayscale(0.1);
-}
-
-.jumbo-img.clickable:hover {
-    filter: brightness(1.1) grayscale(0);
-}
-
-.jumbo-img-wrapper {
-    position: relative;
-    display: inline-block;
-}
-
-.jumbo-thumb {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: 2px solid #F7EDF0;
-    box-shadow: 0 2px 8px #0006;
-    cursor: pointer;
-    z-index: 2;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.jumbo-thumb:hover {
-    transform: scale(1.15);
-    box-shadow: 0 4px 16px #000a;
-    z-index: 3;
-}
-
-.jumbo-thumb-placeholder {
-    background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.2s infinite;
-    opacity: 0.8;
-}
-
-@keyframes scroll-strip {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(-100vw);
-    }
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: -60px 0;
-    }
-
-    100% {
-        background-position: 60px 0;
-    }
-}
-
-/* Modale per ingrandimento */
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-img {
-    max-width: 90vw;
-    max-height: 90vh;
-    border-radius: 12px;
-    box-shadow: 0 4px 32px #000a;
-}
-
-/********************************
       AEREI E NUVOLE
 *********************************/
 
@@ -620,7 +510,7 @@
 
 .home-auth-title,
 .home-auth-username {
-    font-size: 2.6rem;
+    font-size: 2.5rem;
 }
 
 /* Griglia contest card per homepage utenti loggati */
@@ -631,6 +521,10 @@
     justify-content: flex-start;
     align-items: stretch;
     margin: 2rem 0 5rem;
+}
+
+.home-auth-section-title {
+    font-size: 1.5rem;
 }
 
 
