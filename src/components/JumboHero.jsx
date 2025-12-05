@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { photoAPI } from '../services/api';
+import '../style/componentsStyle/JumboHero.css'
 
 const heroImages = [
-    '/Screenshot-(244).png',
+    '/sfondo-goolly.png',
 ];
 
 // Genera posizioni random non sovrapposte
