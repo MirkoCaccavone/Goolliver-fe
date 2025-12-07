@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { contestAPI, photoAPI } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
 import ContestCard from '../components/ContestCard/ContestCard';
+import { BiSolidError, BiRefresh, BiCamera, BiGrid, BiPlayCircle, BiTime, BiCheckCircle } from "react-icons/bi";
 import '../style/pagesStyle/ContestsPage.css';
 
 const ContestsPage = () => {
@@ -61,10 +62,10 @@ const ContestsPage = () => {
 
     // Opzioni di filtro
     const filterOptions = [
-        { key: 'all', label: t('contests.all'), icon: 'bi-grid' },
-        { key: 'active', label: t('contests.active'), icon: 'bi-play-circle' },
-        { key: 'upcoming', label: t('contests.upcoming'), icon: 'bi-clock' },
-        { key: 'ended', label: t('contests.ended'), icon: 'bi-check-circle' }
+        { key: 'all', label: t('contests.all'), icon: <BiGrid className="filter-icon" /> },
+        { key: 'active', label: t('contests.active'), icon: <BiPlayCircle className="filter-icon" /> },
+        { key: 'upcoming', label: t('contests.upcoming'), icon: <BiTime className="filter-icon" /> },
+        { key: 'ended', label: t('contests.ended'), icon: <BiCheckCircle className="filter-icon" /> }
     ];
 
     if (error) {
@@ -79,17 +80,17 @@ const ContestsPage = () => {
                     </div>
 
                     <div className="contest-error-container">
-                        <div className="alert alert-danger d-flex align-items-center" role="alert">
-                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                        <div className="alert alert-danger" role="alert">
+                            <BiSolidError className="icon me-2" />
                             <div>
                                 <strong>{t('contests.errorLoading')}</strong><br />
                                 <small>{error.message}</small>
                             </div>
                             <button
-                                className="btn btn-outline-danger ms-auto"
+                                className="btn-outline-danger"
                                 onClick={() => refetch()}
                             >
-                                <i className="bi bi-arrow-clockwise me-1"></i>
+                                <BiRefresh className="icon me-1" />
                                 {t('contests.retry')}
                             </button>
                         </div>
@@ -118,7 +119,7 @@ const ContestsPage = () => {
                             className={`contests-filter-button ${activeFilter === option.key ? 'active' : ''}`}
                             onClick={() => setActiveFilter(option.key)}
                         >
-                            <i className={`${option.icon} me-1`}></i>
+                            <span className="filter-icon-wrapper">{option.icon}</span>
                             {option.label}
                         </button>
                     ))}
@@ -148,7 +149,7 @@ const ContestsPage = () => {
                 {!isLoading && filteredContests.length === 0 && (
                     <div className="contests-page-empty">
                         <div className="contests-empty-icon">
-                            <i className="bi bi-camera"></i>
+                            <BiCamera className="contests-empty-icon" />
                         </div>
                         <h3 className="contests-empty-title">
                             {activeFilter === 'all'
@@ -175,43 +176,43 @@ const ContestsPage = () => {
 
                 {/* Stats Footer */}
                 {!isLoading && contests?.length > 0 && (
-                    <div className="contests-page-stats mt-4 text-center">
-                        <div className="row">
-                            <div className="col-md-3">
-                                <div className="stat-item">
-                                    <div className="stat-number">{contests.length}</div>
-                                    <div className="stat-label">{t('contests.totalContests')}</div>
-                                </div>
+                    <div className="contests-page-stats">
+                        <div className="stat-grid">
+
+                            <div className="stat-item">
+                                <div className="stat-number">{contests.length}</div>
+                                <div className="stat-label">{t('contests.totalContests')}</div>
                             </div>
-                            <div className="col-md-3">
-                                <div className="stat-item">
-                                    <div className="stat-number">
-                                        {contests.filter(c => {
-                                            const now = new Date();
-                                            const start = new Date(c.start_date);
-                                            const end = new Date(c.end_date);
-                                            return now >= start && now <= end;
-                                        }).length}
-                                    </div>
-                                    <div className="stat-label">{t('contests.activeContests')}</div>
+
+
+                            <div className="stat-item">
+                                <div className="stat-number">
+                                    {contests.filter(c => {
+                                        const now = new Date();
+                                        const start = new Date(c.start_date);
+                                        const end = new Date(c.end_date);
+                                        return now >= start && now <= end;
+                                    }).length}
                                 </div>
+                                <div className="stat-label">{t('contests.activeContests')}</div>
                             </div>
-                            <div className="col-md-3">
-                                <div className="stat-item">
-                                    <div className="stat-number">
-                                        {contests.reduce((total, contest) => total + (contest.current_participants || 0), 0)}
-                                    </div>
-                                    <div className="stat-label">{t('contests.totalParticipants')}</div>
+
+
+                            <div className="stat-item">
+                                <div className="stat-number">
+                                    {contests.reduce((total, contest) => total + (contest.current_participants || 0), 0)}
                                 </div>
+                                <div className="stat-label">{t('contests.totalParticipants')}</div>
                             </div>
-                            <div className="col-md-3">
-                                <div className="stat-item">
-                                    <div className="stat-number">
-                                        {contests.filter(c => c.prize).length}
-                                    </div>
-                                    <div className="stat-label">{t('contests.withPrize')}</div>
+
+
+                            <div className="stat-item">
+                                <div className="stat-number">
+                                    {contests.filter(c => c.prize).length}
                                 </div>
+                                <div className="stat-label">{t('contests.withPrize')}</div>
                             </div>
+
                         </div>
                     </div>
                 )}

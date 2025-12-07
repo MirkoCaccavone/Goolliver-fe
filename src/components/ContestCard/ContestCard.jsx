@@ -1,5 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import {
+    BiCalendar,     // calendario inizio
+    BiCalendarX,         // calendario fine
+    BiTrophy,            // trofeo premio
+    BiTimeFive,    // clessidra
+    BiHeart,             // cuore
+    BiImage,            // galleria
+    BiUpload,            // upload
+    BiXCircle,           // cerchio X
+    BiCheckCircle,   // check pieno
+    BiInfoCircle,        // info
+    BiCamera,
+    BiLeaf,
+    BiUser,
+    BiLandscape,
+    BiBuilding,
+    BiZoomIn,
+} from "react-icons/bi";
 import '../../style/componentsStyle/ContestCard.css';
 
 const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }) => {
@@ -32,15 +50,20 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
     // Determina l'icona basata sul tipo di contest
     const getContestIcon = () => {
         switch (contest.category?.toLowerCase()) {
-            case 'natura': return 'bi-tree';
-            case 'ritratti': return 'bi-person';
-            case 'paesaggi': return 'bi-mountain';
-            case 'street': return 'bi-building';
-            case 'macro': return 'bi-zoom-in';
-            default: return 'bi-camera';
+            case 'natura':
+                return <BiLeaf className="contest-card-icon" />;
+            case 'ritratti':
+                return <BiUser className="contest-card-icon" />;
+            case 'paesaggi':
+                return <BiLandscape className="contest-card-icon" />;
+            case 'street':
+                return <BiBuilding className="contest-card-icon" />;
+            case 'macro':
+                return <BiZoomIn className="contest-card-icon" />;
+            default:
+                return <BiCamera className="contest-card-icon" />;
         }
     };
-
 
     // Stato per carosello background
     const [bgIndex, setBgIndex] = useState(0);
@@ -76,7 +99,7 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
         : {};
 
     const cardClass = variant === 'home'
-        ? `contest-card-container contest-card-home contest-card-bg-carousel${photos.length === 0 ? ' no-photos' : ''}`
+        ? `contest-card-home contest-card-bg-carousel${photos.length === 0 ? ' no-photos' : ''}`
         : 'contest-card-container';
 
     return (
@@ -94,9 +117,9 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
             </div>
 
             {/* Header con icona */}
-            <div className="contest-card-header">
-                <i className={`${getContestIcon()} contest-card-icon`}></i>
-            </div>
+            {/* <div className="contest-card-header">
+                {getContestIcon()}
+            </div> */}
 
             {/* Body del card */}
             <div className="contest-card-body">
@@ -129,30 +152,32 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
                         <span className="contest-stat-value">{contest.max_participants}</span>
                         <span className="contest-stat-label">Max</span>
                     </div>
-                    <div className="contest-stat-item">
+                    {/* <div className="contest-stat-item">
                         <span className="contest-stat-value">{daysRemaining}</span>
                         <span className="contest-stat-label">Giorni</span>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Meta informazioni */}
                 <div className="contest-card-meta">
                     <div className="contest-meta-item">
-                        <i className="bi bi-calendar-event contest-meta-icon"></i>
+                        <BiCalendar className="contest-meta-icon" />
                         <span>Inizio: {formatDate(contest.start_date)}</span>
                     </div>
-                    <div className="contest-meta-item">
-                        <i className="bi bi-calendar-x contest-meta-icon"></i>
+                    {/* <div className="contest-meta-item">
+                        <BiCalendarX className="contest-meta-icon" />
                         <span>Fine: {formatDate(contest.end_date)}</span>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Premio */}
                 {contest.prize && (
                     <div className="contest-card-prize">
-                        <div className="contest-prize-label">Premio</div>
+                        <div className="contest-prize-label">
+                            <BiTrophy className="contest-prize-icon" />
+                            Premio
+                        </div>
                         <div className="contest-prize-amount">
-                            <i className="bi bi-trophy-fill"></i>
                             {contest.prize}
                         </div>
                     </div>
@@ -165,7 +190,7 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
                         <>
                             {userParticipation.moderation_status === 'approved' && status === 'pending_voting' ? (
                                 <div className="contest-action-button contest-action-pending-voting">
-                                    <i className="bi bi-hourglass-split"></i>
+                                    <BiTimeFive />
                                     In attesa votazione
                                 </div>
                             ) : userParticipation.moderation_status === 'approved' && status === 'voting' ? (
@@ -174,26 +199,26 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
                                         to={`/contest/${contest.id}?tab=gallery`}
                                         className="contest-action-button contest-action-primary"
                                     >
-                                        <i className="bi bi-heart"></i>
+                                        <BiHeart />
                                         Vota ora
                                     </Link>
                                     <Link
                                         to={`/contest/${contest.id}?tab=gallery`}
                                         className="contest-action-button contest-action-secondary"
                                     >
-                                        <i className="bi bi-images"></i>
+                                        <BiImage />
                                         Galleria
                                     </Link>
                                 </>
                             ) : userParticipation.moderation_status === 'approved' ? (
                                 <div className="contest-action-button contest-action-participating">
-                                    <i className="bi bi-check-circle-fill"></i>
+                                    <BiCheckCircle />
                                     Partecipando
                                 </div>
                             ) : null}
                             {(userParticipation.moderation_status === 'pending' || userParticipation.moderation_status === 'pending_review') && (
                                 <div className="contest-action-button contest-action-moderation">
-                                    <i className="bi bi-hourglass-split"></i>
+                                    <BiTimeFive />
                                     In Moderazione
                                 </div>
                             )}
@@ -202,7 +227,7 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
                                     to={`/contest/${contest.id}?action=participate`}
                                     className="contest-action-button contest-action-rejected"
                                 >
-                                    <i className="bi bi-x-circle-fill"></i>
+                                    <BiXCircle />
                                     Rifiutato - Partecipa di nuovo
                                 </Link>
                             )}
@@ -212,7 +237,7 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
                                     to={`/contest/${contest.id}?tab=gallery`}
                                     className="contest-action-button contest-action-secondary"
                                 >
-                                    <i className="bi bi-images"></i>
+                                    <BiImage />
                                     Galleria
                                 </Link>
                             )}
@@ -224,14 +249,14 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
                                 to={`/contest/${contest.id}?action=participate`}
                                 className="contest-action-button contest-action-primary"
                             >
-                                <i className="bi bi-upload"></i>
+                                <BiUpload />
                                 Partecipa
                             </Link>
                             <Link
                                 to={`/contest/${contest.id}?tab=gallery`}
                                 className="contest-action-button contest-action-secondary"
                             >
-                                <i className="bi bi-images"></i>
+                                <BiImage />
                                 Galleria
                             </Link>
                         </>
@@ -241,14 +266,14 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
                                 to={`/contest/${contest.id}?tab=results`}
                                 className="contest-action-button contest-action-primary"
                             >
-                                <i className="bi bi-trophy"></i>
+                                <BiTrophy />
                                 Risultati
                             </Link>
                             <Link
                                 to={`/contest/${contest.id}?tab=gallery`}
                                 className="contest-action-button contest-action-secondary"
                             >
-                                <i className="bi bi-images"></i>
+                                <BiImage />
                                 Galleria
                             </Link>
                         </>
@@ -257,34 +282,34 @@ const ContestCard = ({ contest, userParticipation = null, variant, photos = [] }
                             to={`/contest/${contest.id}?tab=details`}
                             className="contest-action-button contest-action-secondary"
                         >
-                            <i className="bi bi-info-circle"></i>
+                            <BiInfoCircle />
                             Dettagli
                         </Link>
                     ) : status === 'voting' ? (
                         <>
                             <button className="contest-action-button contest-action-disabled">
-                                <i className="bi bi-x-circle"></i>
+                                <BiXCircle />
                                 Completo
                             </button>
                             <Link
                                 to={`/contest/${contest.id}?tab=gallery`}
                                 className="contest-action-button contest-action-secondary"
                             >
-                                <i className="bi bi-images"></i>
+                                <BiImage />
                                 Galleria
                             </Link>
                         </>
                     ) : (
                         <>
                             <button className="contest-action-button contest-action-disabled">
-                                <i className="bi bi-x-circle"></i>
+                                <BiXCircle />
                                 Completo
                             </button>
                             <Link
                                 to={`/contest/${contest.id}?tab=gallery`}
                                 className="contest-action-button contest-action-secondary"
                             >
-                                <i className="bi bi-images"></i>
+                                <BiImage />
                                 Galleria
                             </Link>
                         </>

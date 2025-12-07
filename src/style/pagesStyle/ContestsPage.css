@@ -2,7 +2,7 @@
    CONTESTS PAGE - DEDICATED CSS
    ================================= */
 
-/* Page Container */
+/* 
 .contests-page-wrapper {
     min-height: 100vh;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -15,7 +15,6 @@
     padding: 0 1rem;
 }
 
-/* Header Section */
 .contests-page-header {
     text-align: center;
     margin-bottom: 3rem;
@@ -41,7 +40,7 @@
     line-height: 1.6;
 }
 
-/* Filters Section */
+
 .contests-page-filters {
     display: flex;
     flex-wrap: wrap;
@@ -78,7 +77,7 @@
     box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
 }
 
-/* Grid Layout */
+
 .contests-page-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -86,7 +85,7 @@
     margin-bottom: 3rem;
 }
 
-/* Loading States */
+
 .contests-page-loading {
     display: flex;
     justify-content: center;
@@ -113,7 +112,7 @@
     }
 }
 
-/* Empty State */
+
 .contests-page-empty {
     text-align: center;
     padding: 4rem 2rem;
@@ -140,7 +139,7 @@
     font-size: 1rem;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .contests-page-title {
         font-size: 2rem;
@@ -176,13 +175,13 @@
     }
 }
 
-/* Error State */
+
 .contest-error-container {
     max-width: 600px;
     margin: 0 auto;
 }
 
-/* Stats Footer */
+
 .contests-page-stats {
     background: white;
     border-radius: 1rem;
@@ -214,7 +213,7 @@
     letter-spacing: 0.5px;
 }
 
-/* Additional responsive styles for stats */
+
 @media (max-width: 768px) {
     .contests-page-stats .row {
         row-gap: 1rem;
@@ -240,5 +239,263 @@
 
     .stat-label {
         font-size: 0.8rem;
+    }
+} */
+
+/* ============================
+   CONTAINER PRINCIPALE
+============================ */
+.contests-page-wrapper {
+    width: 100%;
+    padding-top: 40px;
+    padding-bottom: 60px;
+    display: flex;
+    justify-content: center;
+    background-color: #f7edf0;
+}
+
+.contests-page-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+/* ============================
+   HEADER
+============================ */
+.contests-page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.contests-page-title {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #2218E3;
+}
+
+.contests-page-subtitle {
+    font-size: 1.15rem;
+    opacity: 0.7;
+    margin-top: 8px;
+}
+
+/* ============================
+   FILTRI
+============================ */
+.contests-page-filters {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 35px;
+}
+
+.contests-filter-button {
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    background: #F1F0FF;
+    color: #2218E3;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.contests-filter-button:hover {
+    background: #E4E1FF;
+}
+
+.contests-filter-button.active {
+    background: linear-gradient(135deg, #2218E3, #4a40ff);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(34, 24, 227, 0.3);
+}
+
+/* ============================
+   LOADING
+============================ */
+.contests-page-loading {
+    display: flex;
+    justify-content: center;
+    padding: 50px 0;
+}
+
+.contests-loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #ddd;
+    border-top-color: #2218E3;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================
+   GRID DEI CONTEST
+============================ */
+.contests-page-grid {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 25px;
+    padding-bottom: 40px;
+}
+
+/* ============================
+   EMPTY STATE
+============================ */
+.contests-page-empty {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.contests-empty-icon {
+    font-size: 3.4rem;
+    margin-bottom: 15px;
+    color: #8280FF;
+}
+
+.contests-empty-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+}
+
+.contests-empty-text {
+    font-size: 1rem;
+    opacity: 0.7;
+    margin-top: 10px;
+}
+
+/* Pulsante "Vedi tutto" */
+.button-primary {
+    padding: 10px 22px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2218E3, #4a40ff);
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.button-primary:hover {
+    transform: scale(1.05);
+}
+
+/* ============================
+   ERROR MESSAGE
+============================ */
+.contest-error-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.alert-danger {
+    background: #ffe4e4;
+    padding: 18px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    border-left: 5px solid #d00000;
+}
+
+.btn-outline-danger {
+    padding: 8px 18px;
+    border-radius: 10px;
+    border: 2px solid #d00000;
+    background: transparent;
+    color: #d00000;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-outline-danger:hover {
+    background: #d00000;
+    color: white;
+}
+
+/* ============================
+   STATS FOOTER
+============================ */
+.contests-page-stats {
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+}
+
+.stat-grid {
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.stat-item {
+    background: #F5F4FF;
+    padding: 25px 10px;
+    border-radius: 14px;
+    text-align: center;
+    transition: all .2s;
+    border: 1px solid #E6E4FF;
+}
+
+.stat-item:hover {
+    background: #EDEAFC;
+    transform: translateY(-4px);
+}
+
+.stat-number {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #2218E3;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    opacity: 0.7;
+    margin-top: 4px;
+}
+
+.icon {
+    font-size: 1.25rem;
+}
+
+.filter-icon {
+    font-size: 1.2rem;
+}
+
+.filter-icon-wrapper {
+    display: flex;
+    align-items: center;
+    margin-right: 6px;
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width: 768px) {
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .stat-grid {
+        grid-template-columns: repeat(1, 1fr);
     }
 }
